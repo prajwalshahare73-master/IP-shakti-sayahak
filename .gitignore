@@ -54,9 +54,11 @@ backend/.pytest_cache/
 
 # Root/local RAG indexes
 data/chroma/
-data/index/
+data/index/*
+!data/index/bm25.pkl
 backend/data/chroma/
 backend/data/index/
+
 
 
 # Temporary testing / audit files
