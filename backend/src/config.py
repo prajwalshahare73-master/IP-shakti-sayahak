@@ -21,6 +21,11 @@ class Settings:
     CHROMA_PATH: str = str((project_root / "data" / "index" / "chroma").resolve())
     BM25_INDEX_PATH: str = str((project_root / "data" / "index" / "bm25.pkl").resolve())
     RERANKER_MODEL: str = os.getenv("RERANKER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
+    # Set DISABLE_HEAVY_RERANKER=true on low-memory environments (e.g. Render Free 512 MB)
+    # to prevent CrossEncoder PyTorch model from loading and causing OOM during queries.
+    # When true, the high-precision lexical-semantic scorer is used instead, with zero extra RAM.
+    DISABLE_HEAVY_RERANKER: bool = os.getenv("DISABLE_HEAVY_RERANKER", "false").strip().lower() in ("true", "1", "yes")
+
 
     # LLM (Ollama)
     OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/")
