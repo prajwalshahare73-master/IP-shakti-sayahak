@@ -1,5 +1,6 @@
 import os
 import re
+import threading
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 from ..config import settings
@@ -143,7 +144,29 @@ class HybridRetriever:
         self.chroma_client = None
         self.chroma_collection = None
         self.bm25_index = None
+        self._ef_lock = threading.Lock()
+        self._embedding_function = None
+        self._ef_attempted = False
         self._init_stores()
+
+    def _get_embedding_function(self):
+        if self._ef_attempted:
+            return self._embedding_function
+        with self._ef_lock:
+            if self._ef_attempted:
+                return self._embedding_function
+            self._ef_attempted = True
+            try:
+                print("[Retriever] Lazy-loading SentenceTransformer embedding function (sentence-transformers/all-MiniLM-L6-v2)...")
+                from chromadb.utils import embedding_functions
+                self._embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
+                    model_name="sentence-transformers/all-MiniLM-L6-v2"
+                )
+                print("[Retriever] Successfully loaded embedding function.")
+            except Exception as e:
+                print(f"[Retriever] SentenceTransformerEmbeddingFunction lazy load notice: {e}")
+                self._embedding_function = None
+        return self._embedding_function
 
     def _init_stores(self):
         import pickle
@@ -186,10 +209,9 @@ class HybridRetriever:
         except Exception as e:
             print(f"[Retriever] BM25 corpus file load notice: {e}. Falling back to default corpus.")
 
-        # 2. Initialize Chroma DB if available
+        # 2. Initialize Chroma DB if available (without eager embedding model load)
         try:
             import chromadb
-            from chromadb.utils import embedding_functions
             from chromadb.config import Settings as ChromaSettings
             
             os.makedirs(settings.CHROMA_PATH, exist_ok=True)
@@ -198,38 +220,19 @@ class HybridRetriever:
                 settings=ChromaSettings(allow_reset=False, anonymized_telemetry=False)
             )
             
-            ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-                model_name="sentence-transformers/all-MiniLM-L6-v2"
-            )
-            
             existing_cols = [c.name for c in self.chroma_client.list_collections()]
             if "langchain" in existing_cols:
-                self.chroma_collection = self.chroma_client.get_collection("langchain", embedding_function=ef)
-                print(f"[Retriever] ChromaDB connected to 'langchain' collection with {self.chroma_collection.count()} chunks.")
+                self.chroma_collection = self.chroma_client.get_collection("langchain")
+                print(f"[Retriever] ChromaDB connected to 'langchain' collection with {self.chroma_collection.count()} chunks (embedding model deferred).")
             else:
-                col = self.chroma_client.get_or_create_collection(name="statutes_rules_india", embedding_function=ef)
-                for doc in self.corpus[:50]:
-                    try:
-                        col.upsert(
-                            ids=[doc["id"]],
-                            documents=[doc["content"]],
-                            metadatas=[{
-                                "title": doc["title"],
-                                "section": doc.get("section", ""),
-                                "act": doc.get("act", ""),
-                                "authority_level": doc.get("authority_level", 1),
-                                "jurisdiction": doc.get("jurisdiction", "india"),
-                                "snippet": doc.get("snippet", "")
-                            }]
-                        )
-                    except Exception:
-                        pass
+                col = self.chroma_client.get_or_create_collection(name="statutes_rules_india")
                 self.chroma_collection = col
-                print(f"[Retriever] ChromaDB vector store ready at {settings.CHROMA_PATH}")
+                print(f"[Retriever] ChromaDB vector store ready at {settings.CHROMA_PATH} (embedding model deferred).")
         except Exception as e:
             print(f"[Retriever] ChromaDB persistent client initialization notice ({e}). Running in high-performance hybrid mode.")
             self.chroma_client = None
             self.chroma_collection = None
+
 
         # 3. Initialize BM25 Index
         try:
@@ -245,11 +248,17 @@ class HybridRetriever:
         results = []
         if self.chroma_collection:
             try:
+                if getattr(self.chroma_collection, "_embedding_function", None) is None:
+                    ef = self._get_embedding_function()
+                    if ef is not None:
+                        self.chroma_collection._embedding_function = ef
+
                 where_clause = None
                 if jurisdiction and jurisdiction.lower() not in ("all", "global"):
                     where_clause = {"jurisdiction": jurisdiction.lower()}
                 
                 n_res = min(top_k, self.chroma_collection.count())
+
                 if n_res > 0:
                     q_res = self.chroma_collection.query(
                         query_texts=[query],
