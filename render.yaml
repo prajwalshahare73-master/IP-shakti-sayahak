@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: ip-sakti-sahayak-backend
+    env: python
+    region: singapore
+    buildCommand: "cd backend && pip install -r requirements.txt"
+    startCommand: "cd backend && uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: CHROMA_PATH
+        value: ./data/index/chroma
+      - key: BM25_INDEX_PATH
+        value: ./data/index/bm25.pkl
+      - key: FRONTEND_ORIGIN
+        value: "*"
+      - key: OLLAMA_BASE_URL
+        value: http://localhost:11434
+      - key: OLLAMA_MODEL
+        value: llama3.1

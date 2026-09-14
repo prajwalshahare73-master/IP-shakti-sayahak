@@ -1,0 +1,234 @@
+{
+  "case_tests": [
+    {
+      "case": "Case A (Strong Evidence)",
+      "id": "CASE-42014",
+      "evidence": "Synergistic Bioassay + Section 3(p) + NBA Form III",
+      "citations_count": 6,
+      "citations": [
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "Biological Diversity Rules (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "National Biodiversity Authority — ABS Regulation/Guidelines (India)",
+        "National Biodiversity Authority — ABS Regulation/Guidelines (India)"
+      ],
+      "confidence": 0.9,
+      "confidence_level": "high",
+      "has_3p": true,
+      "has_3e": true,
+      "has_nba": true,
+      "abstained": false,
+      "status": "PASS"
+    },
+    {
+      "case": "Case B (Partial Evidence)",
+      "id": "CASE-42056",
+      "evidence": "Traditional herbs without synergy bioassay",
+      "citations_count": 4,
+      "confidence": 0.76,
+      "confidence_level": "medium",
+      "human_review_recommended": true,
+      "status": "PASS"
+    },
+    {
+      "case": "Case C (Weak / Out of Scope)",
+      "id": "CASE-42097",
+      "evidence": "Out of scope / non-AYUSH",
+      "citations_count": 0,
+      "confidence": 0.1,
+      "confidence_level": "low",
+      "abstained": true,
+      "status": "PASS"
+    }
+  ],
+  "language_matrix": [
+    {
+      "selected_language": "English",
+      "lang_code": "en",
+      "case_id": "CASE-42098",
+      "script_detected": true,
+      "citations_count": 5,
+      "confidence": 0.87,
+      "rag_grounded": true,
+      "sample_preview": "**Comprehensive Legal Assessment and Guidance**  **Case Profile:**  * Product/Invention Name: Swastha-English Formulatio",
+      "status": "PASS"
+    },
+    {
+      "selected_language": "Hindi",
+      "lang_code": "hi",
+      "case_id": "CASE-42141",
+      "script_detected": true,
+      "citations_count": 3,
+      "confidence": 0.76,
+      "rag_grounded": true,
+      "sample_preview": "**विवरण**  **प्रकरण का विवरण**  प्रोडक्ट/इन्वेंशन का नाम: स्वस्था हिंदी फॉर्मूलेशन आवेदक प्रकार: भारतीय स्टार्टअप / एमएस",
+      "status": "PASS"
+    },
+    {
+      "selected_language": "Hinglish",
+      "lang_code": "hinglish",
+      "case_id": "CASE-42182",
+      "script_detected": true,
+      "citations_count": 2,
+      "confidence": 0.76,
+      "rag_grounded": true,
+      "sample_preview": "Aapka Swastha-Hinglish Formulation ki patenting ke liye kya karna hoga?   Sabse pehle, aapko pata hona chahiye ki aapka ",
+      "status": "PASS"
+    },
+    {
+      "selected_language": "Gujarati",
+      "lang_code": "gu",
+      "case_id": "CASE-42227",
+      "script_detected": true,
+      "citations_count": 3,
+      "confidence": 0.76,
+      "rag_grounded": true,
+      "sample_preview": "**સ્વસ્થા-ગુજરાતી ફોર્મ્યુલેશન માટે પેટન્ટ પ્રાપ્ત કરવાની માર્ગદર્શિકા**  **સંક્ષિપ્ત માહિતી:**  સ્વસ્થા-ગુજરાતી ફોર્મ્ય",
+      "status": "PASS"
+    },
+    {
+      "selected_language": "Telugu",
+      "lang_code": "te",
+      "case_id": "CASE-42271",
+      "script_detected": true,
+      "citations_count": 3,
+      "confidence": 0.76,
+      "rag_grounded": true,
+      "sample_preview": "**స్వస్థ తెలుగు ఫార్ములేషన్ పేటెంట్ కోసం చట్టపరమైన అంచనా**  పేటెంట్ కోసం అర్హత కోసం మీకు అవసరమైన చట్టపరమైన అంచనాలను ఈ పే",
+      "status": "PASS"
+    },
+    {
+      "selected_language": "Kannada",
+      "lang_code": "kn",
+      "case_id": "CASE-42317",
+      "script_detected": true,
+      "citations_count": 3,
+      "confidence": 0.76,
+      "rag_grounded": true,
+      "sample_preview": "**ಸ್ವಸ್ತಾ-ಕನ್ನಡ ಫಾರ್ಮುಲೇಶನ್ ಪೇಟೆಂಟ್ ಪ್ರಕ್ರಿಯೆಯಲ್ಲಿ ಸಹಾಯ**  **ಪ್ರಕ್ರಿಯೆಯ ಮುಖ್ಯ ವಿವರಣೆ**  ಸ್ವಸ್ತಾ-ಕನ್ನಡ ಫಾರ್ಮುಲೇಶನ್ ಪೇಟೆಂಟ",
+      "status": "PASS"
+    },
+    {
+      "selected_language": "Marathi",
+      "lang_code": "mr",
+      "case_id": "CASE-42361",
+      "script_detected": true,
+      "citations_count": 3,
+      "confidence": 0.76,
+      "rag_grounded": true,
+      "sample_preview": "**व्यवस्थापनाचा परिष्कार: स्वस्था-मराठी संयोजनाचा पेटंट**  **पूर्वावलोकन**  स्वस्था-मराठी संयोजन हे एक पोलीहर्बल आयुर्वे",
+      "status": "PASS"
+    },
+    {
+      "selected_language": "Bengali",
+      "lang_code": "bn",
+      "case_id": "CASE-42403",
+      "script_detected": true,
+      "citations_count": 3,
+      "confidence": 0.76,
+      "rag_grounded": true,
+      "sample_preview": "**স্বাস্থ্য-বাংলা ফর্মুলেশনের পেটেন্ট প্রক্রিয়ায় প্রস্তাবিত পদক্ষেপ**  **পরিচিতি**  আপনার প্রস্তাবিত পণ্যটি হল স্বাস্থ",
+      "status": "PASS"
+    },
+    {
+      "selected_language": "Sanskrit",
+      "lang_code": "sa",
+      "case_id": "CASE-42445",
+      "script_detected": true,
+      "citations_count": 1,
+      "confidence": 0.76,
+      "rag_grounded": true,
+      "sample_preview": "**व्यवस्थापनम्** (Comprehensive Guidance)  **स्वस्थ-संस्कृति संयोजनम्** (Swastha-Sanskrit Formulation) **पेटेंट प्राप्ति",
+      "status": "PASS"
+    }
+  ],
+  "field_validation": [
+    {
+      "scenario": "Empty ingredients and special characters",
+      "case_id": "CASE-42536",
+      "status_code": 200,
+      "status": "PASS"
+    },
+    {
+      "scenario": "Long text (1000+ characters)",
+      "case_id": "CASE-42578",
+      "status_code": 200,
+      "status": "PASS"
+    }
+  ],
+  "persistence_test": {
+    "case_id": "CASE-42488",
+    "title_preserved": true,
+    "language_preserved": true,
+    "ai_answer_preserved": true,
+    "citations_preserved": true,
+    "status": "PASS"
+  },
+  "report_tests": [
+    {
+      "language": "English",
+      "code": "en",
+      "report_id": "RPT-CASE-42098",
+      "disclaimer": "This report is generated by IP-SAKTI Sahayak for informational purposes only. It...",
+      "status": "PASS"
+    },
+    {
+      "language": "Hindi",
+      "code": "hi",
+      "report_id": "RPT-CASE-42141",
+      "disclaimer": "यह रिपोर्ट IP-SAKTI सहायक द्वारा केवल सूचनात्मक उद्देश्यों के लिए तैयार की गई है...",
+      "status": "PASS"
+    },
+    {
+      "language": "Hinglish",
+      "code": "hinglish",
+      "report_id": "RPT-CASE-42182",
+      "disclaimer": "Yeh report IP-SAKTI Sahayak ne sirf informational purpose ke liye generate ki ha...",
+      "status": "PASS"
+    },
+    {
+      "language": "Gujarati",
+      "code": "gu",
+      "report_id": "RPT-CASE-42227",
+      "disclaimer": "આ રિપોર્ટ IP-SAKTI સહાયક દ્વારા ફક્ત માહિતી હેતુ માટે બનાવવામાં આવ્યો છે....",
+      "status": "PASS"
+    },
+    {
+      "language": "Telugu",
+      "code": "te",
+      "report_id": "RPT-CASE-42271",
+      "disclaimer": "ఈ నివేదిక IP-SAKTI సహాయక్ ద్వారా సమాచార ప్రయోజనాల కోసం మాత్రమే రూపొందించబడింది....",
+      "status": "PASS"
+    },
+    {
+      "language": "Kannada",
+      "code": "kn",
+      "report_id": "RPT-CASE-42317",
+      "disclaimer": "ಈ ವರದಿಯನ್ನು IP-SAKTI ಸಹಾಯಕ ಮಾಹಿತಿ ಉದ್ದೇಶಗಳಿಗಾಗಿ ಮಾತ್ರ ಉತ್ಪಾದಿಸಲಾಗಿದೆ....",
+      "status": "PASS"
+    },
+    {
+      "language": "Marathi",
+      "code": "mr",
+      "report_id": "RPT-CASE-42361",
+      "disclaimer": "हा अहवाल IP-SAKTI सहायक द्वारे केवळ माहितीच्या उद्देशाने तयार केला आहे. हे कायदे...",
+      "status": "PASS"
+    },
+    {
+      "language": "Bengali",
+      "code": "bn",
+      "report_id": "RPT-CASE-42403",
+      "disclaimer": "এই প্রতিবেদনটি IP-SAKTI সহায়ক দ্বারা শুধুমাত্র তথ্যগত উদ্দেশ্যে তৈরি করা হয়েছে...",
+      "status": "PASS"
+    },
+    {
+      "language": "Sanskrit",
+      "code": "sa",
+      "report_id": "RPT-CASE-42445",
+      "disclaimer": "इदम् प्रतिवेदनम् IP-SAKTI सहायकेन केवलं सूचनार्थं निर्मितम्। एतद् विधिपरामर्शं न...",
+      "status": "PASS"
+    }
+  ],
+  "errors": []
+}

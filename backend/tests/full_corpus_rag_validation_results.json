@@ -1,0 +1,510 @@
+{
+  "timestamp": "2026-09-14T09:36:46.000615",
+  "audit": {
+    "total_source_docs": 50,
+    "corpus_markdown_count": 41,
+    "gk_markdown_count": 9,
+    "total_chunks": 4016,
+    "unique_indexed_sources": 50
+  },
+  "results": [
+    {
+      "test_id": "TC-PAT-01",
+      "category": "Patents / IP Law",
+      "question": "What is the requirement under Section 3(p) of the Patents Act regarding traditional knowledge and aggregation?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 35.26,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-tk-biological-material-guidelines-2012",
+        "in-tk-biological-material-guidelines-2012",
+        "in-ayush-examination-guidelines-2025",
+        "in-ayush-examination-guidelines-2025",
+        "in-tk-biological-material-guidelines-2012",
+        "in-tk-biological-material-guidelines-2012"
+      ],
+      "citations": [
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)"
+      ],
+      "answer_preview": "**Comprehensive Legal Assessment**  **Traditional Knowledge (TK) Involved: YES**  **Section 3(p) of the Patents Act, 1970:**  Section 3(p) of the Patents Act, 1970 states that an invention which, in e",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-PAT-02",
+      "category": "Patents / IP Law",
+      "question": "What changes were introduced in the Patents (Amendment) Rules, 2024 regarding official filing timelines and statements of working?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 33.63,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-patents-amendment-rules-2024",
+        "in-patents-amendment-rules-2024",
+        "in-patents-amendment-rules-2024",
+        "in-patents-amendment-rules-2024"
+      ],
+      "citations": [
+        "Patents (Amendment) Rules, 2024 (India) \u2014 VERIFY EXACT TITLE",
+        "Patents (Amendment) Rules, 2024 (India) \u2014 VERIFY EXACT TITLE",
+        "Patents (Amendment) Rules, 2024 (India) \u2014 VERIFY EXACT TITLE",
+        "Patents (Amendment) Rules, 2024 (India) \u2014 VERIFY EXACT TITLE"
+      ],
+      "answer_preview": "**Assessment & Legal Status:**  The Patents (Amendment) Rules, 2024 have been introduced to amend the Patents Rules, 2003. The rules have been notified on March 15, 2024, and are expected to come into",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-AYUSH-01",
+      "category": "AYUSH Regulatory",
+      "question": "What are the regulatory guidelines and classification criteria for Ayurveda Aahara under the FSSAI Regulations and Orders?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 36.0,
+      "confidence": 0.87,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-ayush-examination-guidelines-2025",
+        "in-fssai-regulation-2022",
+        "in-fssai-regulation-2022",
+        "in-fssai-regulation-2022",
+        "in-cosmetics-rules-2020",
+        "ip_sakti_general_ip_ayurveda_knowledge"
+      ],
+      "citations": [
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "FSSAI Regulation, 2022 (India) \u2014 VERIFY EXACT TITLE",
+        "FSSAI Regulation, 2022 (India) \u2014 VERIFY EXACT TITLE",
+        "FSSAI Regulation, 2022 (India) \u2014 VERIFY EXACT TITLE",
+        "Cosmetics Rules, 2020 (India)"
+      ],
+      "answer_preview": "**Comprehensive Legal Assessment**  **Case Profile:** Ayurveda Aahara under FSSAI Regulations and Orders  **Traditional Knowledge (TK) Involved:** YES (Requires Section 3(p) & TKDL scrutiny)  **Regula",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-AYUSH-02",
+      "category": "AYUSH Regulatory",
+      "question": "What licensing and labeling requirements are mandated under Cosmetics Rules 2020 for Ayurvedic cosmetics?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 33.46,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-cosmetics-rules-2020",
+        "in-tk-biological-material-guidelines-2012",
+        "in-patents-act-1970",
+        "in-nba-abs-regulation-2025"
+      ],
+      "citations": [
+        "Cosmetics Rules, 2020 (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "The Patents Act, 1970 (India) \u2014 Arrangement of Sections",
+        "National Biodiversity Authority \u2014 ABS Regulation/Guidelines (India)"
+      ],
+      "answer_preview": "**Comprehensive Legal Assessment**  Based on the provided Legal Evidence, I will provide a structured guidance on the licensing and labeling requirements for Ayurvedic cosmetics under the Cosmetics Ru",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-ABS-01",
+      "category": "ABS / Biodiversity",
+      "question": "How did the Biological Diversity (Amendment) Act, 2023 modify the obligations of registered AYUSH practitioners regarding access and benefit sharing?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 35.61,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-ayush-examination-guidelines-2025",
+        "in-nba-abs-regulation-2025",
+        "in-nba-abs-regulation-2025",
+        "in-ayush-examination-guidelines-2025",
+        "in-biodiversity-rules",
+        "in-tk-biological-material-guidelines-2012"
+      ],
+      "citations": [
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "National Biodiversity Authority \u2014 ABS Regulation/Guidelines (India)",
+        "National Biodiversity Authority \u2014 ABS Regulation/Guidelines (India)",
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "Biological Diversity Rules (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)"
+      ],
+      "answer_preview": "**Comprehensive Legal Assessment**  **Case Profile:**  * Biological Resource Involved: YES (Requires NBA/SBB ABS scrutiny) * Traditional Knowledge (TK) Involved: YES (Requires Section 3(p) & TKDL scru",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-ABS-02",
+      "category": "ABS / Biodiversity",
+      "question": "What is the procedure for obtaining prior NBA approval under Form III for patent applications based on biological resources under NBA guidelines?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 37.71,
+      "confidence": 0.87,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-biodiversity-rules",
+        "in-tk-biological-material-guidelines-2012",
+        "in-nba-abs-regulation-2025",
+        "in-biodiversity-rules",
+        "in-nba-abs-regulation-2025",
+        "ip_sakti_general_ip_ayurveda_knowledge"
+      ],
+      "citations": [
+        "Biological Diversity Rules (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "National Biodiversity Authority \u2014 ABS Regulation/Guidelines (India)",
+        "Biological Diversity Rules (India)",
+        "National Biodiversity Authority \u2014 ABS Regulation/Guidelines (India)"
+      ],
+      "answer_preview": "**Assessment & Legal Status:**  The user's patent application involves biological resources, which requires compliance with the Biological Diversity Act, 2002 and its associated rules. The user must o",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-PRIOR-01",
+      "category": "Prior-Art Patents",
+      "question": "What is disclosed in CA 3054271 or EP 2393503 regarding herbo-mineral formulations for cardiovascular disease and coronary heart disease?",
+      "language": "en",
+      "jurisdiction": "international",
+      "elapsed_sec": 33.71,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "priorart-ca-3054271",
+        "priorart-ca-3054271",
+        "priorart-ca-3054271",
+        "priorart-ca-3054271"
+      ],
+      "citations": [
+        "CA 3054271 A1 \u2014 Herbo-mineral formulation for cardiovascular disease (Muniyal Ayurvedic Research Centre)",
+        "CA 3054271 A1 \u2014 Herbo-mineral formulation for cardiovascular disease (Muniyal Ayurvedic Research Centre)",
+        "CA 3054271 A1 \u2014 Herbo-mineral formulation for cardiovascular disease (Muniyal Ayurvedic Research Centre)",
+        "CA 3054271 A1 \u2014 Herbo-mineral formulation for cardiovascular disease (Muniyal Ayurvedic Research Centre)"
+      ],
+      "answer_preview": "**Comprehensive Legal Assessment**  Based on the provided legal evidence, we have identified the following key points regarding the herbo-mineral formulations for cardiovascular disease and coronary h",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-PRIOR-02",
+      "category": "Prior-Art Patents",
+      "question": "What herbal solid formulation and extraction process is claimed in EP 2524695 by Himalaya Global Holdings?",
+      "language": "en",
+      "jurisdiction": "international",
+      "elapsed_sec": 34.35,
+      "confidence": 0.86,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "priorart-ep-2524695",
+        "priorart-patent14-verify",
+        "priorart-us-2004-0071790",
+        "priorart-us-10675322"
+      ],
+      "citations": [
+        "EP 2524695 A1 \u2014 Herbal solid formulation and process (Himalaya Global Holdings)",
+        "US 2004/0071790 A1 \u2014 Ayurvedic formulation for HIV/AIDS",
+        "US 10,675,322 B2 \u2014 Herbal formulation for metabolic disorders (Muniyal Ayurvedic Research Centre)"
+      ],
+      "answer_preview": "**Comprehensive Legal Assessment**  Based on the provided legal evidence, I have conducted a thorough analysis of the patent EP 2524695 by Himalaya Global Holdings. The patent claims an herbal solid f",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-PRIOR-03",
+      "category": "Prior-Art Patents",
+      "question": "What botanical ingredients and therapeutic indications are claimed in US 10,576,117 or US 8,337,911 for diabetes mellitus?",
+      "language": "en",
+      "jurisdiction": "international",
+      "elapsed_sec": 34.91,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "priorart-patent16-verify",
+        "priorart-us-8337911",
+        "priorart-us-10576117",
+        "priorart-us-8337911"
+      ],
+      "citations": [
+        "Patent document \u2014 details to verify after OCR (patent 16.pdf)",
+        "US 8,337,911 B2 \u2014 Herbal formulation for diabetes (SRM University)",
+        "US 10,576,117 B2 \u2014 Herbo-mineral formulation for diabetes",
+        "US 8,337,911 B2 \u2014 Herbal formulation for diabetes (SRM University)"
+      ],
+      "answer_preview": "**Comprehensive Legal Assessment**  Based on the provided legal evidence, we will assess the botanical ingredients and therapeutic indications claimed in the US patents US 8,337,911 B2 and US 10,576,1",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-EXAM-01",
+      "category": "Examiner Evidence",
+      "question": "What prior art or Section 3(p) objections were raised by the Indian Patent Examiner in Application 1734/DEL/2007?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 33.92,
+      "confidence": 0.76,
+      "confidence_label": "medium",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-patents-amendment-rules-2024",
+        "in-patents-act-1970",
+        "ip_sakti_general_ip_ayurveda_knowledge",
+        "ip_sakti_general_ip_ayurveda_knowledge"
+      ],
+      "citations": [
+        "Patents (Amendment) Rules, 2024 (India) \u2014 VERIFY EXACT TITLE",
+        "The Patents Act, 1970 (India) \u2014 Arrangement of Sections"
+      ],
+      "answer_preview": "**Case Profile:**  Application Number: 1734/DEL/2007 Context: Prior art or Section 3(p) objections raised by Indian Patent Examiner  **Legal Assessment:**  Based on the provided legal evidence, we can",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-EXAM-02",
+      "category": "Examiner Evidence",
+      "question": "What inventive step or traditional knowledge objections were cited in the EPO Examination Communication for EP 1558271?",
+      "language": "en",
+      "jurisdiction": "international",
+      "elapsed_sec": 38.12,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "intl-examiner-report-ep-1558271",
+        "intl-examiner-report-ep-1558271",
+        "intl-examiner-report-ep-1558271",
+        "priorart-patent13-verify",
+        "priorart-wo-2010-100652",
+        "priorart-ca-3054271"
+      ],
+      "citations": [
+        "EPO Examination Communication \u2014 EP 1558271",
+        "EPO Examination Communication \u2014 EP 1558271",
+        "EPO Examination Communication \u2014 EP 1558271",
+        "Patent document \u2014 details to verify after OCR (patent13.pdf)",
+        "WO 2010/100652 A1 \u2014 Herbo-mineral formulation (same family as EP 2393503)",
+        "CA 3054271 A1 \u2014 Herbo-mineral formulation for cardiovascular disease (Muniyal Ayurvedic Research Centre)"
+      ],
+      "answer_preview": "**Assessment & Legal Status:**  The EPO Examination Communication for EP 1558271 raises several objections regarding inventive step and traditional knowledge. The Examination Communication cites vario",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-TKDL-01",
+      "category": "TKDL / Traditional Knowledge",
+      "question": "What terms govern the TKDL Access Agreement of 2006 between India and international patent offices regarding search and confidential access?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 37.11,
+      "confidence": 0.76,
+      "confidence_label": "medium",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-tk-biological-material-guidelines-2012",
+        "in-ayush-examination-guidelines-2025",
+        "ip_sakti_general_ip_ayurveda_knowledge",
+        "ip_sakti_prior_art_patent_search_guide",
+        "ip_sakti_ip_general_knowledge",
+        "ip_sakti_general_ip_ayurveda_knowledge"
+      ],
+      "citations": [
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)"
+      ],
+      "answer_preview": "**TKDL Access Agreement Terms: A Legal Assessment**  **Assessment & Legal Status:** The TKDL Access Agreement of 2006 between India and international patent offices governs the search and confidential",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-GK-01",
+      "category": "General Knowledge",
+      "question": "What are the official patent filing fees in India for natural persons and startups versus large entities as outlined in IP-SAKTI fee guides?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 36.0,
+      "confidence": 0.76,
+      "confidence_label": "medium",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-patents-amendment-rules-2024",
+        "in-patents-act-1970",
+        "ip_sakti_ip_forms_procedures",
+        "ip_sakti_official_fees_forms_procedures"
+      ],
+      "citations": [
+        "Patents (Amendment) Rules, 2024 (India) \u2014 VERIFY EXACT TITLE",
+        "The Patents Act, 1970 (India) \u2014 Arrangement of Sections"
+      ],
+      "answer_preview": "**Kya aapko patent filing fees ke bare mein jaankari chahiye?**  Aapke question ka jawab dene ke liye, main aapko batata hoon ki Indian Patent Office (CGPDTM) ke under, patent filing fees ki kya vishe",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-NEG-01",
+      "category": "Negative Testing",
+      "question": "What are the current flight schedules between New Delhi and London Heathrow?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 0.0,
+      "confidence": 0.1,
+      "confidence_label": "low",
+      "abstained": true,
+      "retrieved_sources": [],
+      "citations": [],
+      "answer_preview": "**OUT OF SCOPE / NOT VERIFIED:** This query is outside the scope of IP-SAKTI Sahayak. IP-SAKTI Sahayak provides statutory and regulatory guidance exclusively on Indian Intellectual Property Law (Paten",
+      "status": "SUPPORTED / CORRECT_ABSTAIN"
+    },
+    {
+      "test_id": "TC-NEG-02",
+      "category": "Negative Testing",
+      "question": "What is the statute of limitations for filing a utility model in Germany under German patent law?",
+      "language": "en",
+      "jurisdiction": "india",
+      "elapsed_sec": 34.68,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-patents-act-1970",
+        "in-ayush-examination-guidelines-2025",
+        "in-tk-biological-material-guidelines-2012",
+        "in-tk-biological-material-guidelines-2012"
+      ],
+      "citations": [
+        "The Patents Act, 1970 (India) \u2014 Arrangement of Sections",
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)"
+      ],
+      "answer_preview": "Kya aapke paas koi vishesh case profile ya submission hai? Nahi, to hum aapke liye standard general query ka jawab denge.  Aapke prashn ka uttar hai: \"Kya Germany mein utility model ke liye filing ke ",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-MULTI-01",
+      "category": "Multilingual Testing",
+      "question": "\u0915\u094d\u092f\u093e \u092a\u093e\u0930\u0902\u092a\u0930\u093f\u0915 \u091c\u094d\u091e\u093e\u0928 (Traditional Knowledge) \u092a\u0930 \u0906\u0927\u093e\u0930\u093f\u0924 \u0906\u092f\u0941\u0930\u094d\u0935\u0947\u0926\u093f\u0915 \u0926\u0935\u093e \u0915\u094b \u092d\u093e\u0930\u0924 \u092e\u0947\u0902 \u092a\u0947\u091f\u0947\u0902\u091f \u0915\u0930\u093e\u092f\u093e \u091c\u093e \u0938\u0915\u0924\u093e \u0939\u0948?",
+      "language": "hi",
+      "jurisdiction": "india",
+      "elapsed_sec": 36.07,
+      "confidence": 0.76,
+      "confidence_label": "medium",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-tk-biological-material-guidelines-2012",
+        "in-fssai-regulation-2022",
+        "in-ayush-examination-guidelines-2025",
+        "in-nba-abs-regulation-2025"
+      ],
+      "citations": [
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)"
+      ],
+      "answer_preview": "**\u0935\u093f\u0936\u094d\u0932\u0947\u0937\u0923 \u0914\u0930 \u0915\u093e\u0928\u0942\u0928\u0940 \u0938\u094d\u0925\u093f\u0924\u093f**  \u092d\u093e\u0930\u0924 \u092e\u0947\u0902 \u092a\u093e\u0930\u0902\u092a\u0930\u093f\u0915 \u091c\u094d\u091e\u093e\u0928 (Traditional Knowledge) \u092a\u0930 \u0906\u0927\u093e\u0930\u093f\u0924 \u0906\u092f\u0941\u0930\u094d\u0935\u0947\u0926\u093f\u0915 \u0926\u0935\u093e \u0915\u094b \u092a\u0947\u091f\u0947\u0902\u091f \u0915\u0930\u0928\u0947 \u0915\u0940 \u0938\u0902\u092d\u093e\u0935\u0928\u093e \u0915\u093e \u092e\u0942\u0932\u094d\u092f\u093e\u0902\u0915\u0928 \u0915\u0930\u0928\u0947 \u0915\u0947 \u0932\u093f\u090f, \u0939\u092e\u0947\u0902 \u0915\u0941\u091b \u092e\u0939\u0924\u094d\u0935\u092a\u0942\u0930\u094d\u0923 \u092c\u093e\u0924\u094b\u0902 \u0915\u093e \u0927\u094d\u092f\u093e\u0928 \u0930\u0916\u0928\u093e \u0939\u094b\u0917\u093e",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-MULTI-02",
+      "category": "Multilingual Testing",
+      "question": "\u0906\u092f\u0941\u0930\u094d\u0935\u0947\u0926\u093f\u0915 \u0909\u0924\u094d\u092a\u093e\u0926\u0928\u093e\u0902\u0938\u093e\u0920\u0940 \u091c\u0948\u0935\u093f\u0915 \u0935\u093f\u0935\u093f\u0927\u0924\u093e \u0915\u093e\u092f\u0926\u094d\u092f\u093e\u0928\u0941\u0938\u093e\u0930 \u090f\u0928\u092c\u0940\u090f (NBA) \u092a\u0930\u0935\u093e\u0928\u0917\u0940 \u0915\u0927\u0940 \u0906\u0935\u0936\u094d\u092f\u0915 \u0905\u0938\u0924\u0947?",
+      "language": "mr",
+      "jurisdiction": "india",
+      "elapsed_sec": 35.39,
+      "confidence": 0.86,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-nba-abs-regulation-2025",
+        "in-nba-abs-regulation-2025",
+        "ip_sakti_abs_biodiversity_guide",
+        "ip_sakti_abs_biodiversity_guide"
+      ],
+      "citations": [
+        "National Biodiversity Authority \u2014 ABS Regulation/Guidelines (India)",
+        "National Biodiversity Authority \u2014 ABS Regulation/Guidelines (India)",
+        "IP-SAKTI_ABS_Biodiversity_Guide"
+      ],
+      "answer_preview": "**\u0906\u092f\u0941\u0930\u094d\u0935\u0947\u0926\u093f\u0915 \u0909\u0924\u094d\u092a\u093e\u0926\u0928\u093e\u0902\u0938\u093e\u0920\u0940 \u091c\u0948\u0935\u093f\u0915 \u0935\u093f\u0935\u093f\u0927\u0924\u093e \u0915\u093e\u092f\u0926\u094d\u092f\u093e\u0928\u0941\u0938\u093e\u0930 \u090f\u0928\u092c\u0940\u090f (NBA) \u092a\u0930\u0935\u093e\u0928\u0917\u0940 \u0915\u0927\u0940 \u0906\u0935\u0936\u094d\u092f\u0915 \u0905\u0938\u0924\u0947?**  **\u0938\u094d\u092a\u0937\u094d\u091f\u0924\u093e \u0906\u0923\u093f \u0915\u093e\u092f\u0926\u0947\u0936\u0940\u0930 \u0938\u094d\u0925\u093f\u0924\u0940**  \u0906\u092f\u0941\u0930\u094d\u0935\u0947\u0926\u093f\u0915 \u0909\u0924\u094d\u092a\u093e\u0926\u0928\u093e\u0902\u0938\u093e\u0920\u0940 \u091c\u0948\u0935\u093f\u0915 \u0935\u093f\u0935\u093f\u0927\u0924\u093e \u0915\u093e\u092f\u0926\u094d\u092f\u093e\u0928\u0941\u0938\u093e\u0930 \u090f\u0928\u092c\u0940\u090f (NBA) \u092a\u0930\u0935\u093e\u0928\u0917\u0940 ",
+      "status": "GROUNDED / VERIFIED"
+    },
+    {
+      "test_id": "TC-MULTI-03",
+      "category": "Multilingual Testing",
+      "question": "\u0c06\u0c2f\u0c41\u0c30\u0c4d\u0c35\u0c47\u0c26 \u0c14\u0c37\u0c27\u0c3e\u0c32 \u0c24\u0c2f\u0c3e\u0c30\u0c40\u0c15\u0c3f \u0c32\u0c48\u0c38\u0c46\u0c28\u0c4d\u0c38\u0c3f\u0c02\u0c17\u0c4d \u0c28\u0c3f\u0c2c\u0c02\u0c27\u0c28\u0c32\u0c41 \u0c0f\u0c2e\u0c3f\u0c1f\u0c3f?",
+      "language": "te",
+      "jurisdiction": "india",
+      "elapsed_sec": 0.0,
+      "confidence": 0.1,
+      "confidence_label": "low",
+      "abstained": true,
+      "retrieved_sources": [],
+      "citations": [],
+      "answer_preview": "**OUT OF SCOPE / NOT VERIFIED:** This query is outside the scope of IP-SAKTI Sahayak. IP-SAKTI Sahayak provides statutory and regulatory guidance exclusively on Indian Intellectual Property Law (Paten",
+      "status": "INSUFFICIENT_EVIDENCE"
+    },
+    {
+      "test_id": "TC-MULTI-04",
+      "category": "Multilingual Testing",
+      "question": "\u0ab6\u0ac1\u0a82 \u0aaa\u0ab0\u0a82\u0aaa\u0ab0\u0abe\u0a97\u0aa4 \u0a9c\u0acd\u0a9e\u0abe\u0aa8 \u0aaa\u0ab0 \u0a86\u0aa7\u0abe\u0ab0\u0abf\u0aa4 \u0ab9\u0ab0\u0acd\u0aac\u0ab2 \u0aab\u0acb\u0ab0\u0acd\u0aae\u0acd\u0aaf\u0ac1\u0ab2\u0ac7\u0ab6\u0aa8\u0aa8\u0ac7 \u0aaa\u0ac7\u0a9f\u0aa8\u0acd\u0a9f \u0aae\u0ab3\u0ac0 \u0ab6\u0a95\u0ac7?",
+      "language": "gu",
+      "jurisdiction": "india",
+      "elapsed_sec": 0.02,
+      "confidence": 0.1,
+      "confidence_label": "low",
+      "abstained": true,
+      "retrieved_sources": [],
+      "citations": [],
+      "answer_preview": "**OUT OF SCOPE / NOT VERIFIED:** This query is outside the scope of IP-SAKTI Sahayak. IP-SAKTI Sahayak provides statutory and regulatory guidance exclusively on Indian Intellectual Property Law (Paten",
+      "status": "INSUFFICIENT_EVIDENCE"
+    },
+    {
+      "test_id": "TC-MULTI-05",
+      "category": "Multilingual Testing",
+      "question": "\u0906\u092f\u0941\u0930\u094d\u0935\u0947\u0926\u093f\u0915-\u092f\u094b\u0917\u0938\u094d\u092f \u092a\u093e\u0930\u092e\u094d\u092a\u0930\u093f\u0915\u091c\u094d\u091e\u093e\u0928\u0938\u094d\u092f \u092a\u0947\u091f\u0947\u0923\u094d\u091f-\u092f\u094b\u0917\u094d\u092f\u0924\u093e \u0935\u093f\u0937\u092f\u0947 \u092d\u093e\u0930\u0924\u0940\u092f-\u092a\u0947\u091f\u0947\u0923\u094d\u091f-\u0905\u0927\u093f\u0928\u093f\u092f\u092e\u0938\u094d\u092f \u0927\u093e\u0930\u093e \u0969(p) \u0915\u093f\u0902 \u0935\u0926\u0924\u093f?",
+      "language": "sa",
+      "jurisdiction": "india",
+      "elapsed_sec": 0.0,
+      "confidence": 0.1,
+      "confidence_label": "low",
+      "abstained": true,
+      "retrieved_sources": [],
+      "citations": [],
+      "answer_preview": "**OUT OF SCOPE / NOT VERIFIED:** This query is outside the scope of IP-SAKTI Sahayak. IP-SAKTI Sahayak provides statutory and regulatory guidance exclusively on Indian Intellectual Property Law (Paten",
+      "status": "INSUFFICIENT_EVIDENCE"
+    },
+    {
+      "test_id": "TC-CASE-01",
+      "category": "Case Builder Integration",
+      "question": "We have developed an oral polyherbal syrup comprising Withania somnifera (Ashwagandha) and Ocimum sanctum (Tulsi) sourced from Madhya Pradesh forests for managing metabolic fatigue. Can we patent this in India and export to Canada, and what approvals are required?",
+      "language": "en",
+      "jurisdiction": "all",
+      "elapsed_sec": 40.96,
+      "confidence": 0.9,
+      "confidence_label": "high",
+      "abstained": false,
+      "retrieved_sources": [
+        "in-tk-biological-material-guidelines-2012",
+        "in-biodiversity-rules",
+        "in-tk-biological-material-guidelines-2012",
+        "in-ayush-examination-guidelines-2025",
+        "in-nba-abs-regulation-2025",
+        "in-tk-biological-material-guidelines-2012"
+      ],
+      "citations": [
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "Biological Diversity Rules (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)",
+        "Guidelines for Examination of Ayush Related Inventions, 2025 (India)",
+        "National Biodiversity Authority \u2014 ABS Regulation/Guidelines (India)",
+        "Guidelines for Processing Patent Applications relating to Traditional Knowledge and Biological Material, 2012 (India)"
+      ],
+      "answer_preview": "**Assessment & Legal Status:**  The proposed AyurMeta Metabolic Synergistic Syrup, comprising Withania somnifera (Ashwagandha) and Ocimum sanctum (Tulsi), sourced from Madhya Pradesh forests, raises c",
+      "status": "GROUNDED / VERIFIED"
+    }
+  ]
+}
