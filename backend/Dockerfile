@@ -20,9 +20,8 @@ COPY backend/src/ ./src/
 # NOTE: backend/data/ is intentionally excluded; only repository-root data/ is canonical.
 COPY data/ ./data/
 
-# Copy schema and env template
+# Copy schema
 COPY backend/schema/ ./schema/
-COPY backend/.env.example ./.env
 
 EXPOSE 8000
 

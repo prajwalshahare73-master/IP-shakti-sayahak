@@ -17,18 +17,21 @@ from .core.llm_client import llm_client
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("==================================================================")
-    print(f"Starting {settings.APP_NAME} in {settings.APP_ENV} mode...")
-    print(f"Chroma Storage Path: {settings.CHROMA_PATH}")
-    print(f"Ollama Target URL:   {settings.OLLAMA_BASE_URL} (Model: {settings.OLLAMA_MODEL})")
+    print(f"Starting {settings.APP_NAME} in [{settings.APP_ENV.upper()}] mode...")
+    print(f"BM25 Index Path:     {settings.BM25_INDEX_PATH}")
+    print(f"Corpus Chunks:       {len(retriever.corpus)} chunks loaded")
+    print(f"Low-Memory Retrieval:{settings.DISABLE_VECTOR_EMBEDDINGS} (Chroma/Vectors disabled for 512MB RAM)")
+    print(f"Low-Memory Reranker: {settings.DISABLE_HEAVY_RERANKER} (CrossEncoder disabled for 512MB RAM)")
+    print(f"LLM Base URL:        {settings.OLLAMA_BASE_URL} (Model: {settings.OLLAMA_MODEL})")
     print(f"Frontend Origin:     {settings.FRONTEND_ORIGIN}")
     print("==================================================================")
     
-    # Check LLM connectivity at startup
+    # Check LLM connectivity at startup (non-blocking fast check)
     llm_check = await llm_client.check_health()
     if llm_check.get("status") == "ok":
-        print(f"[Startup] Ollama server reachable. Available models: {llm_check.get('available_models')}")
+        print(f"[Startup] LLM server reachable. Available models: {llm_check.get('available_models')}")
     else:
-        print("[Startup] Notice: Ollama daemon not currently detected on localhost:11434. Grounded legal synthesis fallback active.")
+        print("[Startup] Notice: Local Ollama daemon offline. High-precision statutory grounded legal synthesis active.")
 
     yield
     print(f"[Shutdown] Stopping {settings.APP_NAME}...")

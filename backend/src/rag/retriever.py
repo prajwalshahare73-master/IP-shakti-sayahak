@@ -184,16 +184,32 @@ class HybridRetriever:
 
     def _init_stores(self):
         import pickle
-        # 1. Load full BM25 / Document index if available (4016 chunks across 50 documents)
+        bm25_path = settings.BM25_INDEX_PATH
+        is_production = settings.APP_ENV == "production"
+
+        # 1. Production Guard: Fail fast if BM25 file does not exist
+        if is_production and not os.path.exists(bm25_path):
+            raise FileNotFoundError(
+                f"[CRITICAL FAIL-FAST] Production BM25 index not found at '{bm25_path}'. "
+                "Render deployment cannot start without the full legal corpus index. "
+                "Ensure BM25_INDEX_PATH=/app/data/index/bm25.pkl and data/ is copied into Docker image."
+            )
+
+        # 2. Load full BM25 / Document index (approx. 4,016 legal chunks)
         try:
-            bm25_path = settings.BM25_INDEX_PATH
             if os.path.exists(bm25_path):
                 with open(bm25_path, "rb") as f:
                     raw_docs = pickle.load(f)
                 
                 full_corpus = []
                 for d in raw_docs:
-                    meta = d.metadata
+                    if isinstance(d, dict):
+                        meta = d.get("metadata", {})
+                        content = d.get("page_content", "")
+                    else:
+                        meta = getattr(d, "metadata", {})
+                        content = getattr(d, "page_content", "")
+                    
                     doc_type = meta.get("doc_type", "statute")
                     auth_level = 1 if doc_type in ("statute", "rule") else 2 if doc_type in ("guidance", "pharmacopoeia") else 3
                     
@@ -212,18 +228,29 @@ class HybridRetriever:
                         "version": meta.get("version", "Current"),
                         "effective_date": meta.get("effective_date", ""),
                         "url": meta.get("official_url", ""),
-                        "content": d.page_content,
-                        "snippet": d.page_content[:300].strip() + ("..." if len(d.page_content) > 300 else ""),
+                        "content": content,
+                        "snippet": content[:300].strip() + ("..." if len(content) > 300 else ""),
                         "tags": [str(meta.get("source_id", "")), str(doc_type), str(meta.get("jurisdiction", ""))]
                     })
                 
                 if full_corpus:
                     self.corpus = full_corpus
                     print(f"[Retriever] Loaded full corpus from {bm25_path}: {len(self.corpus)} chunks across 50 documents.")
+            else:
+                print(f"[Retriever] Notice: BM25 index path '{bm25_path}' does not exist. Using development seed corpus.")
         except Exception as e:
+            if is_production:
+                raise RuntimeError(f"[CRITICAL FAIL-FAST] Failed to load production BM25 index from {bm25_path}: {e}") from e
             print(f"[Retriever] BM25 corpus file load notice: {e}. Falling back to default corpus.")
 
-        # 2. Initialize Chroma DB if available.
+        # Production Guard: Verify corpus chunk count
+        if is_production and len(self.corpus) < 1000:
+            raise RuntimeError(
+                f"[CRITICAL FAIL-FAST] Production BM25 index loaded only {len(self.corpus)} chunks (expected ~4,016). "
+                "Silent fallback to minimal seed corpus is prohibited in production."
+            )
+
+        # 3. Initialize Chroma DB if available.
         # Skipped entirely when DISABLE_VECTOR_EMBEDDINGS=true so chromadb's internal
         # SQLite3 setup + hnswlib do not consume memory in low-memory mode.
         if settings.DISABLE_VECTOR_EMBEDDINGS:
@@ -258,14 +285,15 @@ class HybridRetriever:
                 self.chroma_client = None
                 self.chroma_collection = None
 
-
-        # 3. Initialize BM25 Index
+        # 4. Initialize BM25 Index
         try:
             from rank_bm25 import BM25Okapi
             tokenized_corpus = [re.findall(r"\w+", (d["content"] + " " + d.get("title", "")).lower()) for d in self.corpus]
             self.bm25_index = BM25Okapi(tokenized_corpus)
             print(f"[Retriever] BM25 lexical index initialized with {len(self.corpus)} chunks.")
         except Exception as e:
+            if is_production:
+                raise RuntimeError(f"[CRITICAL FAIL-FAST] BM25 index initialization failed in production: {e}") from e
             print(f"[Retriever] BM25 initialization notice: {e}")
             self.bm25_index = None
 

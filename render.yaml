@@ -5,6 +5,7 @@ services:
     region: singapore
     dockerfilePath: backend/Dockerfile
     dockerContext: .
+    healthCheckPath: /health
     envVars:
       - key: APP_ENV
         value: production
