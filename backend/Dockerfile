@@ -8,15 +8,21 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install python dependencies
-COPY requirements.txt .
+# Install Python dependencies
+# Build context: repository root (docker build -f backend/Dockerfile .)
+COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend source code
-COPY src/ ./src/
+# Copy backend application source
+COPY backend/src/ ./src/
+
+# Copy repository-root data directory (contains data/index/bm25.pkl — 4,016 legal chunks)
+# NOTE: backend/data/ is intentionally excluded; only repository-root data/ is canonical.
 COPY data/ ./data/
-COPY schema/ ./schema/
-COPY .env.example .env
+
+# Copy schema and env template
+COPY backend/schema/ ./schema/
+COPY backend/.env.example ./.env
 
 EXPOSE 8000
 

@@ -1,13 +1,20 @@
 services:
   - type: web
     name: ip-sakti-sahayak-backend
-    env: python
+    env: docker
     region: singapore
-    buildCommand: "cd backend && pip install -r requirements.txt"
-    startCommand: "cd backend && uvicorn src.main:app --host 0.0.0.0 --port $PORT"
+    dockerfilePath: backend/Dockerfile
+    dockerContext: .
     envVars:
       - key: APP_ENV
         value: production
+      # Absolute paths inside the Docker container (/app is WORKDIR).
+      # Required because config.py derives project_root as /app/.. = / inside Docker,
+      # which would give the wrong path /data/index/... instead of /app/data/index/...
+      - key: BM25_INDEX_PATH
+        value: /app/data/index/bm25.pkl
+      - key: CHROMA_PATH
+        value: /app/data/index/chroma
       - key: FRONTEND_ORIGIN
         value: "*"
       - key: OLLAMA_BASE_URL

@@ -1,0 +1,49 @@
+# Exclude frontend build artefacts and dependencies (not needed in backend Docker image)
+node_modules/
+dist/
+dist-ssr/
+.git/
+.gitignore
+
+# Exclude Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Exclude secrets
+.env
+.env.*
+!backend/.env.example
+
+# Exclude logs and temp files
+*.log
+scratch/
+scratch_crop.ps1
+
+# Exclude SQLite test databases
+*.sqlite
+*.sqlite3
+*.db
+
+# Exclude local Chroma vector stores (large, not needed for low-memory mode)
+data/index/chroma/
+backend/chroma_db/
+backend/data/
+
+# Exclude frontend source (TypeScript, Vite, etc.)
+src/
+public/
+tsconfig.json
+vite.config.ts
+package.json
+package-lock.json
+vercel.json
+index.html
+
+# Exclude markdown docs
+*.md
