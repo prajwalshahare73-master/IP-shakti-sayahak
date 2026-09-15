@@ -1,0 +1,11 @@
+# Ignore backend and non-frontend files for Vercel SPA deployment
+backend/
+data/
+scratch/
+*.py
+*.md
+*.ps1
+case_builder_validation_results.json
+scratch_crop.ps1
+render.yaml
+update_i18n.js
