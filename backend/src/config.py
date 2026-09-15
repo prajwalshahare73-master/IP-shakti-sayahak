@@ -17,9 +17,13 @@ class Settings:
     API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
     API_PORT: int = int(os.getenv("PORT") or os.getenv("API_PORT") or "8000")
 
-    # Storage & Data Paths (Resolves to project root / data)
-    CHROMA_PATH: str = str((project_root / "data" / "index" / "chroma").resolve())
-    BM25_INDEX_PATH: str = str((project_root / "data" / "index" / "bm25.pkl").resolve())
+    # Storage & Data Paths
+    # Priority: environment variable (e.g. Render Docker env) > computed project-root path (local dev).
+    # os.getenv() MUST be used here so that render.yaml env vars (BM25_INDEX_PATH=/app/data/index/bm25.pkl)
+    # are respected inside the Docker container where project_root resolves to / (filesystem root),
+    # which would otherwise produce the wrong path /data/index/... instead of /app/data/index/...
+    CHROMA_PATH: str = os.getenv("CHROMA_PATH") or str((project_root / "data" / "index" / "chroma").resolve())
+    BM25_INDEX_PATH: str = os.getenv("BM25_INDEX_PATH") or str((project_root / "data" / "index" / "bm25.pkl").resolve())
     RERANKER_MODEL: str = os.getenv("RERANKER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
     # ── Low-memory mode flags ────────────────────────────────────────────────
     # Intended for memory-constrained deployment environments such as Render Free (512 MB).
