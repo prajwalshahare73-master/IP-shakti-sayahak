@@ -8,10 +8,6 @@ services:
     envVars:
       - key: APP_ENV
         value: production
-      - key: CHROMA_PATH
-        value: ./data/index/chroma
-      - key: BM25_INDEX_PATH
-        value: ./data/index/bm25.pkl
       - key: FRONTEND_ORIGIN
         value: "*"
       - key: OLLAMA_BASE_URL
