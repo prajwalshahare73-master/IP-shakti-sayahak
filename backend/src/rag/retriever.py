@@ -150,6 +150,19 @@ class HybridRetriever:
         self._init_stores()
 
     def _get_embedding_function(self):
+        """Lazy-load the SentenceTransformer embedding function.
+        Returns None immediately when DISABLE_VECTOR_EMBEDDINGS=true so that
+        no PyTorch model is ever imported in low-memory production mode.
+        """
+        # Low-memory mode: skip SentenceTransformer entirely.
+        if settings.DISABLE_VECTOR_EMBEDDINGS:
+            if not self._ef_attempted:
+                self._ef_attempted = True
+                print("[Retriever] DISABLE_VECTOR_EMBEDDINGS=true — SentenceTransformer skipped. "
+                      "Running in BM25-only retrieval mode (zero extra ML RAM).")
+            return None
+
+        # Normal path: lazy-load once under a lock.
         if self._ef_attempted:
             return self._embedding_function
         with self._ef_lock:
@@ -157,7 +170,8 @@ class HybridRetriever:
                 return self._embedding_function
             self._ef_attempted = True
             try:
-                print("[Retriever] Lazy-loading SentenceTransformer embedding function (sentence-transformers/all-MiniLM-L6-v2)...")
+                print("[Retriever] Lazy-loading SentenceTransformer embedding function "
+                      "(sentence-transformers/all-MiniLM-L6-v2)...")
                 from chromadb.utils import embedding_functions
                 self._embedding_function = embedding_functions.SentenceTransformerEmbeddingFunction(
                     model_name="sentence-transformers/all-MiniLM-L6-v2"
@@ -209,29 +223,40 @@ class HybridRetriever:
         except Exception as e:
             print(f"[Retriever] BM25 corpus file load notice: {e}. Falling back to default corpus.")
 
-        # 2. Initialize Chroma DB if available (without eager embedding model load)
-        try:
-            import chromadb
-            from chromadb.config import Settings as ChromaSettings
-            
-            os.makedirs(settings.CHROMA_PATH, exist_ok=True)
-            self.chroma_client = chromadb.PersistentClient(
-                path=settings.CHROMA_PATH,
-                settings=ChromaSettings(allow_reset=False, anonymized_telemetry=False)
-            )
-            
-            existing_cols = [c.name for c in self.chroma_client.list_collections()]
-            if "langchain" in existing_cols:
-                self.chroma_collection = self.chroma_client.get_collection("langchain")
-                print(f"[Retriever] ChromaDB connected to 'langchain' collection with {self.chroma_collection.count()} chunks (embedding model deferred).")
-            else:
-                col = self.chroma_client.get_or_create_collection(name="statutes_rules_india")
-                self.chroma_collection = col
-                print(f"[Retriever] ChromaDB vector store ready at {settings.CHROMA_PATH} (embedding model deferred).")
-        except Exception as e:
-            print(f"[Retriever] ChromaDB persistent client initialization notice ({e}). Running in high-performance hybrid mode.")
+        # 2. Initialize Chroma DB if available.
+        # Skipped entirely when DISABLE_VECTOR_EMBEDDINGS=true so chromadb's internal
+        # SQLite3 setup + hnswlib do not consume memory in low-memory mode.
+        if settings.DISABLE_VECTOR_EMBEDDINGS:
+            print("[Retriever] DISABLE_VECTOR_EMBEDDINGS=true — Chroma vector store init skipped. "
+                  "BM25 is the sole retrieval source.")
             self.chroma_client = None
             self.chroma_collection = None
+        else:
+            try:
+                import chromadb
+                from chromadb.config import Settings as ChromaSettings
+
+                os.makedirs(settings.CHROMA_PATH, exist_ok=True)
+                self.chroma_client = chromadb.PersistentClient(
+                    path=settings.CHROMA_PATH,
+                    settings=ChromaSettings(allow_reset=False, anonymized_telemetry=False)
+                )
+
+                existing_cols = [c.name for c in self.chroma_client.list_collections()]
+                if "langchain" in existing_cols:
+                    self.chroma_collection = self.chroma_client.get_collection("langchain")
+                    print(f"[Retriever] ChromaDB connected to 'langchain' collection with "
+                          f"{self.chroma_collection.count()} chunks (embedding model deferred).")
+                else:
+                    col = self.chroma_client.get_or_create_collection(name="statutes_rules_india")
+                    self.chroma_collection = col
+                    print(f"[Retriever] ChromaDB vector store ready at {settings.CHROMA_PATH} "
+                          "(embedding model deferred).")
+            except Exception as e:
+                print(f"[Retriever] ChromaDB persistent client initialization notice ({e}). "
+                      "Running in high-performance hybrid mode.")
+                self.chroma_client = None
+                self.chroma_collection = None
 
 
         # 3. Initialize BM25 Index
@@ -245,6 +270,12 @@ class HybridRetriever:
             self.bm25_index = None
 
     def search_vector(self, query: str, collections: Optional[List[str]] = None, jurisdiction: Optional[str] = None, top_k: int = 10) -> List[Dict[str, Any]]:
+        # Low-memory mode: skip all vector retrieval so no SentenceTransformer is loaded.
+        # hybrid_retrieve feeds the empty list into RRF, which handles it gracefully—BM25
+        # results are ranked and returned without any fake or invented vector scores.
+        if settings.DISABLE_VECTOR_EMBEDDINGS:
+            return []
+
         results = []
         if self.chroma_collection:
             try:

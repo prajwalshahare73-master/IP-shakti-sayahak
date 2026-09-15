@@ -20,3 +20,5 @@ services:
         value: llama3.1
       - key: DISABLE_HEAVY_RERANKER
         value: "true"
+      - key: DISABLE_VECTOR_EMBEDDINGS
+        value: "true"
