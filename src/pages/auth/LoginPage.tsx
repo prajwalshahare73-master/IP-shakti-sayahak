@@ -89,7 +89,7 @@ export const LoginPage: React.FC = () => {
 
         if (error) {
           console.warn('[Supabase Login Error]:', error.message);
-          setErrorMsg(t('auth.loginError', 'Unable to sign in. Please check your email and password.'));
+          setErrorMsg(error.message || t('auth.loginError', 'Unable to sign in. Please check your email and password.'));
           return;
         }
 
@@ -111,7 +111,7 @@ export const LoginPage: React.FC = () => {
       }
     } catch (err: any) {
       console.warn('[Login exception]:', err);
-      setErrorMsg(t('auth.loginError', 'Unable to sign in. Please check your email and password.'));
+      setErrorMsg(err?.message || t('auth.loginError', 'Unable to sign in. Please check your email and password.'));
     } finally {
       setLoading(false);
     }
@@ -142,7 +142,7 @@ export const LoginPage: React.FC = () => {
 
         if (error) {
           console.warn('[Supabase SignUp Error]:', error.message);
-          setErrorMsg(t('auth.signUpError', 'Unable to create account. Please verify your details.'));
+          setErrorMsg(error.message || t('auth.signUpError', 'Unable to create account. Please verify your details.'));
           return;
         }
 
@@ -173,7 +173,7 @@ export const LoginPage: React.FC = () => {
       }
     } catch (err: any) {
       console.warn('[SignUp exception]:', err);
-      setErrorMsg(t('auth.signUpError', 'Unable to create account. Please verify your details.'));
+      setErrorMsg(err?.message || t('auth.signUpError', 'Unable to create account. Please verify your details.'));
     } finally {
       setLoading(false);
     }
@@ -211,7 +211,7 @@ export const LoginPage: React.FC = () => {
 
         if (error) {
           console.warn('[Supabase Password Reset Error]:', error.message);
-          setErrorMsg(t('auth.resetError', 'Unable to send password reset email. Please try again.'));
+          setErrorMsg(error.message || t('auth.resetError', 'Unable to send password reset email. Please try again.'));
           return;
         }
 
@@ -225,7 +225,7 @@ export const LoginPage: React.FC = () => {
       }
     } catch (err: any) {
       console.warn('[Password reset exception]:', err);
-      setErrorMsg(t('auth.resetError', 'Unable to send password reset email. Please try again.'));
+      setErrorMsg(err?.message || t('auth.resetError', 'Unable to send password reset email. Please try again.'));
     } finally {
       setLoading(false);
     }
