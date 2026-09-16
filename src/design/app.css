@@ -1,4 +1,4 @@
-﻿/* ==========================================================================
+/* ==========================================================================
    IP-SAKTI Sahayak — Main Application Stylesheet
    Combines Government-Service Clarity + Ayurveda Brand System
    ========================================================================== */
@@ -3086,11 +3086,33 @@
     max-height: none !important;
     overflow: visible !important;
     width: 100% !important;
+    padding: 0 !important;
+    border: none !important;
   }
 
   .case-report-scroll-body {
     padding: 0 !important;
     overflow: visible !important;
+  }
+
+  /* Isolate Case Report Dossier: Hide all background wizard steps and controls when printing */
+  .case-builder-header,
+  .readiness-meter-card,
+  .case-builder-grid,
+  .case-builder-actions-strip,
+  .case-builder-step-nav,
+  .escalation-success-banner,
+  .cb-sidebar-col,
+  .cb-main-content,
+  .gov-case-builder-page > .breadcrumbs-nav {
+    display: none !important;
+  }
+
+  .case-report-document {
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 100% !important;
   }
 }
 

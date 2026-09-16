@@ -55,16 +55,34 @@ def analyze_query(
     cleaned_req = (requested_language or "").lower().strip()
     norm_lang = LANG_NORM_MAP.get(cleaned_req)
 
-    if norm_lang:
-        # Selected language is the supreme authority for response language
+    # Detect language from query script and vocabulary
+    has_devanagari = bool(re.search(r"[\u0900-\u097F]", question))
+    has_gujarati = bool(re.search(r"[\u0A80-\u0AFF]", question))
+    marathi_vocab = {"आहे", "नाही", "कसे", "मिळेल", "करावे", "माझ्या", "काय", "झाले", "औषध", "वनस्पती", "मंडळ", "अर्ज", "हवे", "होईल", "मला", "शकतो", "शकते"}
+    hindi_roman = {"kya", "kaise", "hai", "mujhe", "karna", "hoga", "chahiye", "sakte", "sakta", "batao", "bataiye", "milega", "milta"}
+    marathi_roman = {"mala", "majhya", "kase", "milnar", "shakto", "shakte", "ahe", "karave", "kay", "honaar", "aushadh"}
+
+    text_words = set(text.split())
+
+    if norm_lang and norm_lang not in ("en", "english"):
+        # Explicit non-English selection takes precedence
+        detected_lang = norm_lang
+    elif has_gujarati:
+        detected_lang = "gu"
+    elif has_devanagari:
+        # Check if Marathi vocabulary or default to Hindi
+        if any(w in question for w in marathi_vocab):
+            detected_lang = "mr"
+        else:
+            detected_lang = "hi"
+    elif text_words.intersection(marathi_roman):
+        detected_lang = "mr"
+    elif text_words.intersection(hindi_roman):
+        detected_lang = "hi"
+    elif norm_lang:
         detected_lang = norm_lang
     else:
-        # Fallback to auto-detection only when no valid language was explicitly requested
         detected_lang = "en"
-        if re.search(r"[\u0900-\u097F]", question):
-            detected_lang = "hi"
-        elif any(word in text.split() for word in ["kya", "kaise", "hai", "mujhe", "karna", "hoga", "chahiye", "patent", "le", "sakte"]):
-            detected_lang = "hinglish"
 
     intents: List[str] = []
     domains: List[str] = ["IP"]

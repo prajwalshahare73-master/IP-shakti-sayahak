@@ -234,6 +234,224 @@ export const CaseBuilderPage: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
+  // Download clean, standalone official PDF dossier
+  const handleDownloadOfficialPDF = () => {
+    const reportElem = document.getElementById('printable-case-report');
+    if (!reportElem) {
+      window.print();
+      return;
+    }
+
+    const printWindow = window.open('', '_blank', 'width=950,height=900');
+    if (!printWindow) {
+      window.print();
+      return;
+    }
+
+    const reportHTML = reportElem.innerHTML;
+    printWindow.document.open();
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>IP-SAKTI Official Case Dossier — ${productName}</title>
+          <meta charset="utf-8" />
+          <style>
+            @page {
+              size: A4;
+              margin: 12mm 15mm 12mm 15mm;
+            }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+              color: #111827;
+              background: #ffffff;
+              margin: 0;
+              padding: 24px;
+              line-height: 1.5;
+            }
+            .no-print-toolbar {
+              background: #0f3d5c;
+              color: #ffffff;
+              padding: 12px 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              position: sticky;
+              top: 0;
+              z-index: 1000;
+              border-radius: 6px;
+              margin-bottom: 20px;
+              box-shadow: 0 4px 6px -1px rgba(0,0,0,0.15);
+            }
+            .pdf-action-btn {
+              border: none;
+              padding: 8px 16px;
+              border-radius: 4px;
+              font-weight: 600;
+              cursor: pointer;
+              font-size: 13px;
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+            }
+            .pdf-action-btn.primary {
+              background: #059669;
+              color: white;
+            }
+            .pdf-action-btn.secondary {
+              background: rgba(255,255,255,0.2);
+              color: white;
+            }
+            .pdf-action-btn:hover {
+              opacity: 0.9;
+            }
+            .report-logo-banner {
+              height: 52px;
+              object-fit: contain;
+            }
+            .report-doc-header {
+              border-bottom: 2px solid #0f3d5c;
+              padding-bottom: 14px;
+              margin-bottom: 20px;
+            }
+            .report-header-top {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 12px;
+            }
+            .report-doc-title {
+              font-size: 20pt;
+              font-weight: 800;
+              color: #0f3d5c;
+              margin: 4px 0;
+              letter-spacing: -0.5px;
+            }
+            .report-doc-subtitle {
+              font-size: 10pt;
+              color: #4b5563;
+              margin: 0 0 15px 0;
+            }
+            .report-meta-grid {
+              display: grid;
+              grid-template-columns: repeat(2, 1fr);
+              gap: 8px 16px;
+              background: #f8fafc;
+              padding: 12px;
+              border-radius: 6px;
+              border: 1px solid #e2e8f0;
+              font-size: 9.5pt;
+            }
+            .report-section-block {
+              margin-top: 18px;
+              padding-bottom: 12px;
+              border-bottom: 1px solid #e5e7eb;
+              page-break-inside: avoid;
+            }
+            .report-section-heading {
+              font-size: 12pt;
+              font-weight: 700;
+              color: #0f3d5c;
+              margin: 0 0 8px 0;
+            }
+            .report-section-content {
+              font-size: 10pt;
+              color: #374151;
+            }
+            .report-table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 8px;
+              font-size: 9pt;
+            }
+            .report-table th, .report-table td {
+              border: 1px solid #cbd5e1;
+              padding: 6px 8px;
+              text-align: left;
+            }
+            .report-table th {
+              background: #f1f5f9;
+              font-weight: 700;
+            }
+            .report-sources-list {
+              padding-left: 18px;
+              margin: 6px 0;
+              font-size: 9.5pt;
+            }
+            .report-sources-list li {
+              margin-bottom: 4px;
+            }
+            .report-disclaimer-box {
+              margin-top: 25px;
+              padding: 12px;
+              background: #fefce8;
+              border: 1px solid #fef08a;
+              border-radius: 6px;
+              font-size: 8.5pt;
+              color: #854d0e;
+              line-height: 1.4;
+            }
+            .status-badge {
+              display: inline-block;
+              padding: 2px 8px;
+              font-size: 8pt;
+              font-weight: 700;
+              border-radius: 4px;
+              background: #dcfce7;
+              color: #15803d;
+            }
+            .low-confidence-alerts-stack {
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+            }
+            .low-confidence-warning-box {
+              border: 1px solid #fca5a5;
+              background: #fef2f2;
+              border-radius: 6px;
+              padding: 10px 14px;
+              font-size: 9pt;
+            }
+            .warning-title-bar {
+              color: #991b1b;
+              font-weight: 700;
+              margin-bottom: 4px;
+            }
+            @media print {
+              .no-print-toolbar {
+                display: none !important;
+              }
+              body {
+                padding: 0 !important;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print-toolbar">
+            <div style="display: flex; flex-direction: column;">
+              <span style="font-weight: 700; font-size: 14px; letter-spacing: 0.3px;">IP-SAKTI SAHAYAK — OFFICIAL DOSSIER</span>
+              <span style="font-size: 11px; opacity: 0.85;">Format: Standardized A4 PDF Dossier (14 Statutory Sections)</span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button onclick="window.print()" class="pdf-action-btn primary">🖨 Save as PDF / Print</button>
+              <button onclick="window.close()" class="pdf-action-btn secondary">✕ Close</button>
+            </div>
+          </div>
+          ${reportHTML}
+          <script>
+            window.onload = function() {
+              setTimeout(function() {
+                window.print();
+              }, 400);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   return (
     <div className="gov-case-builder-page" id="main-content">
       <Breadcrumbs customTrail={[{ title: t('nav.caseBuilder', 'Case Builder'), link: '/case-builder' }]} />
@@ -773,14 +991,23 @@ export const CaseBuilderPage: React.FC = () => {
                   <FileText size={18} />
                   <span>{t('caseBuilder.modalTitle', 'Official Ayurveda IP Case Analysis Dossier')}</span>
                 </h3>
-                <div className="modal-bar-actions">
+                <div className="modal-bar-actions flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleDownloadOfficialPDF}
+                    className="btn btn-primary btn-sm flex items-center gap-1.5"
+                    style={{ background: '#047857', borderColor: '#047857' }}
+                  >
+                    <Download size={15} />
+                    <span>Download Official PDF Dossier</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => window.print()}
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-outline btn-sm text-white border-white/40 hover:bg-white/10 flex items-center gap-1.5"
                   >
                     <Printer size={15} />
-                    <span>{t('common.downloadPrintPdf', 'Download / Print PDF')}</span>
+                    <span>Print Document</span>
                   </button>
                   <button
                     type="button"
