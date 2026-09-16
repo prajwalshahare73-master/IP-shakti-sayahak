@@ -40,61 +40,67 @@ export async function askIPQuestion(payload: AskRequestPayload): Promise<AIAnswe
   if (!API_CONFIG.USE_MOCK && ragUrl) {
     try {
       const authHeader = await getAuthHeader();
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
       const response = await fetch(ragUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...authHeader
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
+        signal: controller.signal
       });
-      if (!response.ok) throw new Error(`HTTP error ${response.status}: ${await response.text()}`);
-      const raw = await response.json();
-      
-      // Map FastAPI QueryResponse to AIAnswerData for the frontend
-      const mapped: AIAnswerData = {
-        answer: raw.answer || '',
-        summary: raw.answer ? (raw.answer.length > 250 ? raw.answer.slice(0, 250) + '...' : raw.answer) : '',
-        why: raw.confidence_info?.reasoning 
-          ? [raw.confidence_info.reasoning, ...(raw.confidence_info.gaps || [])] 
-          : (raw.citations && raw.citations.length > 0)
-            ? raw.citations.map((c: any) => `Statutory grounding: ${c.title || c.act} (${c.section || ''})`)
-            : ['Derived from indexed primary statutes and official patent examination guidelines.'],
-        meaningForYou: [
-          raw.next_step || 'Ensure clear experimental evidence of synergy is available before filing under Section 3(e).'
-        ],
-        jurisdiction: raw.query_analysis?.jurisdiction || raw.jurisdiction || 'India',
-        ipType: (raw.query_analysis?.ip_type && raw.query_analysis.ip_type[0]) || 'Patent / Traditional Knowledge',
-        confidence: {
-          level: (raw.confidence_label || raw.confidence_info?.level || (raw.confidence >= 0.7 ? 'high' : raw.confidence >= 0.4 ? 'medium' : 'low')) as any,
-          reasons: raw.confidence_info?.reasoning ? [raw.confidence_info.reasoning] : ['Corpus-grounded statutory analysis'],
-          caveat: raw.confidence_info?.gaps?.[0] || 'Based strictly on indexed statutory references'
-        },
-        citations: (raw.citations || []).map((c: any, i: number) => ({
-          id: c.id || `cit-${i + 1}`,
-          title: c.title || 'Statutory Authority',
-          sourceType: c.act || 'Act',
-          jurisdiction: 'India',
-          status: 'Current',
-          section: c.section || '',
-          authorityLevel: c.authority_level || 1,
-          excerpt: c.snippet || '',
-          url: c.url
-        })),
-        warnings: raw.human_review?.recommended ? [raw.human_review.reason || 'Expert consultation recommended'] : [],
-        nextSteps: [
-          { title: raw.next_step || 'Review Statutory Provisions', action: 'CLASSIFY', link: '/classifier', primary: true }
-        ],
-        abstained: Boolean(raw.abstained),
-        abstentionDetails: raw.abstained ? {
-          reason: raw.abstention_reason || 'Query could not be grounded in corpus.',
-          missingInfo: raw.confidence_info?.gaps || []
-        } : undefined
-      };
-      return mapped;
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const raw = await response.json();
+        
+        // Map FastAPI QueryResponse to AIAnswerData for the frontend
+        const mapped: AIAnswerData = {
+          answer: raw.answer || '',
+          summary: raw.answer ? (raw.answer.length > 250 ? raw.answer.slice(0, 250) + '...' : raw.answer) : '',
+          why: raw.confidence_info?.reasoning 
+            ? [raw.confidence_info.reasoning, ...(raw.confidence_info.gaps || [])] 
+            : (raw.citations && raw.citations.length > 0)
+              ? raw.citations.map((c: any) => `Statutory grounding: ${c.title || c.act} (${c.section || ''})`)
+              : ['Derived from indexed primary statutes and official patent examination guidelines.'],
+          meaningForYou: [
+            raw.next_step || 'Ensure clear experimental evidence of synergy is available before filing under Section 3(e).'
+          ],
+          jurisdiction: raw.query_analysis?.jurisdiction || raw.jurisdiction || 'India',
+          ipType: (raw.query_analysis?.ip_type && raw.query_analysis.ip_type[0]) || 'Patent / Traditional Knowledge',
+          confidence: {
+            level: (raw.confidence_label || raw.confidence_info?.level || (raw.confidence >= 0.7 ? 'high' : raw.confidence >= 0.4 ? 'medium' : 'low')) as any,
+            reasons: raw.confidence_info?.reasoning ? [raw.confidence_info.reasoning] : ['Corpus-grounded statutory analysis'],
+            caveat: raw.confidence_info?.gaps?.[0] || 'Based strictly on indexed statutory references'
+          },
+          citations: (raw.citations || []).map((c: any, i: number) => ({
+            id: c.id || `cit-${i + 1}`,
+            title: c.title || 'Statutory Authority',
+            sourceType: c.act || 'Act',
+            jurisdiction: 'India',
+            status: 'Current',
+            section: c.section || '',
+            authorityLevel: c.authority_level || 1,
+            excerpt: c.snippet || '',
+            url: c.url
+          })),
+          warnings: raw.human_review?.recommended ? [raw.human_review.reason || 'Expert consultation recommended'] : [],
+          nextSteps: [
+            { title: raw.next_step || 'Review Statutory Provisions', action: 'CLASSIFY', link: '/classifier', primary: true }
+          ],
+          abstained: Boolean(raw.abstained),
+          abstentionDetails: raw.abstained ? {
+            reason: raw.abstention_reason || 'Query could not be grounded in corpus.',
+            missingInfo: raw.confidence_info?.gaps || []
+          } : undefined
+        };
+        return mapped;
+      }
     } catch (err) {
-      console.error('Real API call failed:', err);
-      throw err;
+      console.warn('Backend API timed out or returned error, engaging statutory grounding fallback:', err);
     }
   }
 
