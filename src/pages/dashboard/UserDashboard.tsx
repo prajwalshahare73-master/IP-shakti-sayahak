@@ -105,7 +105,7 @@ export const UserDashboard: React.FC = () => {
               <Sparkles size={14} className="icon-gold" />
               <span>{t('brand.subheading', 'National Ayurveda IP Workspace')}</span>
             </div>
-            <h1 className="welcome-name">{t('brand.nameHindi', 'Namaste')}, {user?.name || 'Innovator'}</h1>
+            <h1 className="welcome-name">{t('common.greeting', 'Welcome')}, {user?.name || t('common.innovator', 'Ayurveda Innovator')}</h1>
             <p className="welcome-sub">
               {t('dashboard.subtitle', 'Track your active IP inquiries, formulation dossiers, and empanelled specialist reviews.')}
             </p>
@@ -246,7 +246,7 @@ export const UserDashboard: React.FC = () => {
               <div className="notif-header">
                 <div className="flex items-center gap-2">
                   <Bell size={16} className="text-primary" />
-                  <h4 className="notif-title">{t('common.actions', 'Notifications')}</h4>
+                  <h4 className="notif-title">{t('common.notifications', 'Notifications')}</h4>
                 </div>
               </div>
               <div className="notif-list">
@@ -285,7 +285,7 @@ export const UserDashboard: React.FC = () => {
                   </div>
                   <div className="meta-block">
                     <span className="meta-label">{t('dashboard.escalatedTo', 'Assigned Expert')}:</span>
-                    <strong>{selectedCase.assignedExpertName || 'System Automated'}</strong>
+                    <strong>{selectedCase.assignedExpertName || t('common.automated', 'System Automated')}</strong>
                   </div>
                   <div className="meta-block">
                     <span className="meta-label">{t('dashboard.submittedOn', 'Submitted')}:</span>
@@ -313,9 +313,9 @@ export const UserDashboard: React.FC = () => {
                     <div className="action-header">
                       <AlertCircle size={20} className="text-accent" />
                       <div>
-                        <h3>{t('dashboard.replyPlaceholder', 'Additional Formulation Information Requested')}</h3>
+                        <h3>{t('dashboard.additionalInfoReq', 'Additional Formulation Information Requested')}</h3>
                         <p>
-                          {t('dashboard.replyPlaceholder', 'Your assigned expert requires details on the formulation or classical reference.')}
+                          {t('dashboard.additionalInfoDesc', 'Your assigned expert requires details on the formulation or classical reference.')}
                         </p>
                       </div>
                     </div>
@@ -365,7 +365,7 @@ export const UserDashboard: React.FC = () => {
                       <span className="expert-role">{selectedCase.expertReview.expertRole}</span>
                     </div>
                     <span className="expert-date">
-                      {t('dashboard.submittedOn', 'Delivered on')}{' '}
+                      {t('dashboard.deliveredOn', 'Delivered on')}{' '}
                       {new Date(selectedCase.expertReview.completedAt).toLocaleDateString('en-IN', {
                         day: 'numeric',
                         month: 'short',
@@ -412,7 +412,7 @@ export const UserDashboard: React.FC = () => {
                 <div className="ai-guidance-body">
                   <p className="ai-answer-p">
                     {selectedCase.aiAnswer?.answer ||
-                      'Initial analysis suggests evaluating Section 3(p) patent exclusions and State Biodiversity Board Form I prior intimation.'}
+                      t('dashboard.defaultAiAnalysis', 'Initial analysis suggests evaluating Section 3(p) patent exclusions and State Biodiversity Board Form I prior intimation.')}
                   </p>
 
                   {selectedCase.aiAnswer?.citations && selectedCase.aiAnswer.citations.length > 0 && (
@@ -444,7 +444,7 @@ export const UserDashboard: React.FC = () => {
                   <span className="shared-pill">✓ {t('confidence.why', 'Confidence Assessment')}</span>
                 </div>
                 <p className="info-shared-note">
-                  Protected under National Data Minimization Guidelines. Internal notes and unshared user data are strictly excluded.
+                  {t('dashboard.dataMinimizationNotice', 'Protected under National Data Minimization Guidelines. Internal notes and unshared user data are strictly excluded.')}
                 </p>
               </div>
 

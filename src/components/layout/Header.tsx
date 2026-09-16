@@ -14,7 +14,9 @@ import {
   FileText,
   Sparkles,
   BookOpen,
-  LogOut
+  LogOut,
+  User,
+  Settings
 } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
 import { SUPPORTED_LANGUAGES } from '../../i18n/config';
@@ -42,6 +44,7 @@ export const Header: React.FC = () => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -123,23 +126,158 @@ export const Header: React.FC = () => {
               </div>
             </div>
 
-            {/* Auth / Dashboard CTA */}
+            {/* Auth / Avatar Profile Dropdown */}
             {user ? (
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                <Link to="/dashboard" className="btn btn-outline btn-sm dashboard-btn">
-                  <LayoutDashboard size={16} />
-                  <span className="hide-sm">{user.name.split(' ')[0]}</span>
-                </Link>
+              <div className="gov-dropdown-wrapper header-profile-dropdown" style={{ position: 'relative' }}>
                 <button
                   type="button"
-                  onClick={handleLogout}
-                  className="btn btn-outline btn-sm logout-header-btn"
-                  title={t('auth.signOut', 'Sign Out')}
-                  aria-label="Sign Out"
-                  style={{ padding: '0 8px', borderColor: '#cbd5e1', color: '#64748b' }}
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="btn-icon user-avatar-btn"
+                  title={user.name}
+                  aria-label="User profile menu"
+                  aria-expanded={profileOpen}
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #0f3d5c 0%, #1e5a84 100%)',
+                    color: '#ffffff',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '2px solid rgba(255, 255, 255, 0.4)',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+                    cursor: 'pointer',
+                    fontSize: '18px',
+                    padding: 0
+                  }}
                 >
-                  <LogOut size={15} />
+                  <span role="img" aria-label="avatar">👤</span>
                 </button>
+
+                {profileOpen && (
+                  <div
+                    className="gov-dropdown-menu profile-menu"
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      top: 'calc(100% + 8px)',
+                      minWidth: '240px',
+                      background: '#ffffff',
+                      borderRadius: '10px',
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                      border: '1px solid #e2e8f0',
+                      zIndex: 1000,
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <div style={{ padding: '14px 16px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                      <div style={{ fontWeight: 700, color: '#0f3d5c', fontSize: '14px', lineHeight: 1.3 }}>
+                        {user.name}
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px', wordBreak: 'break-all' }}>
+                        {user.email}
+                      </div>
+                      <div style={{ marginTop: '8px' }}>
+                        <span style={{
+                          display: 'inline-block',
+                          fontSize: '10px',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          background: user.role === 'expert' ? '#ecfdf5' : '#eff6ff',
+                          color: user.role === 'expert' ? '#047857' : '#1d4ed8'
+                        }}>
+                          {user.role === 'expert' ? t('nav.expertPortal', 'Empanelled Expert') : t('common.innovator', 'Ayurveda Innovator')}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div style={{ padding: '6px 0' }}>
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setProfileOpen(false)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          padding: '9px 16px',
+                          color: '#334155',
+                          fontSize: '13px',
+                          textDecoration: 'none',
+                          fontWeight: 500
+                        }}
+                      >
+                        <LayoutDashboard size={16} className="text-primary" />
+                        <span>{t('nav.dashboard', 'My Dashboard')}</span>
+                      </Link>
+
+                      <Link
+                        to="/case-builder"
+                        onClick={() => setProfileOpen(false)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          padding: '9px 16px',
+                          color: '#334155',
+                          fontSize: '13px',
+                          textDecoration: 'none',
+                          fontWeight: 500
+                        }}
+                      >
+                        <FileText size={16} className="text-secondary" />
+                        <span>{t('nav.caseBuilder', 'Case Builder')}</span>
+                      </Link>
+
+                      <Link
+                        to="/dashboard/settings"
+                        onClick={() => setProfileOpen(false)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          padding: '9px 16px',
+                          color: '#334155',
+                          fontSize: '13px',
+                          textDecoration: 'none',
+                          fontWeight: 500
+                        }}
+                      >
+                        <User size={16} className="text-muted" />
+                        <span>{t('nav.profileSettings', 'Profile Settings')}</span>
+                      </Link>
+
+                      <div style={{ height: '1px', background: '#f1f5f9', margin: '4px 0' }} />
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setProfileOpen(false);
+                          handleLogout();
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          padding: '9px 16px',
+                          width: '100%',
+                          background: 'none',
+                          border: 'none',
+                          color: '#dc2626',
+                          fontSize: '13px',
+                          cursor: 'pointer',
+                          textAlign: 'left',
+                          fontWeight: 600
+                        }}
+                      >
+                        <LogOut size={16} />
+                        <span>{t('auth.signOut', 'Sign Out')}</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <Link to="/login" className="btn btn-primary btn-sm">

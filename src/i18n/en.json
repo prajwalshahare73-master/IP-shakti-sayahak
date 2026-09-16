@@ -22,7 +22,8 @@
     "login": "Sign In",
     "logout": "Sign Out",
     "caseBuilder": "Case Builder",
-    "myCases": "My Cases"
+    "myCases": "My Cases",
+    "profileSettings": "Profile Settings"
   },
   "utility": {
     "skipToContent": "Skip to main content",
@@ -166,6 +167,10 @@
     "nationalPortal": "National Ayurveda IP & Regulatory Guidance Portal"
   },
   "common": {
+    "greeting": "Welcome",
+    "innovator": "Ayurveda Innovator",
+    "notifications": "Notifications",
+    "automated": "System Automated",
     "exportPdf": "Export PDF",
     "downloadPrintPdf": "Download / Print PDF",
     "lowConfidence": "LOW CONFIDENCE",
@@ -175,6 +180,14 @@
     "confidence": "Confidence",
     "status": "Status",
     "actions": "Actions"
+  },
+  "status": {
+    "submitted": "Submitted",
+    "assigned": "Expert Assigned",
+    "inReview": "In Review",
+    "actionRequired": "Action Required",
+    "completed": "Review Completed",
+    "closed": "Closed"
   },
   "caseReport": {
     "title": "CASE ANALYSIS REPORT",
@@ -298,7 +311,12 @@
     "timeline": "Procedural Timeline",
     "replyPlaceholder": "Add information or clarification for the specialist...",
     "sendReply": "Send Clarification to Specialist",
-    "replySuccess": "Response submitted and attached to case timeline."
+    "replySuccess": "Response submitted and attached to case timeline.",
+    "additionalInfoReq": "Additional Formulation Information Requested",
+    "additionalInfoDesc": "Your assigned expert requires details on the formulation or classical reference.",
+    "deliveredOn": "Delivered on",
+    "defaultAiAnalysis": "Initial analysis suggests evaluating Section 3(p) patent exclusions and State Biodiversity Board Form I prior intimation.",
+    "dataMinimizationNotice": "Protected under National Data Minimization Guidelines. Internal notes and unshared user data are strictly excluded."
   },
   "help": {
     "badge": "Ayurveda IP Knowledge Base & FAQ",
