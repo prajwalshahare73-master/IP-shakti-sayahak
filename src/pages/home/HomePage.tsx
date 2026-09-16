@@ -175,15 +175,19 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Quick Actions (PRD Section 7) */}
-          <div className="hero-quick-actions-row">
-            <Link to="/ask" className="hero-quick-action-btn primary">
-              <Scale size={16} />
-              <span>{t('hero.askIpQuestion', 'Ask an IP Question')}</span>
+          {/* Quick Actions — 3 Core Pillars */}
+          <div className="hero-quick-actions-row flex flex-wrap justify-center gap-3 mt-6">
+            <Link to="/ask" className="hero-quick-action-btn primary flex items-center gap-2">
+              <Scale size={18} />
+              <span>{t('hero.askIpQuestion', '1. Ask IP Question (RAG)')}</span>
             </Link>
-            <Link to="/case-builder" className="hero-quick-action-btn">
-              <FileText size={16} className="text-secondary" />
-              <span>{t('hero.buildCaseReport', 'Build Case Report')}</span>
+            <Link to="/case-builder" className="hero-quick-action-btn flex items-center gap-2" style={{ borderColor: 'rgba(4, 120, 87, 0.4)', background: '#ffffff', color: '#047857' }}>
+              <FileText size={18} />
+              <span>{t('hero.buildCaseReport', '2. Formulation Case Builder')}</span>
+            </Link>
+            <Link to="/expert/dashboard" className="hero-quick-action-btn flex items-center gap-2" style={{ borderColor: 'rgba(15, 61, 92, 0.4)', background: '#ffffff', color: '#0f3d5c' }}>
+              <UserCheck size={18} />
+              <span>{t('nav.expertPortal', '3. Empanelled Specialists Directory')}</span>
             </Link>
           </div>
         </div>
