@@ -26,6 +26,7 @@ import {
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { VoiceInputField } from '../../components/shared/VoiceInputField';
 import { useAppStore, CaseRecord } from '../../store/appStore';
+import { ExpertDirectorySelector, EmpanelledExpert, EMPANELLED_EXPERTS } from '../../components/expert/ExpertDirectorySelector';
 
 interface IngredientRow {
   id: string;
@@ -40,7 +41,13 @@ interface IngredientRow {
 export const CaseBuilderPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { setQuery, setCaseProfile, addCase, jurisdiction } = useAppStore();
+  const { setCaseProfile, setQuery, addCase, jurisdiction } = useAppStore();
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const [createdCaseId, setCreatedCaseId] = useState<string | null>(null);
+  const [generatedSuccess, setGeneratedSuccess] = useState(false);
+  const [showExpertSelectorModal, setShowExpertSelectorModal] = useState(false);
+  const [selectedExpert, setSelectedExpert] = useState<EmpanelledExpert>(EMPANELLED_EXPERTS[0]);
 
   // Section 1: Innovation Identity
   const [productName, setProductName] = useState('Swastha Respiratory Herbal Kadha');
@@ -92,8 +99,6 @@ export const CaseBuilderPage: React.FC = () => {
   const [targetMarket, setTargetMarket] = useState<'India Domestic' | 'International Export (US/EU)' | 'Both India & Global'>('Both India & Global');
 
   // Case Package state
-  const [generatedSuccess, setGeneratedSuccess] = useState(false);
-  const [createdCaseId, setCreatedCaseId] = useState<string | null>(null);
   const [showReportModal, setShowReportModal] = useState(false);
 
   // Add / Remove Ingredients
@@ -166,23 +171,23 @@ export const CaseBuilderPage: React.FC = () => {
         id: caseId,
         title: `${productName} — ${productType}`,
         query: fullSummaryQuery,
-        domain: 'Patentability + Section 3(p) + ABS Facilitation',
+        domain: selectedExpert.roleTitle,
         jurisdiction: targetMarket.includes('Global') ? 'India + International' : 'India',
         status: 'SUBMITTED',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         confidenceLevel: hasBioAssay ? 'high' : 'medium',
         escalated: true,
-        escalationReason: `Case Builder structured submission by ${entityType}. Synergistic bioassay proof provided.`,
-        assignedExpertCategory: 'Senior Traditional Knowledge & Patent Facilitator',
-        assignedExpertName: 'Dr. V. Sharma (Empanelled)',
+        escalationReason: `Case Builder structured submission by ${entityType}. Assigned to ${selectedExpert.name} (${selectedExpert.degrees}).`,
+        assignedExpertCategory: selectedExpert.roleTitle,
+        assignedExpertName: `${selectedExpert.name} (${selectedExpert.degrees.split(',')[0]})`,
         caseProfile: assembledProfile,
         events: [
           {
             id: `ev-cb-${Date.now()}`,
             timestamp: new Date().toISOString(),
-            title: 'Dossier Assembled via Case Builder',
-            description: `Full formulation factsheet registered for ${productName} with ${ingredients.length} botanical actives.`,
+            title: 'Dossier Assembled & Specialist Assigned',
+            description: `Case assigned to ${selectedExpert.name} (${selectedExpert.degrees}) with ${ingredients.length} botanical actives.`,
             actor: 'user',
             status: 'SUBMITTED'
           }
@@ -613,6 +618,60 @@ export const CaseBuilderPage: React.FC = () => {
               </div>
             </div>
 
+            {/* Dedicated Empanelled Specialist Selection Card */}
+            <div className="gov-card cb-section-card" style={{ background: 'linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%)', borderColor: '#86efac' }}>
+              <div className="cb-sec-header">
+                <span className="sec-number" style={{ background: '#059669', color: '#ffffff' }}>★</span>
+                <div>
+                  <h2 className="sec-title">{t('expertDirectory.title', 'Select Empanelled AYUSH IP & TK Specialist')}</h2>
+                  <p className="sec-desc">{t('expertDirectory.subtitle', 'Choose a certified legal facilitator with specialized expertise in your formulation domain. Inspect verified degrees, resolved case counts, and domain credentials.')}</p>
+                </div>
+              </div>
+
+              <div style={{ padding: '16px', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                  <div style={{
+                    background: selectedExpert.avatarGradient,
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ffffff',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                    flexShrink: 0
+                  }}>
+                    <UserCheck size={24} color="#ffffff" strokeWidth={2.4} />
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <h4 style={{ margin: 0, fontWeight: 700, color: '#0f3d5c', fontSize: '15px' }}>{selectedExpert.name}</h4>
+                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#047857', background: '#ecfdf5', padding: '2px 8px', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
+                        {selectedExpert.experienceYears}+ {t('expertDirectory.yearsExp', 'Yrs Exp')} ({selectedExpert.casesResolved}+ {t('expertDirectory.casesResolved', 'Cases')})
+                      </span>
+                    </div>
+                    <p style={{ margin: '2px 0 0 0', fontSize: '12px', fontWeight: 600, color: '#0284c7' }}>
+                      {t(selectedExpert.domainLabelKey, selectedExpert.roleTitle)}
+                    </p>
+                    <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: '#64748b' }}>
+                      <strong>{t('expertDirectory.degreesLabel', 'Degrees')}:</strong> {selectedExpert.degrees}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setShowExpertSelectorModal(true)}
+                  className="btn btn-secondary btn-sm"
+                  style={{ gap: '6px' }}
+                >
+                  <UserCheck size={14} />
+                  <span>{t('expertDirectory.allDomains', 'Change / Browse Specialists')}</span>
+                </button>
+              </div>
+            </div>
+
             {/* Bottom Actions Bar */}
             <div className="cb-bottom-actions">
               <button
@@ -630,7 +689,7 @@ export const CaseBuilderPage: React.FC = () => {
                 className="btn btn-primary btn-lg"
               >
                 <UserCheck size={18} />
-                <span>{t('caseBuilder.escalateExpert', 'Escalate to Empanelled Specialist')}</span>
+                <span>{t('caseBuilder.escalateExpert', 'Escalate to Empanelled Specialist')} ({selectedExpert.name.split(' ')[0]} {selectedExpert.name.split(' ')[1] || ''})</span>
                 <ArrowRight size={18} />
               </button>
             </div>
@@ -963,6 +1022,18 @@ export const CaseBuilderPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {showExpertSelectorModal && (
+        <ExpertDirectorySelector
+          selectedExpertId={selectedExpert.id}
+          onSelectExpert={(exp) => {
+            setSelectedExpert(exp);
+            setShowExpertSelectorModal(false);
+          }}
+          modalMode={true}
+          onClose={() => setShowExpertSelectorModal(false)}
+        />
+      )}
     </div>
   );
 };

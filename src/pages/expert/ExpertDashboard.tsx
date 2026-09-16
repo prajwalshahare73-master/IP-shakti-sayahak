@@ -18,11 +18,14 @@ import {
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { StatusBadge } from '../../components/shared/StatusBadge';
 import { useAppStore } from '../../store/appStore';
+import { ExpertDirectorySelector, EmpanelledExpert } from '../../components/expert/ExpertDirectorySelector';
 
 export const ExpertDashboard: React.FC = () => {
   const { cases, user, setUser } = useAppStore();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const [activeView, setActiveView] = useState<'cases' | 'directory'>('cases');
   const [activeFilter, setActiveFilter] = useState<'all' | 'open' | 'in_review' | 'need_info' | 'completed'>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -87,7 +90,31 @@ export const ExpertDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="expert-banner-right">
+          <div className="expert-banner-right flex items-center gap-3">
+            <div className="flex bg-white/20 backdrop-blur-md p-1 rounded-xl border border-white/30">
+              <button
+                type="button"
+                onClick={() => setActiveView('cases')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeView === 'cases'
+                    ? 'bg-white text-navy shadow-sm'
+                    : 'text-white hover:bg-white/10'
+                }`}
+              >
+                📋 Assigned Queue ({expertCases.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveView('directory')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  activeView === 'directory'
+                    ? 'bg-white text-navy shadow-sm'
+                    : 'text-white hover:bg-white/10'
+                }`}
+              >
+                👥 Empanelled Directory (8)
+              </button>
+            </div>
             <div className="expert-stat-pill">
               <span>Open Queue:</span>
               <strong>{expertCases.filter((c) => c.status !== 'REVIEW_COMPLETED').length} Cases</strong>
@@ -95,52 +122,62 @@ export const ExpertDashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* Priority Filter Strip */}
-        <div className="expert-controls-card gov-card">
-          <div className="expert-filter-tabs">
-            <button
-              onClick={() => setActiveFilter('all')}
-              className={`expert-tab ${activeFilter === 'all' ? 'active' : ''}`}
-            >
-              All Assigned ({expertCases.length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('open')}
-              className={`expert-tab ${activeFilter === 'open' ? 'active' : ''}`}
-            >
-              Pending Assignment ({expertCases.filter((c) => c.status === 'SUBMITTED' || c.status === 'ASSIGNED').length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('in_review')}
-              className={`expert-tab ${activeFilter === 'in_review' ? 'active' : ''}`}
-            >
-              In Review ({expertCases.filter((c) => c.status === 'IN_REVIEW').length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('need_info')}
-              className={`expert-tab ${activeFilter === 'need_info' ? 'active' : ''}`}
-            >
-              Awaiting Info ({expertCases.filter((c) => c.status === 'NEED_MORE_INFORMATION').length})
-            </button>
-            <button
-              onClick={() => setActiveFilter('completed')}
-              className={`expert-tab ${activeFilter === 'completed' ? 'active' : ''}`}
-            >
-              Completed ({expertCases.filter((c) => c.status === 'REVIEW_COMPLETED').length})
-            </button>
-          </div>
-
-          <div className="expert-search-box">
-            <Search size={16} className="search-icon" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search case ID, botanical name..."
-              className="expert-search-input"
+        {activeView === 'directory' ? (
+          <div className="gov-card p-6 bg-white rounded-2xl shadow-sm border border-gray-200 mb-8">
+            <ExpertDirectorySelector
+              onSelectExpert={(exp) => {
+                alert(`Selected ${exp.name} (${exp.degrees}) for specialized AYUSH consultation.`);
+              }}
             />
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Priority Filter Strip */}
+            <div className="expert-controls-card gov-card">
+              <div className="expert-filter-tabs">
+                <button
+                  onClick={() => setActiveFilter('all')}
+                  className={`expert-tab ${activeFilter === 'all' ? 'active' : ''}`}
+                >
+                  All Assigned ({expertCases.length})
+                </button>
+                <button
+                  onClick={() => setActiveFilter('open')}
+                  className={`expert-tab ${activeFilter === 'open' ? 'active' : ''}`}
+                >
+                  Pending Assignment ({expertCases.filter((c) => c.status === 'SUBMITTED' || c.status === 'ASSIGNED').length})
+                </button>
+                <button
+                  onClick={() => setActiveFilter('in_review')}
+                  className={`expert-tab ${activeFilter === 'in_review' ? 'active' : ''}`}
+                >
+                  In Review ({expertCases.filter((c) => c.status === 'IN_REVIEW').length})
+                </button>
+                <button
+                  onClick={() => setActiveFilter('need_info')}
+                  className={`expert-tab ${activeFilter === 'need_info' ? 'active' : ''}`}
+                >
+                  Awaiting Info ({expertCases.filter((c) => c.status === 'NEED_MORE_INFORMATION').length})
+                </button>
+                <button
+                  onClick={() => setActiveFilter('completed')}
+                  className={`expert-tab ${activeFilter === 'completed' ? 'active' : ''}`}
+                >
+                  Completed ({expertCases.filter((c) => c.status === 'REVIEW_COMPLETED').length})
+                </button>
+              </div>
+
+              <div className="expert-search-box">
+                <Search size={16} className="search-icon" />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search case ID, botanical name..."
+                  className="expert-search-input"
+                />
+              </div>
+            </div>
 
         {/* Cases Table View (Structured Government Reference) */}
         <div className="gov-card expert-table-card">
@@ -211,6 +248,8 @@ export const ExpertDashboard: React.FC = () => {
             </tbody>
           </table>
         </div>
+          </>
+        )}
       </div>
     </div>
   );

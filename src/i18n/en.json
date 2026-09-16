@@ -420,5 +420,27 @@
     "c1NextSteps": "Proceed with provisional patent application enclosing synergy bioassay data, followed by simultaneous NBA Form III intimation.",
     "c1Risk": "Filing commercially without NBA Form III approval attracts statutory liability under Section 55 of Biological Diversity Act.",
     "expertDrSharma": "Dr. V. Sharma (Senior IP Facilitator)"
+  },
+  "expertDirectory": {
+    "title": "Select Empanelled AYUSH IP & TK Specialist",
+    "subtitle": "Choose a certified legal facilitator with specialized expertise in your formulation domain. Inspect verified degrees, resolved case counts, and domain credentials.",
+    "allDomains": "All Specialists",
+    "domainTkdl": "Traditional Knowledge & TKDL",
+    "domainPatent": "Patents & Section 3(p)",
+    "domainAbs": "Biodiversity & NBA ABS",
+    "domainRegulatory": "AYUSH Licensing & Standards",
+    "degreesLabel": "Degrees & Reg",
+    "yearsExp": "Years Exp",
+    "casesResolved": "Cases Resolved",
+    "availableNow": "Available for Review",
+    "assignToExpert": "Assign My Case",
+    "selected": "Selected Expert",
+    "badgeSenior": "Senior Empanelled Facilitator",
+    "badgeTkdlSpecialist": "TKDL & Dravyaguna Specialist",
+    "badgePrincipalCounsel": "Principal AYUSH Patent Counsel",
+    "badgePatentSpecialist": "Phytochemistry & Patent Analyst",
+    "badgeNbaCounsel": "NBA Regulatory Counsel",
+    "badgeAbsAdvisor": "SBB & Nagoya Protocol Advisor",
+    "badgeAyushLicensing": "AYUSH Drugs Act Specialist"
   }
 }

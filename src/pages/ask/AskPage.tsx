@@ -24,6 +24,7 @@ import { CitationCard } from '../../components/shared/CitationCard';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { useAppStore, CaseRecord } from '../../store/appStore';
 import { askIPQuestion } from '../../services/ask.service';
+import { ExpertDirectorySelector, EmpanelledExpert, EMPANELLED_EXPERTS } from '../../components/expert/ExpertDirectorySelector';
 
 export const AskPage: React.FC = () => {
   const { t } = useTranslation();
@@ -51,6 +52,8 @@ export const AskPage: React.FC = () => {
   const [inputQuestion, setInputQuestion] = useState(query || searchParams.get('q') || '');
   const [escalatedSuccess, setEscalatedSuccess] = useState(false);
   const [selectedClarification, setSelectedClarification] = useState<string>('');
+  const [showExpertModal, setShowExpertModal] = useState(false);
+  const [selectedExpert, setSelectedExpert] = useState<EmpanelledExpert>(EMPANELLED_EXPERTS[0]);
 
   // Auto-run if query param or store query is present and no answer yet
   useEffect(() => {
@@ -110,8 +113,9 @@ export const AskPage: React.FC = () => {
     }
   };
 
-  // Handle Human Escalation Request
-  const handleEscalateToHuman = () => {
+  // Handle Human Escalation Request with chosen expert
+  const handleConfirmEscalation = (expertToAssign?: EmpanelledExpert) => {
+    const expert = expertToAssign || selectedExpert || EMPANELLED_EXPERTS[0];
     const newCaseId = `IPS-${Math.floor(1000 + Math.random() * 9000)}`;
     const newCase: CaseRecord = {
       id: newCaseId,
@@ -127,16 +131,16 @@ export const AskPage: React.FC = () => {
       escalationReason:
         currentAnswer?.confidence.caveat ||
         'User requested human review for complex polyherbal formulation assessment.',
-      assignedExpertCategory: 'Traditional Knowledge / Patent Specialist',
-      assignedExpertName: 'Dr. V. Sharma (Empanelled)',
+      assignedExpertCategory: expert.roleTitle,
+      assignedExpertName: `${expert.name} (${expert.degrees})`,
       caseProfile: caseProfile,
       aiAnswer: currentAnswer || undefined,
       events: [
         {
           id: 'ev-new-1',
           timestamp: new Date().toISOString(),
-          title: 'Case Escalated for Human Review',
-          description: `User submitted inquiry ${newCaseId} for empanelled expert guidance.`,
+          title: 'Case Escalated to Empanelled Specialist',
+          description: `User assigned case ${newCaseId} to ${expert.name} (${expert.degrees}, ${expert.experienceYears}+ Yrs Exp).`,
           actor: 'user',
           status: 'SUBMITTED'
         }
@@ -144,6 +148,8 @@ export const AskPage: React.FC = () => {
     };
 
     addCase(newCase);
+    setSelectedExpert(expert);
+    setShowExpertModal(false);
     setEscalatedSuccess(true);
   };
 
@@ -245,8 +251,8 @@ export const AskPage: React.FC = () => {
           <div className="gov-card escalation-success-banner" role="alert">
             <CheckCircle2 size={24} className="text-success" />
             <div>
-              <h4>Human Review Requested Successfully</h4>
-              <p>Your case has been logged and assigned to Dr. V. Sharma (Traditional Knowledge / Patent Specialist).</p>
+              <h4>Specialist Assigned Successfully</h4>
+              <p>Your case has been logged and assigned directly to <strong>{selectedExpert.name}</strong> ({selectedExpert.degrees} — {selectedExpert.experienceYears}+ Yrs Exp).</p>
               <Link to="/dashboard" className="btn btn-primary btn-sm mt-2">
                 <span>Go to My Dashboard & Track Status</span>
                 <ChevronRight size={14} />
@@ -287,7 +293,7 @@ export const AskPage: React.FC = () => {
                       <span>Use Guided Product Classifier</span>
                       <ArrowRight size={16} />
                     </Link>
-                    <button onClick={handleEscalateToHuman} className="btn btn-outline">
+                    <button onClick={() => setShowExpertModal(true)} className="btn btn-outline">
                       <UserCheck size={16} />
                       <span>{t('answer.humanReviewCta')}</span>
                     </button>
@@ -408,7 +414,7 @@ export const AskPage: React.FC = () => {
                         </Link>
                       ))}
 
-                      <button onClick={handleEscalateToHuman} className="btn btn-secondary">
+                      <button onClick={() => setShowExpertModal(true)} className="btn btn-secondary">
                         <UserCheck size={16} />
                         <span>{t('answer.humanReviewCta')}</span>
                       </button>
@@ -470,6 +476,16 @@ export const AskPage: React.FC = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Expert Selection Modal */}
+        {showExpertModal && (
+          <ExpertDirectorySelector
+            modalMode={true}
+            selectedExpertId={selectedExpert?.id}
+            onClose={() => setShowExpertModal(false)}
+            onSelectExpert={(exp) => handleConfirmEscalation(exp)}
+          />
         )}
       </div>
     </div>
