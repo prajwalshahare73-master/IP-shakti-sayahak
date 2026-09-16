@@ -137,22 +137,22 @@ export const Header: React.FC = () => {
                   aria-label="User profile menu"
                   aria-expanded={profileOpen}
                   style={{
-                    width: '38px',
-                    height: '38px',
+                    width: '40px',
+                    height: '40px',
                     borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #0f3d5c 0%, #1e5a84 100%)',
+                    background: 'linear-gradient(135deg, #0f3d5c 0%, #0d9488 100%)',
                     color: '#ffffff',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    border: '2px solid rgba(255, 255, 255, 0.4)',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+                    border: '2px solid rgba(255, 255, 255, 0.6)',
+                    boxShadow: '0 2px 8px rgba(15, 61, 92, 0.3)',
                     cursor: 'pointer',
-                    fontSize: '18px',
-                    padding: 0
+                    padding: 0,
+                    transition: 'all 0.2s ease-in-out'
                   }}
                 >
-                  <span role="img" aria-label="avatar">👤</span>
+                  <User size={20} strokeWidth={2.4} color="#ffffff" />
                 </button>
 
                 {profileOpen && (
@@ -162,35 +162,58 @@ export const Header: React.FC = () => {
                       position: 'absolute',
                       right: 0,
                       top: 'calc(100% + 8px)',
-                      minWidth: '240px',
+                      minWidth: '260px',
                       background: '#ffffff',
-                      borderRadius: '10px',
-                      boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                      borderRadius: '12px',
+                      boxShadow: '0 12px 30px rgba(0,0,0,0.18)',
                       border: '1px solid #e2e8f0',
                       zIndex: 1000,
                       overflow: 'hidden'
                     }}
                   >
-                    <div style={{ padding: '14px 16px', background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                      <div style={{ fontWeight: 700, color: '#0f3d5c', fontSize: '14px', lineHeight: 1.3 }}>
-                        {user.name}
+                    <div style={{
+                      padding: '16px',
+                      background: 'linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%)',
+                      borderBottom: '1px solid #e2e8f0',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px'
+                    }}>
+                      <div style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #0f3d5c 0%, #0d9488 100%)',
+                        color: '#ffffff',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        boxShadow: '0 2px 6px rgba(15, 61, 92, 0.2)'
+                      }}>
+                        <User size={22} strokeWidth={2.4} color="#ffffff" />
                       </div>
-                      <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px', wordBreak: 'break-all' }}>
-                        {user.email}
-                      </div>
-                      <div style={{ marginTop: '8px' }}>
-                        <span style={{
-                          display: 'inline-block',
-                          fontSize: '10px',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          padding: '2px 8px',
-                          borderRadius: '12px',
-                          background: user.role === 'expert' ? '#ecfdf5' : '#eff6ff',
-                          color: user.role === 'expert' ? '#047857' : '#1d4ed8'
-                        }}>
-                          {user.role === 'expert' ? t('nav.expertPortal', 'Empanelled Expert') : t('common.innovator', 'Ayurveda Innovator')}
-                        </span>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 700, color: '#0f3d5c', fontSize: '14px', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {user.name}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          {user.email}
+                        </div>
+                        <div style={{ marginTop: '4px' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            fontSize: '10px',
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            padding: '2px 8px',
+                            borderRadius: '12px',
+                            background: user.role === 'expert' ? '#ecfdf5' : '#eff6ff',
+                            color: user.role === 'expert' ? '#047857' : '#1d4ed8'
+                          }}>
+                            {user.role === 'expert' ? t('nav.expertPortal', 'Empanelled Expert') : t('common.innovator', 'Ayurveda Innovator')}
+                          </span>
+                        </div>
                       </div>
                     </div>
 

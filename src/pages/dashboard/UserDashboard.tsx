@@ -17,7 +17,8 @@ import {
   Send,
   Bell,
   Eye,
-  Search
+  Search,
+  User
 } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { StatusBadge } from '../../components/shared/StatusBadge';
@@ -99,16 +100,37 @@ export const UserDashboard: React.FC = () => {
 
       <div className="gov-container dashboard-container">
         {/* Welcome & Overview Strip */}
-        <div className="dashboard-welcome-banner">
-          <div className="welcome-text-col">
-            <div className="welcome-tag">
-              <Sparkles size={14} className="icon-gold" />
-              <span>{t('brand.subheading', 'National Ayurveda IP Workspace')}</span>
+        <div className="dashboard-welcome-banner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <div
+              className="user-profile-avatar-badge"
+              style={{
+                width: '60px',
+                height: '60px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #0f3d5c 0%, #0d9488 100%)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 14px rgba(15, 61, 92, 0.28)',
+                border: '3px solid rgba(255, 255, 255, 0.7)',
+                flexShrink: 0
+              }}
+            >
+              <User size={32} strokeWidth={2.4} color="#ffffff" />
             </div>
-            <h1 className="welcome-name">{t('common.greeting', 'Welcome')}, {user?.name || t('common.innovator', 'Ayurveda Innovator')}</h1>
-            <p className="welcome-sub">
-              {t('dashboard.subtitle', 'Track your active IP inquiries, formulation dossiers, and empanelled specialist reviews.')}
-            </p>
+
+            <div className="welcome-text-col">
+              <div className="welcome-tag">
+                <Sparkles size={14} className="icon-gold" />
+                <span>{t('brand.subheading', 'National Ayurveda IP Workspace')}</span>
+              </div>
+              <h1 className="welcome-name">{t('common.greeting', 'Welcome')}, {user?.name || t('common.innovator', 'Ayurveda Innovator')}</h1>
+              <p className="welcome-sub">
+                {t('dashboard.subtitle', 'Track your active IP inquiries, formulation dossiers, and empanelled specialist reviews.')}
+              </p>
+            </div>
           </div>
 
           <div className="welcome-cta-col flex gap-3">

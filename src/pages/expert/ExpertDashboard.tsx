@@ -55,16 +55,36 @@ export const ExpertDashboard: React.FC = () => {
 
       <div className="gov-container expert-container">
         {/* Expert Header Banner */}
-        <div className="expert-header-banner">
-          <div className="expert-banner-left">
-            <div className="expert-auth-badge">
-              <Lock size={13} className="text-secondary" />
-              <span>Restricted Empanelled Facilitator Environment</span>
+        <div className="expert-header-banner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <div
+              style={{
+                width: '60px',
+                height: '60px',
+                borderRadius: '50%',
+                background: 'linear-gradient(135deg, #047857 0%, #0d9488 100%)',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 14px rgba(4, 120, 87, 0.28)',
+                border: '3px solid rgba(255, 255, 255, 0.7)',
+                flexShrink: 0
+              }}
+            >
+              <UserCheck size={32} strokeWidth={2.4} color="#ffffff" />
             </div>
-            <h1 className="expert-banner-title">Empanelled Ayurveda IP & TK Expert Workspace</h1>
-            <p className="expert-banner-sub">
-              Logged in as <strong>Dr. V. Sharma</strong> (Senior Traditional Knowledge & Patent Facilitator)
-            </p>
+
+            <div className="expert-banner-left">
+              <div className="expert-auth-badge">
+                <Lock size={13} className="text-secondary" />
+                <span>Restricted Empanelled Facilitator Environment</span>
+              </div>
+              <h1 className="expert-banner-title">Empanelled Ayurveda IP & TK Expert Workspace</h1>
+              <p className="expert-banner-sub">
+                Logged in as <strong>{user?.name || 'Dr. V. Sharma'}</strong> (Senior Traditional Knowledge & Patent Facilitator)
+              </p>
+            </div>
           </div>
 
           <div className="expert-banner-right">
