@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { HelpCircle, ChevronDown, ChevronUp, Shield, Sparkles, UserCheck, BookOpen } from 'lucide-react';
+import { HelpCircle, ChevronDown, ChevronUp, Shield, Scale, UserCheck, BookOpen } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 
 export const HelpPage: React.FC = () => {

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  Sparkles,
   ArrowRight,
   Shield,
   FileText,
@@ -10,6 +9,7 @@ import {
   Award,
   Layers,
   Scale,
+  FileSearch,
   CheckCircle2,
   HelpCircle,
   Clock,
@@ -178,7 +178,7 @@ export const HomePage: React.FC = () => {
           {/* Quick Actions (PRD Section 7) */}
           <div className="hero-quick-actions-row">
             <Link to="/ask" className="hero-quick-action-btn primary">
-              <Sparkles size={16} />
+              <Scale size={16} />
               <span>{t('hero.askIpQuestion', 'Ask an IP Question')}</span>
             </Link>
             <Link to="/case-builder" className="hero-quick-action-btn">
@@ -195,7 +195,7 @@ export const HomePage: React.FC = () => {
           <div className="classifier-banner-card">
             <div className="classifier-banner-content">
               <div className="classifier-badge">
-                <Sparkles size={16} className="text-secondary" />
+                <FileSearch size={16} className="text-secondary" />
                 <span>{t('classifier.badge')}</span>
               </div>
               <h2 className="classifier-banner-title">{t('classifier.title')}</h2>
@@ -329,7 +329,7 @@ export const HomePage: React.FC = () => {
             {/* Prior Art Search */}
             <div className="gov-card service-card">
               <div className="service-icon-box bg-blue-tint">
-                <Sparkles size={24} className="text-primary" />
+                <FileSearch size={24} className="text-primary" />
               </div>
               <h3 className="service-card-title">Prior Art & TKDL Search</h3>
               <p className="service-card-desc">

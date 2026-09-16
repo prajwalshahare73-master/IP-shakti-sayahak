@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, Shield, Sparkles, AlertTriangle, ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
+import { BookOpen, Shield, AlertTriangle, ArrowRight, CheckCircle2, ChevronRight } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 
 export const TKPage: React.FC = () => {

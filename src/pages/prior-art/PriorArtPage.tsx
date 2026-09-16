@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, Sparkles, BookOpen, AlertCircle, FileText, ChevronRight, CheckCircle2, ExternalLink } from 'lucide-react';
+import { Search, Scale, BookOpen, AlertCircle, FileText, ChevronRight, CheckCircle2, ExternalLink } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { VoiceInputField } from '../../components/shared/VoiceInputField';
 
@@ -128,7 +128,7 @@ export const PriorArtPage: React.FC = () => {
             {/* Next Step Action */}
             <div className="gov-card prior-art-cta-card">
               <div className="flex items-center gap-3">
-                <Sparkles size={24} className="text-primary" />
+                <Scale size={24} className="text-primary" />
                 <div>
                   <h4>Want a comprehensive Section 3(p) clearance opinion?</h4>
                   <p>Request an empanelled patent facilitator to conduct a formal clearance search.</p>

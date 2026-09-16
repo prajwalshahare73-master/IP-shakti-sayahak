@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, AlertCircle, Loader2, Sparkles, Volume2 } from 'lucide-react';
+import { Mic, MicOff, AlertCircle, Loader2, Volume2, MessageSquare } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
 
 interface VoiceInputProps {
@@ -271,7 +271,7 @@ export const VoiceInputField: React.FC<VoiceInputProps> = ({
       {showVoicePrompts && (
         <div className="voice-prompts-tray gov-card mt-2 p-3 bg-surface border">
           <div className="flex items-center gap-1 text-xs font-bold text-muted mb-2 uppercase">
-            <Sparkles size={12} className="text-primary" />
+            <Volume2 size={12} className="text-primary" />
             <span>Click to insert sample spoken query ({language.toUpperCase()}):</span>
           </div>
           <div className="flex flex-col gap-1.5">

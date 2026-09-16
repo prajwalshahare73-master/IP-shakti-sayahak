@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Shield, Award, Building, FileText, Sparkles, Scale, Layers, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Shield, Award, Building, FileText, Scale, Layers, ChevronRight, CheckCircle2 } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 
 // 1. Patent Page
@@ -134,7 +134,7 @@ export const DesignPage: React.FC = () => {
       <Breadcrumbs customTrail={[{ title: t('services.design.title', 'Design Protection'), link: '/design' }]} />
       <div className="gov-container category-container">
         <div className="category-header">
-          <span className="category-badge"><Sparkles size={16} /> {t('services.design.title', 'Designs Act, 2000')}</span>
+          <span className="category-badge"><Layers size={16} /> {t('services.design.title', 'Designs Act, 2000')}</span>
           <h1>{t('categories.designTitle', 'Industrial Design Protection for Ayurveda Products')}</h1>
           <p>{t('services.design.desc', 'Protect unique product shapes, packaging aesthetics and dispenser designs.')}</p>
         </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  Sparkles,
+  FileSearch,
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
@@ -57,7 +57,7 @@ export const ClassificationPage: React.FC = () => {
       <div className="gov-container wizard-container">
         <div className="wizard-header">
           <div className="wizard-badge">
-            <Sparkles size={16} className="text-secondary" />
+            <FileSearch size={16} className="text-secondary" />
             <span>Task-First Guided Assessment</span>
           </div>
           <h1 className="wizard-main-title">Ayurveda Product & IP Pathway Classifier</h1>

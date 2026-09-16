@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShieldAlert, Home, Search, Sparkles, ArrowLeft } from 'lucide-react';
+import { ShieldAlert, Home, Search, Scale, ArrowLeft } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 
 export const NotFoundPage: React.FC = () => {
@@ -32,7 +32,7 @@ export const NotFoundPage: React.FC = () => {
               <span>Return to Portal Home</span>
             </Link>
             <Link to="/ask" className="btn btn-secondary">
-              <Sparkles size={16} />
+              <Scale size={16} />
               <span>Ask IP Question</span>
             </Link>
           </div>

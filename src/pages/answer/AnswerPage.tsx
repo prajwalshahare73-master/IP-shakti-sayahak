@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  Sparkles,
+  Scale,
   ArrowRight,
   ShieldAlert,
   CheckCircle2,
@@ -396,7 +396,7 @@ export const AnswerPage: React.FC = () => {
                   <div className="gov-card ai-guidance-card">
                     <div className="ai-badge-header">
                       <div className="ai-origin-pill">
-                        <Sparkles size={14} className="text-primary" />
+                        <Scale size={14} className="text-primary" />
                         <span>{t('answer.aiGuidancePill', 'AI-generated guidance — source-grounded')}</span>
                       </div>
                       <span className="status-badge info">{currentAnswer.ipType}</span>

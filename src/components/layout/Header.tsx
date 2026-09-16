@@ -12,7 +12,8 @@ import {
   LayoutDashboard,
   UserCheck,
   FileText,
-  Sparkles,
+  Scale,
+  FileSearch,
   BookOpen,
   LogOut,
   User,
@@ -336,7 +337,7 @@ export const Header: React.FC = () => {
                 to="/ask"
                 className={`gov-nav-link highlight-link ${isActive('/ask') ? 'active' : ''}`}
               >
-                <Sparkles size={16} className="icon-gold" />
+                <Scale size={16} className="text-secondary" />
                 <span>{t('nav.ask', 'Ask IP-SAKTI')}</span>
               </Link>
             </li>
@@ -437,7 +438,7 @@ export const Header: React.FC = () => {
                     </Link>
 
                     <Link to="/classifier" className="mega-item highlight-card" role="menuitem">
-                      <Sparkles size={18} className="text-primary" />
+                      <FileSearch size={18} className="text-primary" />
                       <div>
                         <strong>{t('classifier.badge', 'Guided Product Classifier')}</strong>
                         <p>{t('classifier.title', 'Not sure? Find your exact legal route in 4 steps.')}</p>
@@ -537,7 +538,7 @@ export const Header: React.FC = () => {
               onClick={() => setMobileMenuOpen(false)}
               className="mobile-link highlight"
             >
-              <Sparkles size={18} />
+              <Scale size={18} />
               <span>{t('nav.ask')}</span>
             </Link>
             <Link

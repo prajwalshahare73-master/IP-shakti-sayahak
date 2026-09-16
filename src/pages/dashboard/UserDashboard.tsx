@@ -10,7 +10,7 @@ import {
   FileText,
   Shield,
   MessageSquare,
-  Sparkles,
+  Scale,
   ChevronRight,
   ExternalLink,
   Layers,
@@ -186,7 +186,7 @@ export const UserDashboard: React.FC = () => {
 
             <div className="welcome-text-col">
               <div className="welcome-tag">
-                <Sparkles size={14} className="icon-gold" />
+                <Scale size={14} className="text-secondary" />
                 <span>{t('brand.subheading', 'National Ayurveda IP Workspace')}</span>
               </div>
               <h1 className="welcome-name">{t('common.greeting', 'Welcome')}, {user?.name || t('common.innovator', 'Ayurveda Innovator')}</h1>
@@ -202,7 +202,7 @@ export const UserDashboard: React.FC = () => {
               <span>{t('nav.caseBuilder', 'Launch Case Builder')}</span>
             </Link>
             <Link to="/ask" className="btn btn-primary">
-              <Sparkles size={16} />
+              <Scale size={16} />
               <span>{t('nav.ask', 'Ask IP Question')}</span>
             </Link>
           </div>
@@ -490,7 +490,7 @@ export const UserDashboard: React.FC = () => {
               {/* VISUAL SEPARATION: AI Guidance & Retrieved Sources */}
               <div className="gov-card ai-guidance-history-card">
                 <div className="ai-guidance-badge">
-                  <Sparkles size={16} className="text-primary" />
+                  <Scale size={16} className="text-primary" />
                   <span>{t('dashboard.aiGuidance', 'AI Statutory Guidance')}</span>
                 </div>
 

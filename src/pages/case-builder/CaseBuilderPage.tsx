@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  Sparkles,
+  Scale,
   Plus,
   Trash2,
   Download,
@@ -237,7 +237,7 @@ export const CaseBuilderPage: React.FC = () => {
         {/* Header Block */}
         <div className="case-builder-header">
           <div className="cb-badge">
-            <Sparkles size={16} className="icon-gold" />
+            <Scale size={16} className="text-secondary" />
             <span>{t('caseBuilder.badge', 'Structured Ayurveda IP Dossier Generator')}</span>
           </div>
           <h1 className="cb-main-title">{t('caseBuilder.title', 'Ayurveda Formulation Case Builder')}</h1>
@@ -620,7 +620,7 @@ export const CaseBuilderPage: React.FC = () => {
                 onClick={() => handleAssembleCase('EVALUATE_AI')}
                 className="btn btn-outline btn-lg"
               >
-                <Sparkles size={18} />
+                <Scale size={18} />
                 <span>{t('caseBuilder.evaluateAi', 'Evaluate with AI Guidance')}</span>
               </button>
 
