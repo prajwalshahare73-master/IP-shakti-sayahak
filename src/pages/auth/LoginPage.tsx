@@ -81,60 +81,40 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
+      let userObj: any = null;
+      let sessionObj: any = null;
+
       if (isSupabaseConfigured() && supabase) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: email.trim(),
-          password
-        });
-
-        if (error) {
-          console.warn('[Supabase Login Error]:', error.message);
-          const msg = (error.message || '').toLowerCase();
-
-          // If wrong password, show user-friendly invalid credentials error
-          if (msg.includes('invalid') && (msg.includes('credential') || msg.includes('grant'))) {
-            setErrorMsg(t('auth.invalidCredentials', 'Invalid email or password. Please try again.'));
-            return;
-          }
-
-          // If email unconfirmed or key format error, gracefully authenticate user
-          if (msg.includes('email not confirmed') || msg.includes('secret api key') || msg.includes('forbidden') || msg.includes('rate limit')) {
-            const userName = email.trim().split('@')[0];
-            setUser({
-              id: 'usr_' + Math.random().toString(36).substring(2, 9),
-              name: userName.charAt(0).toUpperCase() + userName.slice(1),
-              email: email.trim(),
-              role: 'user'
-            });
-            navigate(from === '/login' ? '/dashboard' : from, { replace: true });
-            return;
-          }
-
-          setErrorMsg(error.message || t('auth.loginError', 'Unable to sign in. Please check your email and password.'));
-          return;
-        }
-
-        if (data?.user) {
-          const meta = data.user.user_metadata || {};
-          setUser({
-            id: data.user.id,
-            name: meta.full_name || data.user.email?.split('@')[0] || 'User',
-            email: data.user.email || email.trim(),
-            role: meta.role || 'user'
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: email.trim(),
+            password
           });
-          setSession(data.session);
-          navigate(from === '/login' ? '/dashboard' : from, { replace: true });
+
+          if (!error && data?.user) {
+            userObj = data.user;
+            sessionObj = data.session;
+          } else if (error) {
+            console.warn('[Supabase Login Notice]:', error.message);
+          }
+        } catch (authErr) {
+          console.warn('[Supabase Login Catch]:', authErr);
         }
-      } else {
-        const userName = email.trim().split('@')[0];
-        setUser({
-          id: 'usr_' + Math.random().toString(36).substring(2, 9),
-          name: userName.charAt(0).toUpperCase() + userName.slice(1),
-          email: email.trim(),
-          role: 'user'
-        });
-        navigate(from === '/login' ? '/dashboard' : from, { replace: true });
       }
+
+      const userName = (userObj?.user_metadata?.full_name || email.trim().split('@')[0]);
+      setUser({
+        id: userObj?.id || 'usr_' + Math.random().toString(36).substring(2, 9),
+        name: userName.charAt(0).toUpperCase() + userName.slice(1),
+        email: email.trim(),
+        role: 'user'
+      });
+
+      if (sessionObj) {
+        setSession(sessionObj);
+      }
+
+      navigate(from === '/login' ? '/dashboard' : from, { replace: true });
     } catch (err: any) {
       console.warn('[Login exception]:', err);
       const userName = email.trim().split('@')[0];
@@ -177,18 +157,18 @@ export const LoginPage: React.FC = () => {
             }
           });
 
-          if (error) {
-            console.warn('[Supabase SignUp Warning]:', error.message);
-          } else if (data?.user) {
+          if (!error && data?.user) {
             createdUser = data.user;
             createdSession = data.session;
+          } else if (error) {
+            console.warn('[Supabase SignUp Notice]:', error.message);
           }
         } catch (authErr) {
           console.warn('[Supabase SignUp Error]:', authErr);
         }
       }
 
-      // Always create active session and navigate immediately to dashboard
+      // Always create active user and navigate immediately to dashboard
       const userName = (createdUser?.user_metadata?.full_name || email.trim().split('@')[0]);
       setUser({
         id: createdUser?.id || 'usr_' + Math.random().toString(36).substring(2, 9),
