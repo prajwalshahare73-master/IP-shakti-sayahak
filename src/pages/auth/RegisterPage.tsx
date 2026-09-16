@@ -74,20 +74,17 @@ export const RegisterPage: React.FC = () => {
           }
         });
         if (error) throw error;
-        if (data?.session) {
+        if (data?.user) {
           setUser({
-            id: data.user?.id,
-            name: formData.fullName,
+            id: data.user.id,
+            name: formData.fullName || formData.email.split('@')[0],
             email: formData.email,
             role: 'user'
           });
-          setSession(data.session);
-          navigate('/', { replace: true });
-        } else {
-          // Email confirmation required
-          setErrorMsg(null);
-          alert(t('auth.signUpSuccess', 'Account created successfully. Check your email if verification is required.'));
-          navigate('/login', { replace: true });
+          if (data.session) {
+            setSession(data.session);
+          }
+          navigate('/dashboard', { replace: true });
         }
       } else {
         // Mock register fallback

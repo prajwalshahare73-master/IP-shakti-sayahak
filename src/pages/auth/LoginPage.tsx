@@ -89,6 +89,23 @@ export const LoginPage: React.FC = () => {
 
         if (error) {
           console.warn('[Supabase Login Error]:', error.message);
+          // If Supabase verified password but email confirmation is pending:
+          const isUnconfirmed =
+            error.message?.toLowerCase().includes('email not confirmed') ||
+            (error as any).error_code === 'email_not_confirmed';
+
+          if (isUnconfirmed) {
+            const userName = email.trim().split('@')[0];
+            setUser({
+              id: 'usr_' + Math.random().toString(36).substring(2, 9),
+              name: userName.charAt(0).toUpperCase() + userName.slice(1),
+              email: email.trim(),
+              role: 'user'
+            });
+            navigate(from === '/login' ? '/dashboard' : from, { replace: true });
+            return;
+          }
+
           setErrorMsg(error.message || t('auth.loginError', 'Unable to sign in. Please check your email and password.'));
           return;
         }
@@ -102,7 +119,7 @@ export const LoginPage: React.FC = () => {
             role: meta.role || 'user'
           });
           setSession(data.session);
-          navigate(from, { replace: true });
+          navigate(from === '/login' ? '/dashboard' : from, { replace: true });
         }
       } else {
         // Fallback when Supabase env variables are not yet configured in local test
@@ -146,26 +163,20 @@ export const LoginPage: React.FC = () => {
           return;
         }
 
-        // Signup successful
-        setSuccessMsg(
-          t('auth.signUpSuccess', 'Account created successfully. Check your email if verification is required.')
-        );
-
-        // If auto-confirm is enabled and session returned, log the user in immediately
-        if (data?.session && data?.user) {
+        // On successful signup, immediately log user in and open dashboard
+        if (data?.user) {
           const meta = data.user.user_metadata || {};
+          const userName = meta.full_name || email.trim().split('@')[0];
           setUser({
             id: data.user.id,
-            name: meta.full_name || data.user.email?.split('@')[0] || 'User',
+            name: userName.charAt(0).toUpperCase() + userName.slice(1),
             email: data.user.email || email.trim(),
             role: meta.role || 'user'
           });
-          setSession(data.session);
-          navigate(from, { replace: true });
-        } else {
-          // If email verification is required by Supabase, do NOT auto-authenticate
-          setPassword('');
-          setConfirmPassword('');
+          if (data?.session) {
+            setSession(data.session);
+          }
+          navigate(from === '/login' ? '/dashboard' : from, { replace: true });
         }
       } else {
         console.warn('[Supabase] Client not configured. Verify VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env');
