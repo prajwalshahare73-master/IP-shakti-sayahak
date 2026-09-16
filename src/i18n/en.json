@@ -383,5 +383,42 @@
     "copyrightTitle": "Copyright Protection in Ayurveda",
     "designTitle": "Design Protection for Herbal Products",
     "regulatoryTitle": "Ayurveda Regulatory & AYUSH Compliance"
+  },
+  "domains": {
+    "Patent + Traditional Knowledge": "Patent + Traditional Knowledge",
+    "Patent": "Patent",
+    "Trademark": "Trademark",
+    "ABS / Biodiversity": "ABS / Biodiversity",
+    "Traditional Knowledge": "Traditional Knowledge",
+    "Geographical Indication": "Geographical Indication",
+    "Copyright": "Copyright",
+    "Regulatory & AYUSH": "Regulatory & AYUSH"
+  },
+  "timeline": {
+    "heading": "Case Lifecycle & Review Progress",
+    "evQuerySubmitted": "Query Submitted & Case Created",
+    "evQuerySubmittedDesc": "User initiated inquiry regarding formulation patentability & statutory route.",
+    "evAiAnalysis": "AI Statutory Analysis Generated",
+    "evAiAnalysisDesc": "Section 3(p) TK risk evaluated and statutory provisions retrieved.",
+    "evEscalated": "Escalated to Empanelled Specialist",
+    "evEscalatedDesc": "Case submitted for human expert evaluation and legal opinion.",
+    "evUserResponse": "Additional Information Submitted by User",
+    "evReviewCompleted": "Specialist Review Completed & Approved",
+    "evReviewCompletedDesc": "Empanelled specialist completed statutory assessment and recommended filing roadmap."
+  },
+  "jurisdictions": {
+    "India": "India",
+    "International": "International",
+    "India + International": "India + International"
+  },
+  "mockCases": {
+    "c1Title": "Ayurvedic herbal polyherbal respiratory formulation patentability",
+    "c1Query": "I want to market my Ayurvedic herbal formulation and also obtain a patent. What should I do?",
+    "c1Summary": "Formulation exhibits therapeutic synergy under Section 3(e) surpassing simple addition of known botanical properties.",
+    "c1Obs1": "Clearance under Biological Diversity Act 2002 Section 6 (Form III) is strictly mandatory prior to patent filing.",
+    "c1Obs2": "Section 3(p) objection is defensible with comparative quantitative dissolution data.",
+    "c1NextSteps": "Proceed with provisional patent application enclosing synergy bioassay data, followed by simultaneous NBA Form III intimation.",
+    "c1Risk": "Filing commercially without NBA Form III approval attracts statutory liability under Section 55 of Biological Diversity Act.",
+    "expertDrSharma": "Dr. V. Sharma (Senior IP Facilitator)"
   }
 }

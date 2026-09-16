@@ -27,7 +27,7 @@ import { VoiceInputField } from '../../components/shared/VoiceInputField';
 import { useAppStore, CaseRecord } from '../../store/appStore';
 
 export const UserDashboard: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { cases, updateCase, user, notifications, markNotificationRead } = useAppStore();
 
   const [activeTab, setActiveTab] = useState<'all' | 'active' | 'in_review' | 'completed'>('all');
@@ -35,6 +35,69 @@ export const UserDashboard: React.FC = () => {
   const [userResponseText, setUserResponseText] = useState('');
   const [responseSubmitted, setResponseSubmitted] = useState(false);
   const [filterSearch, setFilterSearch] = useState('');
+
+  // Localization helper functions for dynamic data
+  const getLocalizedDomain = (domain: string) => {
+    return t(`domains.${domain}`, domain);
+  };
+
+  const getLocalizedJurisdiction = (jur: string) => {
+    return t(`jurisdictions.${jur}`, jur);
+  };
+
+  const getLocalizedCaseTitle = (title: string) => {
+    if (title.toLowerCase().includes('respiratory') || title.toLowerCase().includes('polyherbal')) {
+      return t('mockCases.c1Title', title);
+    }
+    return title;
+  };
+
+  const getLocalizedCaseQuery = (query: string) => {
+    if (query.includes('Ayurvedic herbal') || query.includes('patent bhi lena hai')) {
+      return t('mockCases.c1Query', query);
+    }
+    return query;
+  };
+
+  const getLocalizedExpertName = (name?: string) => {
+    if (!name) return t('common.automated', 'System Automated');
+    if (name.includes('Dr. V. Sharma') || name.includes('Sharma')) {
+      return t('mockCases.expertDrSharma', name);
+    }
+    return name;
+  };
+
+  const getLocalizedExpertSummary = (summary: string) => {
+    if (summary.includes('synergy') || summary.includes('Section 3(e)')) {
+      return t('mockCases.c1Summary', summary);
+    }
+    return summary;
+  };
+
+  const getLocalizedObservation = (obs: string) => {
+    if (obs.includes('Biological Diversity') || obs.includes('Form III')) {
+      return t('mockCases.c1Obs1', obs);
+    }
+    if (obs.includes('Section 3(p)') || obs.includes('dissolution')) {
+      return t('mockCases.c1Obs2', obs);
+    }
+    return obs;
+  };
+
+  const getLocalizedRecommendedAction = (action: string) => {
+    if (action.includes('provisional patent') || action.includes('bioassay')) {
+      return t('mockCases.c1NextSteps', action);
+    }
+    return action;
+  };
+
+  const getLocalizedRiskNotes = (risk?: string) => {
+    if (!risk) return '';
+    if (risk.includes('Section 55') || risk.includes('Biological Diversity')) {
+      return t('mockCases.c1Risk', risk);
+    }
+    return risk;
+  };
 
   const selectedCase = cases.find((c) => c.id === selectedCaseId) || cases[0];
 
@@ -250,11 +313,11 @@ export const UserDashboard: React.FC = () => {
                           <span className="case-id-badge">{c.id}</span>
                           <StatusBadge status={c.status} size="sm" />
                         </div>
-                        <h4 className="case-card-title">{c.title}</h4>
+                        <h4 className="case-card-title">{getLocalizedCaseTitle(c.title)}</h4>
                         <div className="case-card-meta">
-                          <span>{c.domain}</span>
+                          <span>{getLocalizedDomain(c.domain)}</span>
                           <span>•</span>
-                          <span>{c.jurisdiction}</span>
+                          <span>{getLocalizedJurisdiction(c.jurisdiction)}</span>
                         </div>
                       </div>
                     );
@@ -291,7 +354,7 @@ export const UserDashboard: React.FC = () => {
                 <div className="case-detail-top">
                   <div className="case-id-title-block">
                     <span className="case-large-id">{selectedCase.id}</span>
-                    <h2 className="case-detail-main-title">{selectedCase.title}</h2>
+                    <h2 className="case-detail-main-title">{getLocalizedCaseTitle(selectedCase.title)}</h2>
                   </div>
                   <StatusBadge status={selectedCase.status} />
                 </div>
@@ -299,20 +362,20 @@ export const UserDashboard: React.FC = () => {
                 <div className="case-detail-meta-grid">
                   <div className="meta-block">
                     <span className="meta-label">{t('dashboard.domain', 'Legal Domain')}:</span>
-                    <strong>{selectedCase.domain}</strong>
+                    <strong>{getLocalizedDomain(selectedCase.domain)}</strong>
                   </div>
                   <div className="meta-block">
                     <span className="meta-label">{t('utility.jurisdiction', 'Jurisdiction')}:</span>
-                    <strong>{selectedCase.jurisdiction}</strong>
+                    <strong>{getLocalizedJurisdiction(selectedCase.jurisdiction)}</strong>
                   </div>
                   <div className="meta-block">
                     <span className="meta-label">{t('dashboard.escalatedTo', 'Assigned Expert')}:</span>
-                    <strong>{selectedCase.assignedExpertName || t('common.automated', 'System Automated')}</strong>
+                    <strong>{getLocalizedExpertName(selectedCase.assignedExpertName)}</strong>
                   </div>
                   <div className="meta-block">
                     <span className="meta-label">{t('dashboard.submittedOn', 'Submitted')}:</span>
                     <strong>
-                      {new Date(selectedCase.updatedAt).toLocaleDateString('en-IN', {
+                      {new Date(selectedCase.updatedAt).toLocaleDateString(i18n.language === 'hi' ? 'hi-IN' : i18n.language === 'mr' ? 'mr-IN' : i18n.language === 'gu' ? 'gu-IN' : 'en-IN', {
                         day: 'numeric',
                         month: 'short',
                         year: 'numeric'
@@ -324,7 +387,7 @@ export const UserDashboard: React.FC = () => {
                 {/* Original Question Quoted */}
                 <div className="original-query-quote">
                   <span className="quote-label">{t('hero.askButton', 'Original Inquiry')}:</span>
-                  <p>"{selectedCase.query}"</p>
+                  <p>"{getLocalizedCaseQuery(selectedCase.query)}"</p>
                 </div>
               </div>
 
@@ -383,12 +446,12 @@ export const UserDashboard: React.FC = () => {
 
                   <div className="expert-profile-row">
                     <div>
-                      <h3 className="expert-name">{selectedCase.expertReview.expertName}</h3>
+                      <h3 className="expert-name">{getLocalizedExpertName(selectedCase.expertReview.expertName)}</h3>
                       <span className="expert-role">{selectedCase.expertReview.expertRole}</span>
                     </div>
                     <span className="expert-date">
                       {t('dashboard.deliveredOn', 'Delivered on')}{' '}
-                      {new Date(selectedCase.expertReview.completedAt).toLocaleDateString('en-IN', {
+                      {new Date(selectedCase.expertReview.completedAt).toLocaleDateString(i18n.language === 'hi' ? 'hi-IN' : i18n.language === 'mr' ? 'mr-IN' : i18n.language === 'gu' ? 'gu-IN' : 'en-IN', {
                         day: 'numeric',
                         month: 'short',
                         year: 'numeric'
@@ -398,27 +461,27 @@ export const UserDashboard: React.FC = () => {
 
                   <div className="expert-summary-box">
                     <strong>{t('humanReview.expertGuidance', 'Expert Summary')}:</strong>
-                    <p>{selectedCase.expertReview.summary}</p>
+                    <p>{getLocalizedExpertSummary(selectedCase.expertReview.summary)}</p>
                   </div>
 
                   <div className="expert-observations-box">
                     <strong>{t('humanReview.observations', 'Key Observations')}:</strong>
                     <ul>
                       {selectedCase.expertReview.observations.map((obs, idx) => (
-                        <li key={idx}>• {obs}</li>
+                        <li key={idx}>• {getLocalizedObservation(obs)}</li>
                       ))}
                     </ul>
                   </div>
 
                   <div className="expert-action-box">
                     <strong>{t('humanReview.nextSteps', 'Recommended Next Steps')}:</strong>
-                    <p>{selectedCase.expertReview.recommendedAction}</p>
+                    <p>{getLocalizedRecommendedAction(selectedCase.expertReview.recommendedAction)}</p>
                   </div>
 
                   {selectedCase.expertReview.riskNotes && (
                     <div className="expert-risk-box">
                       <Shield size={16} className="text-error" />
-                      <span>{selectedCase.expertReview.riskNotes}</span>
+                      <span>{getLocalizedRiskNotes(selectedCase.expertReview.riskNotes)}</span>
                     </div>
                   )}
                 </div>
