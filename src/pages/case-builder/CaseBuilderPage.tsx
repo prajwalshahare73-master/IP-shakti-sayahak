@@ -157,8 +157,8 @@ export const CaseBuilderPage: React.FC = () => {
 
   const readinessScore = calculateReadinessScore();
 
-  // Create Case Package & Escalate or Inspect
-  const handleAssembleCase = (action: 'EVALUATE_AI' | 'ESCALATE_EXPERT') => {
+  // Create Case Package & Escalate, Evaluate, or Navigate to Ask
+  const handleAssembleCase = (action: 'EVALUATE_AI' | 'ESCALATE_EXPERT' | 'NAVIGATE_ASK') => {
     const caseId = `IPS-${Math.floor(2000 + Math.random() * 8000)}`;
     const fullSummaryQuery = `Case Builder Formulation: ${productName} (${productType}) for ${targetIndication}. Composition: ${ingredients
       .map((i) => `${i.sanskritName} [${i.botanicalName}] ${i.percentage}`)
@@ -180,6 +180,11 @@ export const CaseBuilderPage: React.FC = () => {
 
     setCaseProfile(assembledProfile);
     setQuery(fullSummaryQuery);
+
+    if (action === 'NAVIGATE_ASK') {
+      navigate('/ask');
+      return;
+    }
 
     if (action === 'ESCALATE_EXPERT') {
       const newCase: CaseRecord = {
@@ -214,10 +219,12 @@ export const CaseBuilderPage: React.FC = () => {
       setCreatedCaseId(caseId);
       setGeneratedSuccess(true);
       setShowInPlaceEvaluation(false);
+      window.scrollTo({ top: 300, behavior: 'smooth' });
     } else {
       // EVALUATE_AI in-place directly inside Case Builder!
       setEvaluatingAI(true);
       setShowInPlaceEvaluation(true);
+      window.scrollTo({ top: 300, behavior: 'smooth' });
       setTimeout(async () => {
         try {
           const res = await askIPQuestion({
@@ -244,6 +251,7 @@ export const CaseBuilderPage: React.FC = () => {
           });
         } finally {
           setEvaluatingAI(false);
+          window.scrollTo({ top: 300, behavior: 'smooth' });
         }
       }, 500);
     }
@@ -609,7 +617,16 @@ export const CaseBuilderPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => handleAssembleCase('NAVIGATE_ASK')}
+                  className="btn btn-secondary btn-sm"
+                  style={{ gap: '6px' }}
+                >
+                  <Scale size={14} />
+                  <span>Open in AI Workspace (/ask)</span>
+                </button>
                 <button
                   type="button"
                   onClick={() => setShowReportModal(true)}
@@ -1108,23 +1125,35 @@ export const CaseBuilderPage: React.FC = () => {
             </div>
 
             {/* Bottom Actions Bar */}
-            <div className="cb-bottom-actions">
+            <div className="cb-bottom-actions flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={() => handleAssembleCase('EVALUATE_AI')}
-                className="btn btn-outline btn-lg"
+                className="btn btn-outline btn-lg flex-1"
+                style={{ gap: '8px' }}
+              >
+                <Sparkles size={18} className="text-emerald-600" />
+                <span>{t('caseBuilder.evaluateAi', 'Evaluate In-Place AI Verdict')}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleAssembleCase('NAVIGATE_ASK')}
+                className="btn btn-secondary btn-lg flex-1"
+                style={{ gap: '8px' }}
               >
                 <Scale size={18} />
-                <span>{t('caseBuilder.evaluateAi', 'Evaluate with AI Guidance')}</span>
+                <span>{t('caseBuilder.openAsk', 'Open Full AI Guidance Workspace')}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleAssembleCase('ESCALATE_EXPERT')}
-                className="btn btn-primary btn-lg"
+                className="btn btn-primary btn-lg flex-1"
+                style={{ gap: '8px' }}
               >
                 <UserCheck size={18} />
-                <span>{t('caseBuilder.escalateExpert', 'Escalate to Empanelled Specialist')} ({selectedExpert.name.split(' ')[0]} {selectedExpert.name.split(' ')[1] || ''})</span>
+                <span>{t('caseBuilder.escalateExpert', 'Escalate to Specialist')} ({selectedExpert.name.split(' ')[0]} {selectedExpert.name.split(' ')[1] || ''})</span>
                 <ArrowRight size={18} />
               </button>
             </div>
