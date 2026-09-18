@@ -18,7 +18,8 @@ import {
   Bell,
   Eye,
   Search,
-  User
+  User,
+  Lock
 } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { StatusBadge } from '../../components/shared/StatusBadge';
@@ -35,6 +36,11 @@ export const UserDashboard: React.FC = () => {
   const [userResponseText, setUserResponseText] = useState('');
   const [responseSubmitted, setResponseSubmitted] = useState(false);
   const [filterSearch, setFilterSearch] = useState('');
+
+  // Passcode Security Lock State
+  const [unlockedCases, setUnlockedCases] = useState<Record<string, boolean>>({});
+  const [passcodeInput, setPasscodeInput] = useState('');
+  const [passcodeError, setPasscodeError] = useState(false);
 
   // Localization helper functions for dynamic data
   const getLocalizedDomain = (domain: string) => {
@@ -309,8 +315,14 @@ export const UserDashboard: React.FC = () => {
                         role="button"
                         tabIndex={0}
                       >
-                        <div className="case-card-top-row">
+                        <div className="case-card-top-row" style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                           <span className="case-id-badge">{c.id}</span>
+                          {c.casePasscode && (
+                            <span style={{ fontSize: '10px', background: '#fef3c7', color: '#92400e', padding: '1px 6px', borderRadius: '4px', border: '1px solid #fde68a', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                              <Lock size={10} />
+                              <span>{unlockedCases[c.id] ? 'Unlocked' : 'Protected'}</span>
+                            </span>
+                          )}
                           <StatusBadge status={c.status} size="sm" />
                         </div>
                         <h4 className="case-card-title">{getLocalizedCaseTitle(c.title)}</h4>
@@ -349,8 +361,68 @@ export const UserDashboard: React.FC = () => {
           {/* Right Column: Case Details, AI vs Human Guidance, Timeline */}
           {selectedCase ? (
             <div className="dashboard-case-detail-col">
-              {/* Top Case Identity Card */}
-              <div className="gov-card case-detail-header-card">
+              {selectedCase.casePasscode && !unlockedCases[selectedCase.id] ? (
+                <div className="gov-card" style={{ background: '#ffffff', border: '2px solid #f59e0b', borderRadius: '12px', padding: '36px 24px', textAlign: 'center', boxShadow: '0 8px 24px rgba(245, 158, 11, 0.12)' }}>
+                  <div style={{ background: '#fef3c7', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto', color: '#d97706', border: '2px solid #fcd34d' }}>
+                    <Lock size={32} />
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: 700, background: '#fef3c7', color: '#92400e', padding: '4px 12px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Data Security Lock Enforced
+                  </span>
+                  <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#0f3d5c', margin: '12px 0 8px 0' }}>
+                    Passcode Protected Formulation Dossier ({selectedCase.id})
+                  </h2>
+                  <p style={{ color: '#64748b', fontSize: '14px', maxWidth: '520px', margin: '0 auto 24px auto', lineHeight: 1.6 }}>
+                    This case dossier contains confidential botanical composition and proprietary AYUSH IP claims. To view details, enter the secret <strong>dossier passcode</strong> set by the creator during Case Building.
+                  </p>
+
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (passcodeInput.trim() === selectedCase.casePasscode) {
+                        setUnlockedCases({ ...unlockedCases, [selectedCase.id]: true });
+                        setPasscodeInput('');
+                        setPasscodeError(false);
+                      } else {
+                        setPasscodeError(true);
+                      }
+                    }}
+                    style={{ maxWidth: '340px', margin: '0 auto' }}
+                  >
+                    <div style={{ marginBottom: '14px' }}>
+                      <input
+                        type="password"
+                        value={passcodeInput}
+                        onChange={(e) => {
+                          setPasscodeInput(e.target.value);
+                          setPasscodeError(false);
+                        }}
+                        placeholder="Enter secret passcode..."
+                        className="gov-input text-center font-mono text-xl"
+                        style={{ letterSpacing: '6px', borderColor: passcodeError ? '#ef4444' : '#cbd5e1', padding: '12px' }}
+                        autoFocus
+                      />
+                      {passcodeError && (
+                        <p style={{ color: '#dc2626', fontSize: '12.5px', marginTop: '8px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                          <AlertCircle size={14} />
+                          <span>Incorrect passcode. Access restricted for privacy.</span>
+                        </p>
+                      )}
+                    </div>
+                    <button type="submit" className="btn btn-primary w-full justify-center" style={{ gap: '8px', padding: '12px 20px', fontSize: '15px' }}>
+                      <Lock size={18} />
+                      <span>Unlock Dossier Details</span>
+                    </button>
+                  </form>
+
+                  <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #f1f5f9', fontSize: '12px', color: '#94a3b8' }}>
+                    ℹ Empanelled Experts assigned to this case bypass passcode restrictions in the Expert Portal.
+                  </div>
+                </div>
+              ) : (
+                <>
+                  {/* Top Case Identity Card */}
+                  <div className="gov-card case-detail-header-card">
                 <div className="case-detail-top">
                   <div className="case-id-title-block">
                     <span className="case-large-id">{selectedCase.id}</span>
@@ -537,7 +609,9 @@ export const UserDashboard: React.FC = () => {
               <div className="gov-card timeline-card-wrapper">
                 <CaseTimeline events={selectedCase.events} currentStatus={selectedCase.status} />
               </div>
-            </div>
+            </>
+          )}
+        </div>
           ) : (
             <div className="empty-selection-card gov-card">
               <p>{t('dashboard.noCases', 'Select a case from the left to view timeline, AI guidance, and expert review.')}</p>

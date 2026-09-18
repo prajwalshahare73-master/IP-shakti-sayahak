@@ -25,7 +25,8 @@ import {
   UploadCloud,
   Sparkles,
   Check,
-  Loader2
+  Loader2,
+  Lock
 } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { VoiceInputField } from '../../components/shared/VoiceInputField';
@@ -67,6 +68,7 @@ export const CaseBuilderPage: React.FC = () => {
   const [productType, setProductType] = useState('Proprietary Ayurvedic Medicine');
   const [targetIndication, setTargetIndication] = useState('Chronic Bronchial Clearance & Mucolytic Synergism');
   const [entityType, setEntityType] = useState<'Indian Startup / MSME' | 'Individual Vaidya' | 'Large Enterprise' | 'Foreign / NRI Entity'>('Indian Startup / MSME');
+  const [casePasscode, setCasePasscode] = useState('2024');
 
   // Section 2: Composition Matrix
   const [ingredients, setIngredients] = useState<IngredientRow[]>([
@@ -194,6 +196,7 @@ export const CaseBuilderPage: React.FC = () => {
         escalationReason: `Case Builder structured submission by ${entityType}. Assigned to ${selectedExpert.name} (${selectedExpert.degrees}). Document attached: ${uploadedFile ? uploadedFile.name : 'Digital Formulation Dossier'}.`,
         assignedExpertCategory: selectedExpert.roleTitle,
         assignedExpertName: `${selectedExpert.name} (${selectedExpert.degrees.split(',')[0]})`,
+        casePasscode: casePasscode.trim() || '2024',
         caseProfile: assembledProfile,
         events: [
           {
@@ -799,6 +802,25 @@ export const CaseBuilderPage: React.FC = () => {
                     <option value="Foreign / NRI Entity">{t('caseBuilder.entityForeign', 'Foreign / NRI Entity')}</option>
                   </select>
                 </div>
+              </div>
+
+              <div className="form-field-group mt-4" style={{ background: '#fffbeb', border: '1px solid #fcd34d', padding: '14px', borderRadius: '8px' }}>
+                <label htmlFor="cb-passcode" className="gov-input-label flex items-center gap-1.5" style={{ color: '#92400e', fontWeight: 700 }}>
+                  <Lock size={16} className="text-warning" />
+                  <span>Dossier Data Security Passcode / PIN (Private Protection Lock) *:</span>
+                </label>
+                <input
+                  id="cb-passcode"
+                  type="text"
+                  value={casePasscode}
+                  onChange={(e) => setCasePasscode(e.target.value)}
+                  className="gov-input font-mono text-base"
+                  placeholder="Set 4-digit or text passcode (e.g. 2024)"
+                  style={{ background: '#ffffff', borderColor: '#f59e0b' }}
+                />
+                <span style={{ fontSize: '11.5px', color: '#78350f', marginTop: '4px', display: 'block' }}>
+                  🔒 Data Security: Only users with this passcode can view this case dossier. Empanelled Experts automatically bypass this passcode when conducting legal review.
+                </span>
               </div>
             </div>
 

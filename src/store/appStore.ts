@@ -100,6 +100,7 @@ export interface CaseRecord {
   escalationReason?: string;
   assignedExpertCategory?: string;
   assignedExpertName?: string;
+  casePasscode?: string;
   aiAnswer?: AIAnswerData;
   caseProfile?: CaseProfile;
   events: CaseEvent[];
@@ -241,6 +242,7 @@ export const useAppStore = create<AppState>((set) => ({
       escalationReason: 'Complex interaction between Section 3(p) Traditional Knowledge exclusion and synergistic therapeutic effect claims.',
       assignedExpertCategory: 'Traditional Knowledge / Patent Specialist',
       assignedExpertName: 'Dr. V. Sharma (Senior IP Facilitator)',
+      casePasscode: '2024',
       caseProfile: {
         productType: 'Ayurvedic Medicine / Polyherbal Kadha Extract',
         purpose: 'Respiratory Care & Bronchodilation',
