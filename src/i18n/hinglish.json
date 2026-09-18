@@ -22,7 +22,8 @@
     "login": "लॉग इन",
     "logout": "लॉग आउट",
     "caseBuilder": "केस बिल्डर",
-    "myCases": "मेरे केस"
+    "myCases": "मेरे केस",
+    "profileSettings": "Profile Settings"
   },
   "utility": {
     "skipToContent": "मुख्य सामग्री पर जाएं",
@@ -174,7 +175,11 @@
     "reason": "कारण",
     "confidence": "विश्वास स्तर",
     "status": "स्थिति",
-    "actions": "कार्य"
+    "actions": "कार्य",
+    "greeting": "Welcome",
+    "innovator": "Ayurveda Innovator",
+    "notifications": "Notifications",
+    "automated": "System Automated"
   },
   "caseReport": {
     "title": "केस विश्लेषण रिपोर्ट",
@@ -298,7 +303,16 @@
     "timeline": "Procedural Timeline",
     "replyPlaceholder": "Specialist ke liye additional clarification add karein...",
     "sendReply": "Specialist ko Clarification Send Karein",
-    "replySuccess": "Response submit ho gaya aur case timeline mein jud gaya."
+    "replySuccess": "Response submit ho gaya aur case timeline mein jud gaya.",
+    "additionalInfoReq": "Additional Info Required",
+    "defaultAiAnalysis": "Statutory RAG Analysis Complete",
+    "downloadOfficialDossier": "Official Case Dossier Download Karein (PDF)",
+    "assignedSpecialist": "Assigned Specialist",
+    "patentReadiness": "Patent Readiness",
+    "statutoryAlerts": "Statutory Alerts",
+    "additionalInfoDesc": "Your assigned expert requires details on the formulation or classical reference.",
+    "deliveredOn": "Delivered on",
+    "dataMinimizationNotice": "Protected under National Data Minimization Guidelines. Internal notes and unshared user data are strictly excluded."
   },
   "help": {
     "badge": "Ayurveda IP Knowledge Base & FAQ",
@@ -365,5 +379,89 @@
     "copyrightTitle": "Copyright Protection in Ayurveda",
     "designTitle": "Design Protection for Herbal Products",
     "regulatoryTitle": "Ayurveda Regulatory & AYUSH Compliance"
+  },
+  "domains": {
+    "Patent + Traditional Knowledge": "Patent + Traditional Knowledge",
+    "Patent": "Patent",
+    "Trademark": "Trademark",
+    "ABS / Biodiversity": "ABS / Biodiversity",
+    "Traditional Knowledge": "Traditional Knowledge (TK)",
+    "Geographical Indication": "Geographical Indication (GI)",
+    "Copyright": "Copyright",
+    "Regulatory & AYUSH": "Regulatory & AYUSH"
+  },
+  "timeline": {
+    "heading": "Case Lifecycle & Review Progress",
+    "evQuerySubmitted": "Query Submit hui & Case Create hua",
+    "evQuerySubmittedDesc": "Aapne formulation patentability & statutory route ke baare mein inquiry start ki.",
+    "evAiAnalysis": "AI Statutory Analysis Ready",
+    "evAiAnalysisDesc": "Section 3(p) TK risk evaluate hua aur statutory provisions retrieve hui.",
+    "evEscalated": "Empanelled Specialist ko Escalate hua",
+    "evEscalatedDesc": "Human review request submit hui empanelled patent examiner ke pass.",
+    "evUnderReview": "Specialist Review Underway",
+    "evUnderReviewDesc": "Assigned expert TKDL disclosures aur Section 3(e) experimental data check kar rahe hain.",
+    "evReportReady": "Official Examination Opinion Ready",
+    "evReportReadyDesc": "Complete 14-section compliance opinion download ke liye available hai.",
+    "evUserResponse": "Additional Information Submitted by User",
+    "evReviewCompleted": "Specialist Review Completed & Approved",
+    "evReviewCompletedDesc": "Empanelled specialist completed statutory assessment and recommended filing roadmap."
+  },
+  "mockCases": {
+    "c1Obs1": "Classical treatise mein direct overlap detect hua — Section 3(p) clearance mandatory hai.",
+    "c1Obs2": "Synergy test data provided hai (CI = 0.82) — Section 3(e) mere admixture objection ko tackle karta hai.",
+    "c1Obs3": "Commercial extraction ke liye Form 1 NBA mandatory clearance required hai.",
+    "c2Obs1": "Trademark class 5 (pharmaceutical) aur class 3 (cosmetics) overlap analysis complete ho gayi.",
+    "c2Obs2": "Ayurveda Aahara compliance FSSAI regulation 2022 ke under verify hua.",
+    "c3Obs1": "Standardized extract documentation Ayush GMP standards ke mutabiq hai.",
+    "c3Obs2": "Rule 161 labelling compliance mandatory hai market launch se pehle.",
+    "c1Title": "Ayurvedic herbal polyherbal respiratory formulation patentability",
+    "c1Query": "I want to market my Ayurvedic herbal formulation and also obtain a patent. What should I do?",
+    "c1Summary": "Formulation exhibits therapeutic synergy under Section 3(e) surpassing simple addition of known botanical properties.",
+    "c1NextSteps": "Proceed with provisional patent application enclosing synergy bioassay data, followed by simultaneous NBA Form III intimation.",
+    "c1Risk": "Filing commercially without NBA Form III approval attracts statutory liability under Section 55 of Biological Diversity Act.",
+    "expertDrSharma": "Dr. V. Sharma (Senior IP Facilitator)"
+  },
+  "status": {
+    "submitted": "Submitted",
+    "underReview": "Under Review",
+    "actionRequired": "Action Required",
+    "completed": "Completed",
+    "assigned": "Expert Assigned",
+    "inReview": "In Review",
+    "closed": "Closed"
+  },
+  "expertDirectory": {
+    "title": "Empanelled Experts & Specialists",
+    "subtitle": "Certified Patent Attorneys, Ayurvedic Scientists, aur Traditional Knowledge Legal Advisors se consult karein.",
+    "searchPlaceholder": "Expert name, specialisation ya degrees se search karein...",
+    "allDomains": "All Domains",
+    "domainPatent": "Patents & TKDL",
+    "domainRegulatory": "Regulatory & AYUSH",
+    "domainABS": "ABS & Biodiversity",
+    "yearsExp": "Saal ka Experience",
+    "casesHandled": "Cases Handled",
+    "degreesLabel": "Credentials & Qualifications",
+    "consultBtn": "Consultation Book Karein",
+    "viewProfileBtn": "Profile Dekhein",
+    "verifiedBadge": "Empanelled & Verified",
+    "activeStatus": "Consultation ke liye Available",
+    "domainTkdl": "Traditional Knowledge & TKDL",
+    "domainAbs": "Biodiversity & NBA ABS",
+    "casesResolved": "Cases Resolved",
+    "availableNow": "Available for Review",
+    "assignToExpert": "Assign My Case",
+    "selected": "Selected Expert",
+    "badgeSenior": "Senior Empanelled Facilitator",
+    "badgeTkdlSpecialist": "TKDL & Dravyaguna Specialist",
+    "badgePrincipalCounsel": "Principal AYUSH Patent Counsel",
+    "badgePatentSpecialist": "Phytochemistry & Patent Analyst",
+    "badgeNbaCounsel": "NBA Regulatory Counsel",
+    "badgeAbsAdvisor": "SBB & Nagoya Protocol Advisor",
+    "badgeAyushLicensing": "AYUSH Drugs Act Specialist"
+  },
+  "jurisdictions": {
+    "India": "India",
+    "International": "International",
+    "India + International": "India + International"
   }
 }

@@ -41,7 +41,7 @@ export async function askIPQuestion(payload: AskRequestPayload): Promise<AIAnswe
     try {
       const authHeader = await getAuthHeader();
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000);
+      const timeoutId = setTimeout(() => controller.abort(), 45000);
 
       const response = await fetch(ragUrl, {
         method: 'POST',
