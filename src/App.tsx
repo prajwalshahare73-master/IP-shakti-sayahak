@@ -72,16 +72,22 @@ export const App: React.FC = () => {
               });
               setSession(session);
             } else {
-              setUser(null);
-              setSession(null);
+              const savedUser = localStorage.getItem('ipsakti_user');
+              if (!savedUser) {
+                setUser(null);
+                setSession(null);
+              }
             }
             setAuthInitialized(true);
           }
         } catch (err) {
           console.warn('[Supabase] Auth initialization error:', err);
           if (isMounted) {
-            setUser(null);
-            setSession(null);
+            const savedUser = localStorage.getItem('ipsakti_user');
+            if (!savedUser) {
+              setUser(null);
+              setSession(null);
+            }
             setAuthInitialized(true);
           }
         }
@@ -100,7 +106,7 @@ export const App: React.FC = () => {
               role: meta.role || 'user'
             });
             setSession(session);
-          } else {
+          } else if (event === 'SIGNED_OUT') {
             setUser(null);
             setSession(null);
           }
@@ -112,8 +118,11 @@ export const App: React.FC = () => {
         };
       } else {
         if (isMounted) {
-          setUser(null);
-          setSession(null);
+          const savedUser = localStorage.getItem('ipsakti_user');
+          if (!savedUser) {
+            setUser(null);
+            setSession(null);
+          }
           setAuthInitialized(true);
         }
       }

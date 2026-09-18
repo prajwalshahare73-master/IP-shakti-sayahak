@@ -172,6 +172,18 @@ interface AppState {
   markNotificationRead: (id: string) => void;
 }
 
+const getStoredUser = () => {
+  try {
+    const raw = localStorage.getItem('ipsakti_user');
+    if (raw) return JSON.parse(raw);
+  } catch (e) {
+    console.warn('[appStore] Error loading stored user:', e);
+  }
+  return null;
+};
+
+const initialStoredUser = getStoredUser();
+
 export const useAppStore = create<AppState>((set) => ({
   language: localStorage.getItem('ipsakti_lang') || 'en',
   responseLanguage: localStorage.getItem('ipsakti_lang') || 'en',
@@ -200,10 +212,17 @@ export const useAppStore = create<AppState>((set) => ({
   setError: (error) => set({ error }),
   setCurrentAnswer: (currentAnswer) => set({ currentAnswer }),
 
-  user: null,
+  user: initialStoredUser,
   session: null,
-  authInitialized: false,
-  setUser: (user) => set({ user }),
+  authInitialized: Boolean(initialStoredUser),
+  setUser: (user) => {
+    if (user) {
+      localStorage.setItem('ipsakti_user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('ipsakti_user');
+    }
+    set({ user, authInitialized: true });
+  },
   setSession: (session) => set({ session }),
   setAuthInitialized: (authInitialized) => set({ authInitialized }),
 

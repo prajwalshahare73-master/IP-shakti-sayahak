@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   UserCheck,
@@ -17,7 +17,7 @@ import { supabase, isSupabaseConfigured } from '../../services/supabase';
 export const ExpertLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setUser } = useAppStore();
+  const { user, setUser, authInitialized } = useAppStore();
 
   const [expertId, setExpertId] = useState('EXP-IN-7042');
   const [password, setPassword] = useState('••••••••••••');
@@ -27,6 +27,12 @@ export const ExpertLoginPage: React.FC = () => {
 
   const from = (location.state as any)?.from?.pathname || '/expert/dashboard';
   const roleMismatch = (location.state as any)?.roleMismatch;
+
+  useEffect(() => {
+    if (authInitialized && user) {
+      navigate(from === '/expert/login' ? '/expert/dashboard' : from, { replace: true });
+    }
+  }, [authInitialized, user, navigate, from]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

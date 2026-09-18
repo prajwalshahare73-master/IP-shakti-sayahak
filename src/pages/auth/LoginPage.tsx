@@ -36,10 +36,11 @@ export const LoginPage: React.FC = () => {
 
   const from = (location.state as any)?.from?.pathname || '/';
 
-  // If already authenticated, redirect to destination
+  // If already authenticated, redirect immediately so user never sees login again
   useEffect(() => {
     if (authInitialized && user) {
-      navigate(from, { replace: true });
+      const dest = (!from || from === '/login') ? '/' : from;
+      navigate(dest, { replace: true });
     }
   }, [authInitialized, user, navigate, from]);
 

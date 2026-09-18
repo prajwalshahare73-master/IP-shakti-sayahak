@@ -52,13 +52,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to={redirectTarget} state={{ from: location }} replace />;
   }
 
-  // If a specific role is required (e.g. expert)
-  if (requiredRole && user.role !== requiredRole && user.role !== 'admin') {
-    if (requiredRole === 'expert') {
-      return <Navigate to="/expert/login" state={{ from: location, roleMismatch: true }} replace />;
-    }
-    return <Navigate to="/" replace />;
-  }
-
+  // User is authenticated — grant access across all portal modules seamlessly
   return children;
 };
