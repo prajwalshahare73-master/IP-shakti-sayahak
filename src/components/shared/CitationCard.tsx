@@ -72,14 +72,32 @@ export const CitationCard: React.FC<{ citation: Citation; index?: number }> = ({
 
       <div className="citation-action-row">
         <a
-          href={citation.url || `/sources?highlight=${encodeURIComponent(citation.title)}`}
+          href={
+            citation.url ||
+            (citation.title.toLowerCase().includes('biodiversity') || citation.title.toLowerCase().includes('nba')
+              ? 'http://nbaindia.org'
+              : citation.title.toLowerCase().includes('tkdl')
+              ? 'https://tkdl.res.in'
+              : citation.title.toLowerCase().includes('ayurveda aahara') || citation.title.toLowerCase().includes('fssai')
+              ? 'https://fssai.gov.in'
+              : citation.title.toLowerCase().includes('trademark')
+              ? 'https://ipindia.gov.in/trade-marks.htm'
+              : 'https://ipindia.gov.in/patents.htm')
+          }
           className="btn btn-outline btn-sm citation-link"
           target="_blank"
           rel="noopener noreferrer"
         >
           <BookOpen size={14} />
-          <span>View Source Document</span>
+          <span>View Statutory Source</span>
           <ExternalLink size={12} />
+        </a>
+        <a
+          href={`/sources?highlight=${encodeURIComponent(citation.section || citation.title.split('—')[0].trim())}`}
+          className="btn btn-outline btn-sm"
+          style={{ fontSize: '11.5px', padding: '4px 10px' }}
+        >
+          <span>Browse in Portal Sources</span>
         </a>
       </div>
     </div>

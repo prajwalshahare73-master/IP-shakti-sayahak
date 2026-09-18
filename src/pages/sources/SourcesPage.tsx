@@ -112,18 +112,25 @@ export const SourcesPage: React.FC = () => {
     }
   ];
 
-  const filteredSources = sourcesList.filter((src) => {
-    const matchesSearch =
-      searchFilter === '' ||
-      src.title.toLowerCase().includes(searchFilter.toLowerCase()) ||
-      src.sections.toLowerCase().includes(searchFilter.toLowerCase()) ||
-      src.desc.toLowerCase().includes(searchFilter.toLowerCase());
+  const filterTokens = searchFilter
+    .toLowerCase()
+    .replace(/[—\-_()\[\],]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !['the', 'act', 'and', 'for'].includes(w));
 
+  const rawFiltered = sourcesList.filter((src) => {
+    if (filterTokens.length === 0) return true;
+    const combinedText = `${src.title} ${src.sections} ${src.desc} ${src.authority} ${src.type}`.toLowerCase();
+    return filterTokens.some((token) => combinedText.includes(token));
+  });
+
+  const matchesTypeAndJurisdiction = (rawFiltered.length > 0 ? rawFiltered : sourcesList).filter((src) => {
     const matchesType = typeFilter === 'All' || src.type === typeFilter;
     const matchesJurisdiction = jurisdictionFilter === 'All' || src.jurisdiction === jurisdictionFilter;
-
-    return matchesSearch && matchesType && matchesJurisdiction;
+    return matchesType && matchesJurisdiction;
   });
+
+  const filteredSources = matchesTypeAndJurisdiction.length > 0 ? matchesTypeAndJurisdiction : sourcesList;
 
   return (
     <div className="gov-sources-page" id="main-content">
