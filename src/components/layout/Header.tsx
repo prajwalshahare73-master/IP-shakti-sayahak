@@ -364,6 +364,17 @@ export const Header: React.FC = () => {
 
             <li className="gov-nav-item">
               <Link
+                to="/expert/dashboard"
+                className={`gov-nav-link ${isActive('/expert/dashboard') || isActive('/expert/login') ? 'active' : ''}`}
+                style={{ color: '#047857', fontWeight: 600 }}
+              >
+                <UserCheck size={16} color="#047857" />
+                <span>{t('nav.expertPortal', 'Expert Portal')}</span>
+              </Link>
+            </li>
+
+            <li className="gov-nav-item">
+              <Link
                 to="/help"
                 className={`gov-nav-link ${isActive('/help') ? 'active' : ''}`}
               >
