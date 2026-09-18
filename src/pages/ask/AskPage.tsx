@@ -72,12 +72,13 @@ export const AskPage: React.FC = () => {
 
     setError(null);
     setLoading(true, 1);
-    await new Promise((r) => setTimeout(r, 150));
+    await new Promise((r) => setTimeout(r, 550));
     setLoading(true, 2);
-    await new Promise((r) => setTimeout(r, 150));
+    await new Promise((r) => setTimeout(r, 650));
     setLoading(true, 3);
-    await new Promise((r) => setTimeout(r, 150));
+    await new Promise((r) => setTimeout(r, 700));
     setLoading(true, 4);
+    await new Promise((r) => setTimeout(r, 600));
 
     try {
       const activeProfile = { ...caseProfile, ...profileOverride };
