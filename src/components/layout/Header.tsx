@@ -354,6 +354,16 @@ export const Header: React.FC = () => {
 
             <li className="gov-nav-item">
               <Link
+                to="/sources"
+                className={`gov-nav-link ${isActive('/sources') ? 'active' : ''}`}
+              >
+                <BookOpen size={16} className="text-secondary" />
+                <span>{t('nav.sources', 'Sources & Statutes')}</span>
+              </Link>
+            </li>
+
+            <li className="gov-nav-item">
+              <Link
                 to="/dashboard"
                 className={`gov-nav-link ${isActive('/dashboard') ? 'active' : ''}`}
               >
