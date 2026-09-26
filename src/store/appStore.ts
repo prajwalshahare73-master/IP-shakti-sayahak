@@ -10,6 +10,8 @@ export interface Citation {
   jurisdiction: string;
   status: 'Current' | 'Amended' | 'Historical';
   version?: string;
+  effectiveDate?: string;       // Date when this provision came into force (ISO or human-readable)
+  lastAmendedDate?: string;     // Date of most recent amendment (ISO or human-readable)
   url?: string;
   excerpt?: string;
   authorityLevel: 1 | 2 | 3 | 4; // 1 = Primary Statute, 2 = Official Guideline, 3 = Registry Evidence, 4 = Supporting Research

@@ -131,11 +131,12 @@ def analyze_query(
 
     has_domain_terms = any(kw in text for kw in IP_AYUSH_KEYWORDS)
 
-    # Check for explicitly out-of-scope questions (weather, sports, politics, general chat)
+    # Check for explicitly out-of-scope questions (weather, sports, politics, foreign software/blockchain, general chat)
     OUT_OF_SCOPE_TERMS = [
         "weather", "temperature", "forecast", "rain", "cricket", "football", "match", "score",
         "movie", "film", "song", "actor", "recipe", "cooking", "president", "prime minister",
-        "capital of", "joke", "story", "bitcoin", "crypto", "stock market today"
+        "capital of", "joke", "story", "bitcoin", "crypto", "stock market today",
+        "delaware", "blockchain", "ethereum", "uspto", "sec filing", "forex", "nft"
     ]
 
     is_out_of_scope = any(re.search(r"\b" + re.escape(w) + r"\b", text) for w in OUT_OF_SCOPE_TERMS)

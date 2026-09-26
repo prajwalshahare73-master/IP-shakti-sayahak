@@ -76,7 +76,8 @@ class CasesRepository:
         self.sb = get_supabase_client()
 
     async def create_case(self, user_id: str, title: str, builder_data: Optional[CaseBuilderInput] = None, initial_question: Optional[str] = None, language: str = "en", jurisdiction: str = "india") -> CaseRecord:
-        case_id = f"CASE-{int(datetime.utcnow().timestamp()) % 100000:05d}"
+        # Unique collision-free case ID with millisecond precision and random entropy
+        case_id = f"CASE-{int(datetime.utcnow().timestamp() * 1000) % 1000000:06d}-{uuid.uuid4().hex[:4].upper()}"
         now = datetime.utcnow()
         
         ip_categories = [builder_data.ip_category] if builder_data and builder_data.ip_category else ["PATENT"]
@@ -200,7 +201,17 @@ class CasesRepository:
                     results.append(case)
         return results
 
-    async def update_status(self, case_id: str, new_status: CaseStatus, actor_id: Optional[str] = None, actor_role: str = "system", note: Optional[str] = None) -> CaseRecord:
+    async def update_status(
+        self, 
+        case_id: str, 
+        new_status: CaseStatus, 
+        actor_id: Optional[str] = None, 
+        actor_role: str = "system", 
+        note: Optional[str] = None,
+        expert_id: Optional[str] = None,
+        expert_name: Optional[str] = None,
+        expert_domain: Optional[str] = None
+    ) -> CaseRecord:
         case = await self.get_case(case_id)
         if not case:
             raise ValueError(f"Case {case_id} not found")
@@ -210,6 +221,12 @@ class CasesRepository:
             raise ValueError(f"Invalid transition from {case.status} to {new_status}. Allowed: {allowed}")
 
         case.status = new_status
+        if expert_id:
+            case.expert_id = expert_id
+        if expert_name:
+            case.expert_name = expert_name
+        if expert_domain:
+            case.expert_domain = expert_domain
         case.updated_at = datetime.utcnow()
 
         event = CaseEvent(

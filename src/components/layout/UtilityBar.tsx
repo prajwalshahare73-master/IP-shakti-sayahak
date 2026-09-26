@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck, Globe, MapPin, Eye, Volume2 } from 'lucide-react';
+import { ShieldCheck, Globe, Eye, Volume2 } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
 import { SUPPORTED_LANGUAGES } from '../../i18n/config';
 
 export const UtilityBar: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { jurisdiction, setJurisdiction, language, setLanguage } = useAppStore();
+  const { language, setLanguage } = useAppStore();
   const [fontSize, setFontSize] = useState<'normal' | 'large' | 'larger'>('normal');
 
   const handleTextSize = (size: 'normal' | 'large' | 'larger') => {
@@ -64,24 +64,6 @@ export const UtilityBar: React.FC = () => {
             </button>
           </div>
 
-          {/* Jurisdiction Selector */}
-          <div className="jurisdiction-select-wrapper">
-            <MapPin size={13} className="text-secondary" />
-            <label htmlFor="utility-jurisdiction" className="sr-only">
-              {t('utility.jurisdiction')}
-            </label>
-            <select
-              id="utility-jurisdiction"
-              value={jurisdiction}
-              onChange={(e) => setJurisdiction(e.target.value as any)}
-              className="gov-select-compact"
-              aria-label="Target Legal Jurisdiction"
-            >
-              <option value="India">🇮🇳 India (Acts & AYUSH)</option>
-              <option value="International">🌐 International (PCT/WIPO)</option>
-              <option value="India + International">🇮🇳+🌐 India + Global</option>
-            </select>
-          </div>
 
           {/* Fast Language Selector */}
           <div className="language-select-wrapper">

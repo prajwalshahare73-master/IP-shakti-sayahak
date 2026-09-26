@@ -69,6 +69,40 @@ def init_db():
         )
     """)
     
+    # Expert Case Requests Table
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS expert_case_requests (
+            id TEXT PRIMARY KEY,
+            case_id TEXT NOT NULL,
+            expert_id TEXT NOT NULL,
+            user_id TEXT,
+            case_title TEXT,
+            domain TEXT,
+            jurisdiction TEXT,
+            priority TEXT,
+            status TEXT NOT NULL,
+            submitted_at TEXT,
+            accepted_at TEXT,
+            completed_at TEXT,
+            review_response TEXT,
+            created_at TEXT,
+            updated_at TEXT
+        )
+    """)
+    
+    # Users Table (for Authentication & Cross-User Security Isolation)
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id TEXT PRIMARY KEY,
+            email TEXT UNIQUE NOT NULL,
+            password_hash TEXT NOT NULL,
+            full_name TEXT NOT NULL,
+            role TEXT NOT NULL DEFAULT 'user',
+            organization TEXT,
+            created_at TEXT
+        )
+    """)
+    
     conn.commit()
     conn.close()
 

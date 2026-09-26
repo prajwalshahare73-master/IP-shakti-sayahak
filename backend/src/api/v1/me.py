@@ -17,9 +17,11 @@ async def get_my_cases(auth_user = Depends(get_current_user_payload)):
 @router.get("/cases/{case_id}", response_model=Dict[str, Any])
 async def get_my_case_detail(case_id: str, auth_user = Depends(get_current_user_payload)):
     case = await cases_repo.get_case(case_id)
-    if not case:
-        raise HTTPException(status_code=404, detail={"code": "CASE_NOT_FOUND", "message": f"Case {case_id} not found."})
-    
+    user_id = auth_user.get("sub", "anon_user") if auth_user else "anon_user"
+    role = auth_user.get("role", "user") if auth_user else "user"
+    if case.user_id and case.user_id != "anon_user" and case.user_id != user_id and role != "admin":
+        raise HTTPException(status_code=403, detail={"code": "FORBIDDEN_CASE_ACCESS", "message": "You are not authorized to view this case."})
+
     review = await expert_repo.get_case_review(case_id)
     case_dict = case.model_dump()
     case_dict["expert_review"] = review

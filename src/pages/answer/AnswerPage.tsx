@@ -29,9 +29,11 @@ import {
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { ConfidenceCard } from '../../components/shared/ConfidenceCard';
 import { CitationCard } from '../../components/shared/CitationCard';
+import { StructuredAnswerPanel } from '../../components/shared/StructuredAnswerPanel';
 import { useAppStore, CaseRecord, AIAnswerData } from '../../store/appStore';
 import { askIPQuestion } from '../../services/ask.service';
 import { ExpertDirectorySelector, EmpanelledExpert, EMPANELLED_EXPERTS } from '../../components/expert/ExpertDirectorySelector';
+import { TrustValidationPanel } from '../../components/shared/TrustValidationPanel';
 
 export const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -398,24 +400,33 @@ export const AnswerPage: React.FC = () => {
                     </div>
                   )}
 
-                  {/* AI-Generated Guidance Block */}
-                  <div className="gov-card ai-guidance-card">
-                    <div className="ai-badge-header">
+                  {/* Structured Answer Dossier — 11-section RAG answer panel */}
+                  <div className="gov-card" style={{ padding: 0, overflow: 'hidden' }}>
+                    <div className="ai-badge-header" style={{ padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-border-light)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)', background: 'var(--color-ai-bg)' }}>
                       <div className="ai-origin-pill">
                         <Scale size={14} className="text-primary" />
                         <span>{t('answer.aiGuidancePill', 'AI-generated guidance — source-grounded')}</span>
                       </div>
                       <span className="status-badge info">{currentAnswer.ipType}</span>
                     </div>
-
-                    <h2 className="direct-answer-heading">{t('answer.directAnswer', 'Guidance Opinion')}</h2>
-                    <p className="direct-answer-text">{currentAnswer.answer}</p>
-
-                    <div className="answer-summary-box">
-                      <strong>{t('answer.executiveSummary', 'Executive Summary:')}</strong>
-                      <p>{currentAnswer.summary}</p>
+                    <div style={{ padding: 'var(--space-4)' }}>
+                      <StructuredAnswerPanel
+                        answer={currentAnswer}
+                        query={query || qParam || ''}
+                        jurisdiction={jurisdiction}
+                        caseProfile={caseProfile}
+                        onEscalate={() => setShowExpertModal(true)}
+                      />
                     </div>
                   </div>
+
+                  {/* Trust & Citation Verification Additive Layer */}
+                  <TrustValidationPanel
+                    answer={currentAnswer as any}
+                    query={query}
+                    jurisdiction={jurisdiction}
+                    onEscalate={() => setShowExpertModal(true)}
+                  />
 
                   {/* Collapsible Why Section */}
                   <div className="gov-card why-section-card">
@@ -522,6 +533,12 @@ export const AnswerPage: React.FC = () => {
                       <strong className="context-val">{caseProfile.productType}</strong>
                     </div>
                   )}
+                  {caseProfile.productName && (
+                    <div className="context-row">
+                      <span className="context-label">Product Name:</span>
+                      <strong className="context-val">{caseProfile.productName}</strong>
+                    </div>
+                  )}
                   {caseProfile.purpose && (
                     <div className="context-row">
                       <span className="context-label">Intended Purpose:</span>
@@ -531,7 +548,37 @@ export const AnswerPage: React.FC = () => {
                   {caseProfile.ingredients && caseProfile.ingredients.length > 0 && (
                     <div className="context-row">
                       <span className="context-label">Botanical Ingr.:</span>
-                      <strong className="context-val">{caseProfile.ingredients.join(', ')}</strong>
+                      <strong className="context-val">{caseProfile.ingredients.slice(0, 3).join(', ')}{caseProfile.ingredients.length > 3 ? ` +${caseProfile.ingredients.length - 3} more` : ''}</strong>
+                    </div>
+                  )}
+                  {caseProfile.formulation_details && (
+                    <div className="context-row">
+                      <span className="context-label">Formulation:</span>
+                      <strong className="context-val" style={{ fontSize: '0.8rem' }}>{caseProfile.formulation_details.slice(0, 80)}{caseProfile.formulation_details.length > 80 ? '…' : ''}</strong>
+                    </div>
+                  )}
+                  {caseProfile.tk_involved && (
+                    <div className="context-row">
+                      <span className="context-label">Traditional Knowledge:</span>
+                      <span className="status-badge warning" style={{ fontSize: '10px' }}>YES — TK Review Required</span>
+                    </div>
+                  )}
+                  {caseProfile.biological_material && (
+                    <div className="context-row">
+                      <span className="context-label">Biological Resource:</span>
+                      <span className="status-badge warning" style={{ fontSize: '10px' }}>YES — ABS Applicable</span>
+                    </div>
+                  )}
+                  {caseProfile.export_planned && (
+                    <div className="context-row">
+                      <span className="context-label">Export / International:</span>
+                      <span className="status-badge info" style={{ fontSize: '10px' }}>YES</span>
+                    </div>
+                  )}
+                  {caseProfile.target_countries && caseProfile.target_countries.length > 0 && (
+                    <div className="context-row">
+                      <span className="context-label">Target Countries:</span>
+                      <strong className="context-val">{caseProfile.target_countries.join(', ')}</strong>
                     </div>
                   )}
                 </div>

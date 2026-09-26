@@ -137,6 +137,25 @@ CREATE TABLE IF NOT EXISTS review_requests (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 7b. Actionable Expert Case Routing Requests (Section 14)
+CREATE TABLE IF NOT EXISTS expert_case_requests (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    case_id TEXT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+    expert_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+    user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
+    domain TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'Pending Expert Review' CHECK (status IN (
+        'Pending Expert Review', 'Accepted', 'Under Review', 'Response Available', 'Closed', 'Declined'
+    )),
+    submitted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    accepted_at TIMESTAMP WITH TIME ZONE,
+    completed_at TIMESTAMP WITH TIME ZONE,
+    review_response JSONB DEFAULT '{}'::jsonb,
+    additional_information TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS expert_reviews (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     case_id TEXT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
@@ -182,17 +201,24 @@ CREATE INDEX IF NOT EXISTS idx_cases_status ON cases(status);
 CREATE INDEX IF NOT EXISTS idx_case_events_case_id ON case_events(case_id);
 CREATE INDEX IF NOT EXISTS idx_ai_answers_case_id ON ai_answers(case_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id, read);
+CREATE INDEX IF NOT EXISTS idx_expert_requests_case_id ON expert_case_requests(case_id);
+CREATE INDEX IF NOT EXISTS idx_expert_requests_expert_id ON expert_case_requests(expert_id);
 
 -- Row-Level Security (RLS) Enablement
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE cases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE case_builder_data ENABLE ROW LEVEL SECURITY;
 ALTER TABLE case_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE expert_case_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE expert_reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
--- Basic RLS Policies
+-- Basic RLS Policies (Section 10 Privacy Compliance)
 CREATE POLICY "Users can read own profile" ON profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can view their own cases" ON cases FOR SELECT USING (auth.uid() = user_id OR auth.uid() = expert_id);
 CREATE POLICY "Users can view their notifications" ON notifications FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "Authorized access to expert requests" ON expert_case_requests FOR ALL USING (
+    auth.uid() = user_id OR auth.uid() = expert_id
+);
+

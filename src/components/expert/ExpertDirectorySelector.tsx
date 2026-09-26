@@ -18,7 +18,7 @@ export interface EmpanelledExpert {
   id: string;
   name: string;
   roleTitle: string;
-  domain: 'tkdl' | 'patent' | 'abs' | 'regulatory' | 'trademark';
+  domain: 'tkdl' | 'patent' | 'abs' | 'regulatory' | 'food_aahara' | 'intl_ip' | 'trademark' | 'prior_art';
   domainLabelKey: string;
   degrees: string;
   experienceYears: number;
@@ -28,6 +28,16 @@ export interface EmpanelledExpert {
   bioKey: string;
   available: boolean;
   avatarGradient: string;
+  // Enhanced Section 2 & 11 verified credential fields
+  specialization: string[];
+  expertise: string[];
+  jurisdiction: 'India' | 'International' | 'India / International';
+  status: 'Available' | 'Busy' | 'Offline';
+  organization: string;
+  verificationStatus: 'Verified Expert' | 'Verified Senior Specialist';
+  matchScore?: number;
+  matchBadge?: string;
+  matchReasons?: string[];
 }
 
 export const EMPANELLED_EXPERTS: EmpanelledExpert[] = [
@@ -45,7 +55,13 @@ export const EMPANELLED_EXPERTS: EmpanelledExpert[] = [
     badgeKey: 'expertDirectory.badgeSenior',
     bioKey: 'expertDirectory.bioVandana',
     available: true,
-    avatarGradient: 'linear-gradient(135deg, #0f3d5c 0%, #0d9488 100%)'
+    avatarGradient: 'linear-gradient(135deg, #0f3d5c 0%, #0d9488 100%)',
+    specialization: ['Traditional Knowledge', 'TKDL', 'Prior Art'],
+    expertise: ['Patent Research', 'Traditional Knowledge', 'Prior Art', 'AYUSH IP'],
+    jurisdiction: 'India / International',
+    status: 'Available',
+    organization: 'AYUSH IP Facilitation Cell / Regd. IPO Agent',
+    verificationStatus: 'Verified Senior Specialist'
   },
   {
     id: 'exp-tkdl-2',
@@ -60,22 +76,13 @@ export const EMPANELLED_EXPERTS: EmpanelledExpert[] = [
     badgeKey: 'expertDirectory.badgeTkdlSpecialist',
     bioKey: 'expertDirectory.bioAnanya',
     available: true,
-    avatarGradient: 'linear-gradient(135deg, #047857 0%, #059669 100%)'
-  },
-  {
-    id: 'exp-tkdl-3',
-    name: 'Vaidya Harishankar Joshi',
-    roleTitle: 'Classical Formulary & Manuscript Documentation Fellow',
-    domain: 'tkdl',
-    domainLabelKey: 'expertDirectory.domainTkdl',
-    degrees: 'BAMS, M.A. (Sanskrit - Ayurveda Samhitas), TKDL Legal Fellow',
-    experienceYears: 22,
-    casesResolved: 165,
-    rating: 5.0,
-    badgeKey: 'expertDirectory.badgePrincipalCounsel',
-    bioKey: 'expertDirectory.bioHarishankar',
-    available: true,
-    avatarGradient: 'linear-gradient(135deg, #b45309 0%, #d97706 100%)'
+    avatarGradient: 'linear-gradient(135deg, #047857 0%, #059669 100%)',
+    specialization: ['Classical Treatises', 'Dravyaguna Herbology', 'TKDL Indexing'],
+    expertise: ['Samhita Concordance', 'Prior Art Invalidation', 'Ayurveda Botanical Evidence'],
+    jurisdiction: 'India',
+    status: 'Available',
+    organization: 'National Ayurveda Research Institute',
+    verificationStatus: 'Verified Expert'
   },
 
   // 2. Patents & Section 3(p) Synergy Specialists
@@ -92,22 +99,13 @@ export const EMPANELLED_EXPERTS: EmpanelledExpert[] = [
     badgeKey: 'expertDirectory.badgePrincipalCounsel',
     bioKey: 'expertDirectory.bioRajeshwar',
     available: true,
-    avatarGradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)'
-  },
-  {
-    id: 'exp-pat-2',
-    name: 'Dr. Hemant Joshi',
-    roleTitle: 'Polyherbal Formulation & Synergism Claim Specialist',
-    domain: 'patent',
-    domainLabelKey: 'expertDirectory.domainPatent',
-    degrees: 'M.Pharm (Pharmacognosy), Ph.D. (Phytochemistry), Patent Analyst',
-    experienceYears: 14,
-    casesResolved: 95,
-    rating: 4.8,
-    badgeKey: 'expertDirectory.badgePatentSpecialist',
-    bioKey: 'expertDirectory.bioHemant',
-    available: true,
-    avatarGradient: 'linear-gradient(135deg, #4338ca 0%, #6366f1 100%)'
+    avatarGradient: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
+    specialization: ['Section 3(p) Screening', 'Synergism Claims', 'Patent Drafting'],
+    expertise: ['Patent Litigation', 'Section 3(e) Synergistic Assay', 'Drafting & Prosecution'],
+    jurisdiction: 'India',
+    status: 'Available',
+    organization: 'National AYUSH Patent Attorneys Guild',
+    verificationStatus: 'Verified Senior Specialist'
   },
 
   // 3. Biodiversity Act & NBA Access and Benefit Sharing (ABS) Specialists
@@ -124,12 +122,18 @@ export const EMPANELLED_EXPERTS: EmpanelledExpert[] = [
     badgeKey: 'expertDirectory.badgeNbaCounsel',
     bioKey: 'expertDirectory.bioMeenakshi',
     available: true,
-    avatarGradient: 'linear-gradient(135deg, #065f46 0%, #10b981 100%)'
+    avatarGradient: 'linear-gradient(135deg, #065f46 0%, #10b981 100%)',
+    specialization: ['National Biodiversity Authority', 'SBB Form I & III', 'Nagoya Protocol'],
+    expertise: ['ABS Approvals', 'Biological Diversity Act 2002', 'Access Agreements'],
+    jurisdiction: 'India / International',
+    status: 'Available',
+    organization: 'Centre for Bio-Legal Studies & NBA Statutory Advisory',
+    verificationStatus: 'Verified Expert'
   },
   {
     id: 'exp-abs-2',
     name: 'Dr. Pradeep Narayanan',
-    roleTitle: 'State Biodiversity Board (SBB) Form I & III Compliance Advisor',
+    roleTitle: 'State Biodiversity Board (SBB) Compliance Advisor',
     domain: 'abs',
     domainLabelKey: 'expertDirectory.domainAbs',
     degrees: 'Ph.D. (Ethnobotany), Post-Doc (ABS Nagoya Protocol), SBB Advisor',
@@ -139,7 +143,13 @@ export const EMPANELLED_EXPERTS: EmpanelledExpert[] = [
     badgeKey: 'expertDirectory.badgeAbsAdvisor',
     bioKey: 'expertDirectory.bioPradeep',
     available: true,
-    avatarGradient: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)'
+    avatarGradient: 'linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)',
+    specialization: ['Wild Herb Sourcing', 'Form I SBB Intimation', 'Commercial Benefit Sharing'],
+    expertise: ['Ethnobotanical Documentation', 'State Biodiversity Boards', 'ABS Clearance'],
+    jurisdiction: 'India',
+    status: 'Available',
+    organization: 'Ethnobotany Conservation & Bio-Trade Advisory',
+    verificationStatus: 'Verified Expert'
   },
 
   // 4. Regulatory & AYUSH Licensing Specialists
@@ -156,14 +166,112 @@ export const EMPANELLED_EXPERTS: EmpanelledExpert[] = [
     badgeKey: 'expertDirectory.badgeAyushLicensing',
     bioKey: 'expertDirectory.bioSuniti',
     available: true,
-    avatarGradient: 'linear-gradient(135deg, #831843 0%, #db2777 100%)'
+    avatarGradient: 'linear-gradient(135deg, #831843 0%, #db2777 100%)',
+    specialization: ['Drugs & Cosmetics Act 1940', 'GMP Schedule T', 'Manufacturing Licensing'],
+    expertise: ['Drug Licensing', 'Schedule T GMP', 'State Licensing Authority (SLA)'],
+    jurisdiction: 'India',
+    status: 'Available',
+    organization: 'AYUSH Regulatory Compliance Bureau',
+    verificationStatus: 'Verified Expert'
+  },
+
+  // 5. Food / Ayurveda Aahara Specialists
+  {
+    id: 'exp-food-1',
+    name: 'Dr. Arvind R. Namboodiri',
+    roleTitle: 'Ayurveda Aahara & FSSAI Nutraceutical Specialist',
+    domain: 'food_aahara',
+    domainLabelKey: 'expertDirectory.domainFoodAahara',
+    degrees: 'BAMS, M.Sc. (Food Science & Nutrition), FSSAI Certified Technical Advisor',
+    experienceYears: 15,
+    casesResolved: 86,
+    rating: 4.8,
+    badgeKey: 'expertDirectory.badgeFoodSpecialist',
+    bioKey: 'expertDirectory.bioArvind',
+    available: true,
+    avatarGradient: 'linear-gradient(135deg, #ea580c 0%, #f97316 100%)',
+    specialization: ['FSSAI Ayurveda Aahara 2022', 'Nutraceutical Labeling', 'Dietary Safety Dossiers'],
+    expertise: ['Ayurveda Aahara Formulations', 'Food Safety Standards', 'Label Claims'],
+    jurisdiction: 'India',
+    status: 'Available',
+    organization: 'Ayurveda Aahara Technical Advisory Group',
+    verificationStatus: 'Verified Expert'
+  },
+
+  // 6. International IP / Regulatory Specialists
+  {
+    id: 'exp-intl-1',
+    name: 'Adv. Priya Venkataraman',
+    roleTitle: 'International IP & Global Regulatory Counsel (WIPO / PCT / US FDA)',
+    domain: 'intl_ip',
+    domainLabelKey: 'expertDirectory.domainIntlIp',
+    degrees: 'B.Sc. (Chemistry), LL.M. (International IP - London), Regd. Patent Agent',
+    experienceYears: 17,
+    casesResolved: 135,
+    rating: 4.9,
+    badgeKey: 'expertDirectory.badgeIntlCounsel',
+    bioKey: 'expertDirectory.bioPriya',
+    available: true,
+    avatarGradient: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+    specialization: ['PCT International Applications', 'US FDA Botanical Guidance', 'EU Herbal Monographs'],
+    expertise: ['PCT Chapter I & II', 'Cross-Border IP', 'Foreign Filing Licenses (Sec 39)'],
+    jurisdiction: 'India / International',
+    status: 'Available',
+    organization: 'Global Life Sciences IP Practice',
+    verificationStatus: 'Verified Expert'
+  },
+
+  // 7. Trademark / GI / Design Specialists
+  {
+    id: 'exp-tm-1',
+    name: 'Adv. Vikramaditya Sen',
+    roleTitle: 'Trademark, Geographical Indications & Design Law Specialist',
+    domain: 'trademark',
+    domainLabelKey: 'expertDirectory.domainTrademark',
+    degrees: 'B.A. LL.B. (Hons), Advocate (IPAB & High Court)',
+    experienceYears: 14,
+    casesResolved: 112,
+    rating: 4.8,
+    badgeKey: 'expertDirectory.badgeTrademarkSpecialist',
+    bioKey: 'expertDirectory.bioVikramaditya',
+    available: true,
+    avatarGradient: 'linear-gradient(135deg, #0284c7 0%, #06b6d4 100%)',
+    specialization: ['Nice Class 5 & 30', 'Geographical Indications of Goods', 'Shape of Goods / Design'],
+    expertise: ['AYUSH Brand Protection', 'GI Registry Chennai', 'Opposition & Infringement'],
+    jurisdiction: 'India',
+    status: 'Available',
+    organization: 'Intellectual Property Litigation Chambers',
+    verificationStatus: 'Verified Expert'
+  },
+
+  // 8. Prior Art / Patent Research Specialists
+  {
+    id: 'exp-pa-1',
+    name: 'Dr. Hemant Joshi',
+    roleTitle: 'Prior Art, Patent Landscaping & TKDL Search Specialist',
+    domain: 'prior_art',
+    domainLabelKey: 'expertDirectory.domainPriorArt',
+    degrees: 'M.Pharm (Pharmacognosy), Ph.D. (Phytochemistry), Certified Patent Analyst',
+    experienceYears: 14,
+    casesResolved: 95,
+    rating: 4.8,
+    badgeKey: 'expertDirectory.badgePatentSpecialist',
+    bioKey: 'expertDirectory.bioHemant',
+    available: true,
+    avatarGradient: 'linear-gradient(135deg, #4338ca 0%, #6366f1 100%)',
+    specialization: ['TKDL Database Search', 'Freedom to Operate (FTO)', 'Patentability Assessment'],
+    expertise: ['Prior Art Search', 'Invalidity Contention', 'Polyherbal Formularies'],
+    jurisdiction: 'India / International',
+    status: 'Available',
+    organization: 'Phytopharmaceutical Patent Research Centre',
+    verificationStatus: 'Verified Expert'
   }
 ];
 
 interface ExpertDirectorySelectorProps {
   selectedExpertId?: string;
   onSelectExpert: (expert: EmpanelledExpert) => void;
-  defaultDomain?: 'all' | 'tkdl' | 'patent' | 'abs' | 'regulatory' | 'trademark';
+  defaultDomain?: 'all' | 'tkdl' | 'patent' | 'abs' | 'regulatory' | 'food_aahara' | 'intl_ip' | 'trademark' | 'prior_art';
   modalMode?: boolean;
   onClose?: () => void;
 }
@@ -185,7 +293,8 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
       searchQuery === '' ||
       exp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       exp.degrees.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      exp.roleTitle.toLowerCase().includes(searchQuery.toLowerCase());
+      exp.roleTitle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      exp.organization.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesDomain && matchesSearch;
   });
 
@@ -203,7 +312,7 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
         </p>
       </div>
 
-      {/* Domain Filter Tabs */}
+      {/* Domain Filter Tabs Covering all 8 Domains */}
       <div className="expert-domain-tabs flex flex-wrap gap-2 mb-4 pb-2 border-b border-gray-100">
         <button
           type="button"
@@ -225,7 +334,7 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          📚 {t('expertDirectory.domainTkdl', 'Traditional Knowledge & TKDL')} (3)
+          📚 Traditional Knowledge / TKDL
         </button>
         <button
           type="button"
@@ -236,7 +345,7 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          ⚖️ {t('expertDirectory.domainPatent', 'Patents & Section 3(p)')} (2)
+          ⚖️ Patent / Section 3(p)
         </button>
         <button
           type="button"
@@ -247,7 +356,7 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          🌿 {t('expertDirectory.domainAbs', 'Biodiversity & NBA ABS')} (2)
+          🌿 Biodiversity / ABS / NBA
         </button>
         <button
           type="button"
@@ -258,7 +367,51 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
               : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
           }`}
         >
-          🏛️ {t('expertDirectory.domainRegulatory', 'AYUSH Licensing')} (1)
+          🏛️ AYUSH Regulatory
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveDomain('food_aahara')}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            activeDomain === 'food_aahara'
+              ? 'bg-amber-600 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          🥗 Ayurveda Aahara / Food
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveDomain('intl_ip')}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            activeDomain === 'intl_ip'
+              ? 'bg-indigo-600 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          🌐 International IP / PCT
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveDomain('trademark')}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            activeDomain === 'trademark'
+              ? 'bg-cyan-600 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          🏷️ Trademark / GI / Design
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveDomain('prior_art')}
+          className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+            activeDomain === 'prior_art'
+              ? 'bg-violet-600 text-white shadow-sm'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          🔍 Prior Art / Patent Search
         </button>
       </div>
 
@@ -306,12 +459,15 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
                   </div>
 
                   <p className="text-xs font-semibold text-primary mt-0.5 leading-tight">
-                    {t(exp.domainLabelKey, exp.roleTitle)}
+                    {exp.roleTitle}
                   </p>
 
-                  <div className="mt-1">
+                  <div className="mt-1 flex items-center gap-1.5">
                     <span className="inline-block text-[10px] font-bold tracking-wide uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                      {t(exp.badgeKey, 'Certified Facilitator')}
+                      {exp.verificationStatus}
+                    </span>
+                    <span className="text-[10px] text-gray-500">
+                      {exp.jurisdiction}
                     </span>
                   </div>
                 </div>
@@ -322,8 +478,12 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
                 <div className="flex items-start gap-1.5">
                   <Award size={13} className="text-secondary shrink-0 mt-0.5" />
                   <div className="text-gray-700 text-[11px] leading-snug">
-                    <strong className="text-navy">{t('expertDirectory.degreesLabel', 'Degrees & Bar/Patent Reg')}:</strong> {exp.degrees}
+                    <strong className="text-navy">{t('expertDirectory.degreesLabel', 'Degrees')}:</strong> {exp.degrees}
                   </div>
+                </div>
+
+                <div className="text-[11px] text-gray-600">
+                  <strong>Organization:</strong> {exp.organization}
                 </div>
 
                 <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 text-[11px]">
@@ -340,7 +500,7 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
               <div className="flex items-center justify-between gap-2 mt-2">
                 <span className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  {t('expertDirectory.availableNow', 'Available for Review')}
+                  {exp.status} for Review
                 </span>
 
                 <button
@@ -349,20 +509,11 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
                   className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
                     isSelected
                       ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'bg-navy text-white hover:bg-primary shadow-sm'
+                      : 'bg-primary text-white hover:bg-primary/90'
                   }`}
                 >
-                  {isSelected ? (
-                    <>
-                      <CheckCircle2 size={13} />
-                      <span>{t('expertDirectory.selected', 'Selected Expert')}</span>
-                    </>
-                  ) : (
-                    <>
-                      <UserCheck size={13} />
-                      <span>{t('expertDirectory.assignToExpert', 'Assign My Case')}</span>
-                    </>
-                  )}
+                  <CheckCircle2 size={13} />
+                  <span>{isSelected ? t('common.selected', 'Selected') : t('expertDirectory.chooseSpecialist', 'Select Expert')}</span>
                 </button>
               </div>
             </div>
@@ -372,28 +523,29 @@ export const ExpertDirectorySelector: React.FC<ExpertDirectorySelectorProps> = (
     </div>
   );
 
-  if (!modalMode) {
-    return content;
+  if (modalMode) {
+    return (
+      <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl max-w-3xl w-full p-6 max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-gray-100">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-primary">
+              Empanelled Expert Directory
+            </span>
+            {onClose && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="text-gray-400 hover:text-gray-600 p-1 rounded-lg"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          <div className="overflow-y-auto flex-1">{content}</div>
+        </div>
+      </div>
+    );
   }
 
-  return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl border border-gray-200 max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto">
-          {content}
-        </div>
-        {onClose && (
-          <div className="pt-4 mt-3 border-t border-gray-100 flex justify-end">
-            <button
-              type="button"
-              onClick={onClose}
-              className="btn btn-outline btn-sm"
-            >
-              {t('common.close', 'Close & Return')}
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  return content;
 };

@@ -18,13 +18,13 @@ import {
   Send,
   Loader2
 } from 'lucide-react';
-import { VoiceInputField } from '../../components/shared/VoiceInputField';
 import { ConfidenceCard } from '../../components/shared/ConfidenceCard';
 import { CitationCard } from '../../components/shared/CitationCard';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { useAppStore, CaseRecord } from '../../store/appStore';
 import { askIPQuestion } from '../../services/ask.service';
 import { ExpertDirectorySelector, EmpanelledExpert, EMPANELLED_EXPERTS } from '../../components/expert/ExpertDirectorySelector';
+import { TrustValidationPanel } from '../../components/shared/TrustValidationPanel';
 
 export const AskPage: React.FC = () => {
   const { t } = useTranslation();
@@ -167,13 +167,13 @@ export const AskPage: React.FC = () => {
           </p>
 
           <form onSubmit={handleFormSubmit} className="ask-form">
-            <VoiceInputField
-              value={inputQuestion}
-              onChange={setInputQuestion}
-              placeholder="Describe your Ayurvedic product, formulation, or legal query..."
-              multiline={true}
-              rows={3}
+            <textarea
               id="ask-query-input"
+              value={inputQuestion}
+              onChange={(e) => setInputQuestion(e.target.value)}
+              placeholder="Describe your Ayurvedic product, formulation, or legal query..."
+              rows={3}
+              className="gov-textarea"
             />
 
             <div className="ask-form-bottom">
@@ -359,6 +359,14 @@ export const AskPage: React.FC = () => {
                     </div>
                   </div>
 
+                  {/* Trust & Citation Verification Additive Layer */}
+                  <TrustValidationPanel
+                    answer={currentAnswer as any}
+                    query={query}
+                    jurisdiction={jurisdiction}
+                    onEscalate={() => setShowExpertModal(true)}
+                  />
+
                   {/* 2. "Why am I receiving this guidance?" Section */}
                   <div className="gov-card why-section-card">
                     <h3 className="section-subheading">{t('answer.whySection')}</h3>
@@ -487,6 +495,22 @@ export const AskPage: React.FC = () => {
             onClose={() => setShowExpertModal(false)}
             onSelectExpert={(exp) => handleConfirmEscalation(exp)}
           />
+        )}
+
+        {/* Inline Legal Disclaimer — required per PRD Requirement 7 */}
+        {currentAnswer && !loading && (
+          <p
+            style={{
+              fontSize: '11.5px',
+              color: '#94a3b8',
+              textAlign: 'center',
+              marginTop: '20px',
+              lineHeight: 1.5,
+              padding: '0 8px'
+            }}
+          >
+            ℹ️ <strong>Disclaimer:</strong> This guidance is compiled from authoritative Indian statutes (Patents Act 1970, Trade Marks Act 1999, Biological Diversity Act 2002, AYUSH guidelines) and is intended for preliminary assessment only. It does not constitute legal advice or formal patent examination. Please consult a registered patent agent or advocate for formal proceedings.
+          </p>
         )}
       </div>
     </div>

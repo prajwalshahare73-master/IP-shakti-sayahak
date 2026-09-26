@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, Scale, BookOpen, AlertCircle, FileText, ChevronRight, CheckCircle2, ExternalLink } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
-import { VoiceInputField } from '../../components/shared/VoiceInputField';
 
 export const PriorArtPage: React.FC = () => {
   const { t } = useTranslation();
@@ -58,15 +57,19 @@ export const PriorArtPage: React.FC = () => {
         {/* Search Box */}
         <div className="gov-card prior-art-search-card">
           <form onSubmit={handleSearch} className="prior-art-form">
-            <VoiceInputField
-              value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder="Describe formulation ingredients, botanical names (e.g. Vasaka, Ashwagandha), or therapeutic application..."
-              multiline={true}
-              rows={2}
-              id="prior-art-input"
-              label="Invention Description or Ingredients for Prior Art Search"
-            />
+            <div className="form-field-group mb-3">
+              <label htmlFor="prior-art-input" className="gov-input-label">
+                Invention Description or Ingredients for Prior Art Search
+              </label>
+              <textarea
+                id="prior-art-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Describe formulation ingredients, botanical names (e.g. Vasaka, Ashwagandha), or therapeutic application..."
+                rows={2}
+                className="gov-textarea"
+              />
+            </div>
 
             <div className="search-controls-row">
               <div className="jurisdiction-select-box">

@@ -618,11 +618,7 @@
   color: var(--color-primary);
 }
 
-/* ---------------- Voice Input Component ---------------- */
-.voice-input-container {
-  width: 100%;
-}
-
+/* ---------------- Standard Form Inputs ---------------- */
 .gov-input-label {
   display: block;
   font-size: var(--font-size-small);
@@ -630,16 +626,10 @@
   margin-bottom: var(--space-1);
 }
 
-.voice-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
 .gov-input,
 .gov-textarea {
   width: 100%;
-  padding: 12px 48px 12px 14px;
+  padding: 12px 14px;
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-input);
   font-size: var(--font-size-body);
@@ -655,61 +645,6 @@
 .gov-input:focus,
 .gov-textarea:focus {
   border-color: var(--color-primary);
-}
-
-.listening-border {
-  border-color: var(--color-error) !important;
-  box-shadow: 0 0 0 3px rgba(202, 53, 53, 0.15);
-}
-
-.voice-mic-btn {
-  position: absolute;
-  right: 10px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  transition: all var(--transition-speed);
-}
-
-.voice-mic-btn:hover {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-}
-
-.voice-mic-btn.active-listening {
-  background: var(--color-error);
-  color: white;
-  border-color: var(--color-error);
-  animation: micPulse 1.2s infinite;
-}
-
-@keyframes micPulse {
-  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(202, 53, 53, 0.6); }
-  70% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(202, 53, 53, 0); }
-  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(202, 53, 53, 0); }
-}
-
-.voice-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--font-size-xs);
-  margin-top: 4px;
-}
-
-.voice-status.listening {
-  color: var(--color-error);
-  font-weight: 600;
-}
-
-.voice-status.error {
-  color: var(--color-text-muted);
 }
 
 .spin-icon {
@@ -4163,3 +4098,514 @@ p, li, td, th, h1, h2, h3, h4, h5, h6, span, label, strong {
   padding-top: var(--space-6);
   padding-bottom: var(--space-12);
 }
+
+/* ==========================================================================
+   STRUCTURED ANSWER PANEL (sap-*)
+   11-section RAG answer dossier display
+   ========================================================================== */
+
+/* Root */
+.sap-root {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Navigation pills row */
+.sap-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-card);
+  margin-bottom: var(--space-1);
+}
+
+.sap-nav-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-light);
+  text-decoration: none;
+  transition: all var(--transition-speed);
+}
+.sap-nav-pill:hover {
+  background: var(--sap-accent, var(--color-primary-light));
+  border-color: var(--sap-accent, var(--color-primary));
+  color: var(--sap-accent, var(--color-primary));
+  text-decoration: none;
+}
+.sap-nav-num {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Section stack */
+.sap-sections-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+/* Section card */
+.sap-section-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  scroll-margin-top: 80px;
+}
+
+/* Section header (button) */
+.sap-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--sap-bg, var(--color-surface));
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  gap: var(--space-3);
+  transition: background var(--transition-speed);
+}
+.sap-section-header:hover {
+  filter: brightness(0.97);
+}
+
+.sap-static-header {
+  cursor: default;
+  pointer-events: none;
+}
+
+.sap-section-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.sap-section-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.sap-section-label {
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: 0.2px;
+}
+
+.sap-section-toggle {
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.sap-cite-count {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* Section body */
+.sap-section-body {
+  padding: var(--space-4);
+  border-top: 1px solid var(--color-border-light);
+  background: var(--color-bg);
+}
+
+/* Section content markdown */
+.sap-section-content { line-height: 1.7; }
+.sap-md-p { margin-bottom: var(--space-3); color: var(--color-text-primary); font-size: 0.9375rem; }
+.sap-md-p:last-child { margin-bottom: 0; }
+.sap-md-list { padding-left: var(--space-5); margin-bottom: var(--space-3); }
+.sap-md-list li { margin-bottom: var(--space-1); font-size: 0.9375rem; }
+.sap-md-h1, .sap-md-h2, .sap-md-h3, .sap-md-h4 {
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+  margin-top: var(--space-4);
+}
+.sap-md-h1 { font-size: 1.125rem; }
+.sap-md-h2 { font-size: 1rem; }
+.sap-md-h3 { font-size: 0.9375rem; }
+.sap-md-h4 { font-size: 0.875rem; }
+.sap-inline-code {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 0.85em;
+  font-family: 'Courier New', monospace;
+}
+
+/* ── Citation Cards ── */
+.sap-citations-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sap-citation-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-left: 3px solid var(--color-primary);
+  border-radius: var(--radius-card);
+  padding: var(--space-3);
+  font-size: var(--font-size-small);
+}
+.sap-citation-card.auth-success { border-left-color: var(--color-success); }
+.sap-citation-card.auth-info    { border-left-color: var(--color-primary); }
+.sap-citation-card.auth-warning { border-left-color: var(--color-accent); }
+.sap-citation-card.auth-neutral { border-left-color: var(--color-border-dark); }
+
+.sap-citation-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.sap-citation-index {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  min-width: 22px;
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.sap-citation-body {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.sap-citation-title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+.sap-citation-section {
+  font-size: 11px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 3px;
+  padding: 2px 6px;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+}
+
+.sap-auth-badge {
+  font-size: 10px !important;
+  padding: 2px 7px !important;
+}
+
+.sap-citation-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sap-ext-link, .sap-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition-speed);
+  text-decoration: none;
+}
+.sap-ext-link:hover, .sap-expand-btn:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.sap-citation-excerpt {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  border-left: 3px solid var(--color-border);
+  padding: var(--space-2) var(--space-3);
+  margin-left: calc(22px + var(--space-2));
+  margin-top: var(--space-1);
+  font-style: italic;
+  background: var(--color-surface-subtle);
+  border-radius: 0 4px 4px 0;
+}
+
+.sap-show-more-btn {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  font-weight: 600;
+  text-align: left;
+}
+.sap-show-more-btn:hover { text-decoration: underline; }
+
+/* ── Confidence Widget ── */
+.sap-conf-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sap-conf-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sap-conf-level {
+  font-size: var(--font-size-small);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.sap-conf-pct {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.sap-conf-bar {
+  height: 8px;
+  background: var(--color-border-light);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.sap-conf-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: width 0.5s ease;
+}
+
+.sap-conf-reasons {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sap-conf-reasons li {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.sap-conf-reason-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-text-muted);
+}
+
+.sap-conf-caveat {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+  margin-top: var(--space-1);
+}
+
+/* ── Mini cards (prose mode) ── */
+.sap-mini-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-card);
+  padding: var(--space-4);
+}
+
+.sap-mini-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-small);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.sap-mini-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.sap-mini-list li {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--color-border-light);
+}
+
+.sap-warning-card {
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-abstain-bg);
+}
+
+.sap-next-card {
+  border-left: 3px solid var(--color-secondary);
+  background: var(--color-secondary-light);
+}
+
+.sap-next-btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ── Case Context Banner (prose mode) ── */
+.sap-case-context-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-primary-light);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius-card);
+  font-size: var(--font-size-xs);
+}
+
+.sap-cctx-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.sap-cctx-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.sap-cctx-pill {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: white;
+  border: 1px solid var(--color-info-border);
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.sap-pill-warning {
+  background: var(--color-warning-bg);
+  border-color: var(--color-warning-border);
+  color: #92400e;
+}
+
+/* ── Prose block ── */
+.sap-prose-block {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.sap-prose-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-ai-bg);
+  border-bottom: 1px solid var(--color-ai-border);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.sap-prose-icon { color: var(--color-primary); flex-shrink: 0; }
+
+.sap-prose-content {
+  padding: var(--space-4) var(--space-5);
+  line-height: 1.75;
+}
+
+/* ── Why card ── */
+.sap-why-card {
+  border-left: 3px solid var(--color-primary);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .sap-nav { gap: 4px; }
+  .sap-nav-pill { font-size: 10px; padding: 3px 7px; }
+  .sap-nav-label { display: none; }
+  .sap-section-header { padding: var(--space-3); }
+  .sap-section-label { font-size: var(--font-size-xs); }
+  .sap-citation-excerpt { margin-left: 0; }
+  .sap-prose-content { padding: var(--space-3); }
+}
+
+/* ==========================================================================
+   Expert Routing & Actionable Case-Matching Workflow (Additive Enhancement)
+   ========================================================================== */
+.expert-routing-workflow-container {
+  animation: fadeInWorkflow 0.3s ease-in-out;
+}
+
+@keyframes fadeInWorkflow {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.expert-recommendation-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.expert-recommendation-card:hover {
+  transform: translateY(-2px);
+}
+
+.case-requests-block {
+  animation: fadeInWorkflow 0.25s ease-out;
+}
+
+

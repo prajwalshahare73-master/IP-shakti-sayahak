@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Response
 from fastapi.responses import JSONResponse
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 
 from ...models.case import (
@@ -8,17 +8,44 @@ from ...models.case import (
     AIAnswerData, CaseAnalyzeRequest
 )
 from ...db.cases_repo import cases_repo
+from ...db.expert_repo import expert_repo
 from ...auth.jwt import get_current_user_payload
 from ...core.query_understanding import analyze_query
 from ...core.query_decomposer import decompose_query
 from ...core.rag_router import route_and_retrieve
 from ...core.context_builder import build_llm_prompt
 from ...core.llm_client import llm_client
-from ...models.query import ConfidenceInfo, HumanReviewRecommendation
+from ...models.query import ConfidenceInfo, HumanReviewRecommendation, CaseBuilderInput
 from ...core.claim_verifier import extract_and_verify_citations
 from ...core.confidence import calculate_confidence_and_abstention
+from ...core.case_validator import validate_case_dossier, ValidationResult
+from ...core.pdf_generator import generate_case_dossier_pdf
 
 router = APIRouter(prefix="/v1", tags=["Cases"])
+
+async def verify_case_access(case: CaseRecord, auth_user: Optional[Dict[str, Any]]) -> None:
+    """Enforces strict data isolation: User A cannot access User B's case."""
+    if not case.user_id or case.user_id == "anon_user":
+        return
+    if not auth_user:
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "AUTHENTICATION_REQUIRED", "message": "Authentication required to view this confidential case dossier."}
+        )
+    user_id = auth_user.get("sub")
+    role = auth_user.get("role", "user")
+    if role in ["admin", "superadmin"]:
+        return
+    if case.user_id == user_id:
+        return
+    if case.expert_id == user_id:
+        return
+    if await expert_repo.has_case_access(user_id, case.id):
+        return
+    raise HTTPException(
+        status_code=403,
+        detail={"code": "FORBIDDEN_CASE_ACCESS", "message": "You are not authorized to access this private case dossier."}
+    )
 
 @router.post("/cases", response_model=CaseRecord)
 async def create_case(request: CaseCreateRequest, auth_user = Depends(get_current_user_payload)):
@@ -39,13 +66,14 @@ async def list_cases(auth_user = Depends(get_current_user_payload)):
     return await cases_repo.list_cases_for_user(user_id)
 
 @router.get("/cases/{case_id}", response_model=CaseRecord)
-async def get_case(case_id: str):
+async def get_case(case_id: str, auth_user = Depends(get_current_user_payload)):
     record = await cases_repo.get_case(case_id)
     if not record:
         raise HTTPException(
             status_code=404, 
             detail={"code": "CASE_NOT_FOUND", "message": f"Case with ID {case_id} not found."}
         )
+    await verify_case_access(record, auth_user)
     return record
 
 @router.patch("/cases/{case_id}", response_model=CaseRecord)
@@ -180,7 +208,7 @@ async def analyze_case(
 
 
 @router.get("/cases/{case_id}/report")
-async def get_case_report(case_id: str, language: Optional[str] = None):
+async def get_case_report(case_id: str, language: Optional[str] = None, auth_user = Depends(get_current_user_payload)):
     """
     Returns a structured JSON report for PDF rendering / printing.
     Multilingual disclaimers: en, hi, mr, sa, gu, te, kn, bn, hinglish.
@@ -188,6 +216,7 @@ async def get_case_report(case_id: str, language: Optional[str] = None):
     case = await cases_repo.get_case(case_id)
     if not case:
         raise HTTPException(status_code=404, detail={"code": "CASE_NOT_FOUND", "message": f"Case {case_id} not found."})
+    await verify_case_access(case, auth_user)
 
     profile = case.profile
     ai = case.ai_answer
@@ -226,3 +255,62 @@ async def get_case_report(case_id: str, language: Optional[str] = None):
         "disclaimer": DISCLAIMERS.get(report_lang, DISCLAIMERS["en"]),
         "legal_notice": "Verify current law at ipindia.gov.in, nbaindia.org, ayush.gov.in."
     })
+
+@router.post("/cases/validate", response_model=ValidationResult)
+async def validate_case_payload(data: Dict[str, Any]):
+    """Validates raw case builder formulation payload without persisting."""
+    return validate_case_dossier(data)
+
+@router.post("/cases/{case_id}/validate", response_model=ValidationResult)
+async def validate_existing_case(case_id: str, auth_user = Depends(get_current_user_payload)):
+    """Validates persistent case record and appends a validation timeline event."""
+    case = await cases_repo.get_case(case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail={"code": "CASE_NOT_FOUND", "message": f"Case {case_id} not found."})
+    await verify_case_access(case, auth_user)
+
+    case_dict = {}
+    if case.builder_data:
+        case_dict = case.builder_data.model_dump()
+    case_dict["title"] = case.title
+    if case.profile and case.profile.key_questions:
+        case_dict["initial_question"] = case.profile.key_questions[0]
+
+    result = validate_case_dossier(case_dict)
+    
+    # Persist validation event to timeline
+    event_status = "VALIDATION_PASSED" if result.valid else "VALIDATION_WARNINGS"
+    await cases_repo.add_event(
+        case_id=case_id,
+        event_type=event_status,
+        title=f"Statutory Validation ({'Passed' if result.valid else 'Action Required'})",
+        description=f"Readiness Score: {result.readiness_score}/100. Errors: {len(result.errors)}, Warnings: {len(result.warnings)}.",
+        actor_id=auth_user.get("sub", "system") if auth_user else "system",
+        actor_role="system"
+    )
+    return result
+
+@router.get("/cases/{case_id}/pdf")
+@router.get("/cases/{case_id}/download-pdf")
+async def download_case_pdf(case_id: str, auth_user = Depends(get_current_user_payload)):
+    """
+    Generates and downloads the official publication-grade case dossier PDF
+    rendered directly from the SQLite persistent case record.
+    """
+    case = await cases_repo.get_case(case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail={"code": "CASE_NOT_FOUND", "message": f"Case {case_id} not found."})
+    await verify_case_access(case, auth_user)
+
+    review_data = await expert_repo.get_case_review(case_id)
+    pdf_bytes = generate_case_dossier_pdf(case, extra_review=review_data)
+
+    filename = f"IP_SAKTI_Dossier_{case_id}.pdf"
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Content-Type": "application/pdf"
+        }
+    )

@@ -29,10 +29,11 @@ import {
   Lock
 } from 'lucide-react';
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
-import { VoiceInputField } from '../../components/shared/VoiceInputField';
+import { StructuredAnswerPanel } from '../../components/shared/StructuredAnswerPanel';
 import { useAppStore, CaseRecord } from '../../store/appStore';
 import { askIPQuestion } from '../../services/ask.service';
 import { ExpertDirectorySelector, EmpanelledExpert, EMPANELLED_EXPERTS } from '../../components/expert/ExpertDirectorySelector';
+import { ExpertRoutingWorkflow } from '../../components/expert/ExpertRoutingWorkflow';
 
 interface IngredientRow {
   id: string;
@@ -165,9 +166,18 @@ export const CaseBuilderPage: React.FC = () => {
       .join(', ')}. TK Status: ${tkClassification} referenced from ${classicalTextRef}. Novelty: ${noveltyDescription}. Synergistic Assay: ${bioAssayDetails}. Target: ${targetMarket}.`;
 
     const assembledProfile = {
+      productName,
       productType,
+      entityType,
       purpose: targetIndication,
       ingredients: ingredients.map((i) => `${i.sanskritName} (${i.botanicalName}) - ${i.percentage}`),
+      biologicalResources: ingredients.filter(i => i.sourceType === 'Wild').map(i => i.sourceState).join(', '),
+      biological_material: ingredients.some(i => i.sourceType === 'Wild'),
+      tk_involved: tkClassification !== 'Novel Phyto-Formulation',
+      export_planned: targetMarket.includes('Global') || targetMarket.includes('International'),
+      formulation_details: noveltyDescription,
+      process_description: bioAssayDetails,
+      target_countries: targetMarket.includes('Global') || targetMarket.includes('International') ? ['US', 'EU'] : [],
       jurisdiction: targetMarket.includes('Global') ? 'India + International' : 'India',
       isTraditional:
         tkClassification === 'Novel Phyto-Formulation'
@@ -175,7 +185,7 @@ export const CaseBuilderPage: React.FC = () => {
           : tkClassification === 'Classical AFI Formula'
           ? ('traditional' as const)
           : ('modified_traditional' as const),
-      notes: `Case Builder Dossier ${caseId}. Entity: ${entityType}. Bio-Assay: ${bioAssayDetails}`
+      notes: `Case Builder Dossier ${caseId}. Entity: ${entityType}. Classical Ref: ${classicalTextRef}.`
     };
 
     setCaseProfile(assembledProfile);
@@ -235,19 +245,32 @@ export const CaseBuilderPage: React.FC = () => {
           });
           setInPlaceEvaluation(res);
         } catch (e) {
+          // RAG-first: never substitute hard-coded answers when the backend fails.
+          // Show a proper abstention + retry message.
           setInPlaceEvaluation({
-            answer: `Statutory Patentability Evaluation for ${productName}: The polyherbal formulation qualifies for patent protection under Section 3(e) provided synergistic bio-assay data (CI < 1.0) is submitted. Traditional knowledge concordance with ${classicalTextRef} requires Section 3(p) prior art novelty screening. Mandatory Form III clearance from National Biodiversity Authority (NBA) is required prior to grant.`,
-            summary: `Readiness Score: ${readinessScore}%. Synergistic bio-assay verified. NBA approval required.`,
-            confidence: { level: 'high', caveat: 'Based on submitted composition matrix & bioassay details.' },
-            citations: [
-              { title: 'The Patents Act, 1970 — Section 3(e)', section: 'Section 3(e)', excerpt: 'Inventions which are mere admixtures resulting in aggregation of known properties are non-patentable without proven synergy.' },
-              { title: 'The Patents Act, 1970 — Section 3(p)', section: 'Section 3(p)', excerpt: 'An invention which in effect is traditional knowledge or an aggregation of known properties is excluded from patentability.' },
-              { title: 'Biological Diversity Act, 2002 — Section 6', section: 'Section 6', excerpt: 'Mandatory prior approval from National Biodiversity Authority (Form III) before applying for IPR.' }
-            ],
+            answer:
+              '### ⚠️ Knowledge Base Unavailable\n\n' +
+              'The IP-SAKTI knowledge retrieval service could not be reached. ' +
+              'No statutory evidence was retrieved, so no assessment has been generated.\n\n' +
+              '**This system does not provide pre-written legal conclusions** as a substitute for RAG retrieval.\n\n' +
+              'Please:\n' +
+              '1. **Retry** — the service may be temporarily unavailable.\n' +
+              '2. **Navigate to Ask** to submit the question directly.\n' +
+              '3. **Request Expert Review** to escalate to an empanelled IP specialist.',
+            summary: 'Knowledge retrieval service unavailable. Retry or request expert review.',
+            confidence: { level: 'low' as const, reasons: ['RAG backend unreachable — no evidence retrieved'], caveat: 'No statutory knowledge was retrieved.' },
+            citations: [],
+            warnings: ['The RAG backend is unreachable. No legal assessment has been generated.'],
             nextSteps: [
-              { title: 'Preview & Download 14-Section Legal PDF Dossier', action: 'PDF' },
-              { title: `Escalate to Empanelled Specialist (${selectedExpert.name})`, action: 'EXPERT' }
-            ]
+              { title: 'Retry AI Evaluation', action: 'RETRY', link: '/case-builder' },
+              { title: 'Navigate to Ask', action: 'ASK', link: '/ask', primary: true }
+            ],
+            why: ['Backend unavailable — no statutory evidence retrieved'],
+            meaningForYou: ['Retry when the service is available, or submit for expert review.'],
+            jurisdiction: 'India',
+            ipType: 'Undetermined',
+            abstained: true,
+            abstentionDetails: { reason: 'RAG backend unreachable.', missingInfo: ['Knowledge base connection required'] }
           });
         } finally {
           setEvaluatingAI(false);
@@ -657,37 +680,42 @@ export const CaseBuilderPage: React.FC = () => {
               </div>
             </div>
 
-            {/* AI Answer & Statutory Findings */}
-            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '8px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
-              <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 700, color: '#0f3d5c', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Scale size={16} className="text-secondary" />
-                <span>Executive Patentability Assessment</span>
-              </h4>
-              <p style={{ margin: 0, fontSize: '13.5px', color: '#334155', lineHeight: 1.6 }}>
-                {inPlaceEvaluation.answer || inPlaceEvaluation.summary}
-              </p>
-            </div>
+            {/* Structured Answer Dossier — replaces plain text evaluation */}
+            <div style={{ marginBottom: '16px' }}>
+              <StructuredAnswerPanel
+                answer={inPlaceEvaluation}
+                query={inPlaceEvaluation.query || productName}
+                jurisdiction={targetMarket.includes('Global') ? 'india_international' : 'india'}
+                caseProfile={{
+                  productName,
+                  productType,
+                  purpose: targetIndication,
+                  ingredients: ingredients.map(i => `${i.sanskritName} (${i.botanicalName})`),
+                  tk_involved: tkClassification !== 'Novel Phyto-Formulation',
+                  biological_material: ingredients.some(i => i.sourceType === 'Wild'),
+                  export_planned: targetMarket.includes('Global') || targetMarket.includes('International')
+                }}
+              />
 
-            {/* Citations Grid */}
-            {inPlaceEvaluation.citations && inPlaceEvaluation.citations.length > 0 && (
-              <div>
-                <h4 style={{ margin: '0 0 10px 0', fontSize: '13px', fontWeight: 700, color: '#0f3d5c', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Statutory Provisions & Legal Footnotes
-                </h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
-                  {inPlaceEvaluation.citations.map((c: any, idx: number) => (
-                    <div key={idx} style={{ background: '#ffffff', padding: '12px', borderRadius: '6px', border: '1px solid #cbd5e1', fontSize: '12px' }}>
-                      <strong style={{ color: '#047857', display: 'block', marginBottom: '4px' }}>
-                        {c.title || c.section}
-                      </strong>
-                      <p style={{ margin: 0, color: '#64748b', fontSize: '11.5px', lineHeight: 1.4 }}>
-                        {c.excerpt}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+              {/* Actionable Legal Expert Routing Workflow */}
+              <ExpertRoutingWorkflow
+                caseId={createdCaseId || `CB-${productName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase()}-${Date.now().toString().slice(-4)}`}
+                caseTitle={`${productName} — ${productType}`}
+                caseQuery={`Formulation evaluation for ${productName}. Indication: ${targetIndication}. Active herbs: ${ingredients.map(i => i.sanskritName).join(', ')}.`}
+                domain={productType}
+                jurisdiction={targetMarket.includes('Global') ? 'India / International' : 'India'}
+                productType={productType}
+                isTraditional={tkClassification === 'Novel Phyto-Formulation' ? 'new' : 'modified_traditional'}
+                biologicalMaterial={ingredients.some(i => i.sourceType === 'Wild')}
+                tkInvolved={tkClassification !== 'Novel Phyto-Formulation'}
+                exportPlanned={targetMarket.includes('Global') || targetMarket.includes('International')}
+                ingredients={ingredients.map(i => `${i.sanskritName} (${i.botanicalName})`)}
+                onCaseSent={(req) => {
+                  setCreatedCaseId(req.caseId);
+                  setGeneratedSuccess(true);
+                }}
+              />
+            </div>
           </div>
         )}
 
@@ -991,14 +1019,16 @@ export const CaseBuilderPage: React.FC = () => {
               </div>
 
               <div className="form-field-group">
-                <VoiceInputField
-                  value={noveltyDescription}
-                  onChange={setNoveltyDescription}
-                  placeholder="Describe your extraction novelty, standardized active marker ratio, or unexpected bioavailability enhancement..."
-                  multiline={true}
-                  rows={3}
+                <label htmlFor="cb-novelty-claim" className="gov-input-label">
+                  {t('caseBuilder.noveltyClaim', 'Novel Technical Feature / Extraction Advance Claim *')}
+                </label>
+                <textarea
                   id="cb-novelty-claim"
-                  label={t('caseBuilder.noveltyClaim', 'Novel Technical Feature / Extraction Advance Claim *')}
+                  value={noveltyDescription}
+                  onChange={(e) => setNoveltyDescription(e.target.value)}
+                  placeholder="Describe your extraction novelty, standardized active marker ratio, or unexpected bioavailability enhancement..."
+                  rows={3}
+                  className="gov-textarea"
                 />
               </div>
             </div>
@@ -1029,14 +1059,16 @@ export const CaseBuilderPage: React.FC = () => {
 
               {hasBioAssay && (
                 <div className="form-field-group">
-                  <VoiceInputField
-                    value={bioAssayDetails}
-                    onChange={setBioAssayDetails}
-                    placeholder="Enter comparative synergy index (CI), IC50 values, or animal model pharmacological assay summary..."
-                    multiline={true}
-                    rows={3}
+                  <label htmlFor="cb-bio-assay" className="gov-input-label">
+                    {t('caseBuilder.bioAssayDetails', 'Synergistic Bio-Assay Evidence & Observations')}
+                  </label>
+                  <textarea
                     id="cb-bio-assay"
-                    label={t('caseBuilder.bioAssayDetails', 'Synergistic Bio-Assay Evidence & Observations')}
+                    value={bioAssayDetails}
+                    onChange={(e) => setBioAssayDetails(e.target.value)}
+                    placeholder="Enter comparative synergy index (CI), IC50 values, or animal model pharmacological assay summary..."
+                    rows={3}
+                    className="gov-textarea"
                   />
                 </div>
               )}
@@ -1070,59 +1102,24 @@ export const CaseBuilderPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Dedicated Empanelled Specialist Selection Card */}
-            <div className="gov-card cb-section-card" style={{ background: 'linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%)', borderColor: '#86efac' }}>
-              <div className="cb-sec-header">
-                <span className="sec-number" style={{ background: '#059669', color: '#ffffff' }}>★</span>
-                <div>
-                  <h2 className="sec-title">{t('expertDirectory.title', 'Select Empanelled AYUSH IP & TK Specialist')}</h2>
-                  <p className="sec-desc">{t('expertDirectory.subtitle', 'Choose a certified legal facilitator with specialized expertise in your formulation domain. Inspect verified degrees, resolved case counts, and domain credentials.')}</p>
-                </div>
-              </div>
-
-              <div style={{ padding: '16px', background: '#ffffff', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-                  <div style={{
-                    background: selectedExpert.avatarGradient,
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#ffffff',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                    flexShrink: 0
-                  }}>
-                    <UserCheck size={24} color="#ffffff" strokeWidth={2.4} />
-                  </div>
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <h4 style={{ margin: 0, fontWeight: 700, color: '#0f3d5c', fontSize: '15px' }}>{selectedExpert.name}</h4>
-                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#047857', background: '#ecfdf5', padding: '2px 8px', borderRadius: '12px', border: '1px solid #a7f3d0' }}>
-                        {selectedExpert.experienceYears}+ {t('expertDirectory.yearsExp', 'Yrs Exp')} ({selectedExpert.casesResolved}+ {t('expertDirectory.casesResolved', 'Cases')})
-                      </span>
-                    </div>
-                    <p style={{ margin: '2px 0 0 0', fontSize: '12px', fontWeight: 600, color: '#0284c7' }}>
-                      {t(selectedExpert.domainLabelKey, selectedExpert.roleTitle)}
-                    </p>
-                    <p style={{ margin: '3px 0 0 0', fontSize: '11px', color: '#64748b' }}>
-                      <strong>{t('expertDirectory.degreesLabel', 'Degrees')}:</strong> {selectedExpert.degrees}
-                    </p>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setShowExpertSelectorModal(true)}
-                  className="btn btn-secondary btn-sm"
-                  style={{ gap: '6px' }}
-                >
-                  <UserCheck size={14} />
-                  <span>{t('expertDirectory.allDomains', 'Change / Browse Specialists')}</span>
-                </button>
-              </div>
-            </div>
+            {/* Dedicated Empanelled Specialist Selection & Routing Workflow */}
+            <ExpertRoutingWorkflow
+              caseId={createdCaseId || `CB-${productName.replace(/[^a-zA-Z0-9]/g, '').slice(0, 8).toUpperCase()}-${Date.now().toString().slice(-4)}`}
+              caseTitle={`${productName} — ${productType}`}
+              caseQuery={`Formulation evaluation for ${productName}. Indication: ${targetIndication}. Active herbs: ${ingredients.map(i => i.sanskritName).join(', ')}.`}
+              domain={productType}
+              jurisdiction={targetMarket.includes('Global') ? 'India / International' : 'India'}
+              productType={productType}
+              isTraditional={tkClassification === 'Novel Phyto-Formulation' ? 'new' : 'modified_traditional'}
+              biologicalMaterial={ingredients.some(i => i.sourceType === 'Wild')}
+              tkInvolved={tkClassification !== 'Novel Phyto-Formulation'}
+              exportPlanned={targetMarket.includes('Global') || targetMarket.includes('International')}
+              ingredients={ingredients.map(i => `${i.sanskritName} (${i.botanicalName})`)}
+              onCaseSent={(req) => {
+                setCreatedCaseId(req.caseId);
+                setGeneratedSuccess(true);
+              }}
+            />
 
             {/* Bottom Actions Bar */}
             <div className="cb-bottom-actions flex flex-wrap gap-3">

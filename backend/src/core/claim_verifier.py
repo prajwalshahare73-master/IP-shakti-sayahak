@@ -21,15 +21,13 @@ def extract_and_verify_citations(
         doc_act = doc.get("act", "")
         doc_content = doc.get("content", "")
 
-        # Check if the document's concepts/sections are mentioned or referenced
+        # Check if the document's specific section is referenced
         is_referenced = False
         if doc_section and doc_section.lower() in answer_lower:
             is_referenced = True
-        elif doc_act and doc_act.lower() in answer_lower:
-            is_referenced = True
         else:
-            # Check for high keyword overlap
-            keywords = [w for w in re.findall(r"\w+", doc_title.lower()) if len(w) > 4]
+            # Check for distinctive keyword overlap from title/tags (excluding generic act terms)
+            keywords = [w for w in re.findall(r"\w+", doc_title.lower()) if len(w) > 4 and w not in ("patents", "statute", "rules", "india", "section", "guidelines")]
             matches = sum(1 for kw in keywords if kw in answer_lower)
             if matches >= 2:
                 is_referenced = True
@@ -49,21 +47,7 @@ def extract_and_verify_citations(
             )
             citations.append(citation)
 
-    # If no explicit references matched but documents exist, attach top documents as supporting citations
-    if not citations and retrieved_documents:
-        for doc in retrieved_documents[:3]:
-            citations.append(Citation(
-                id=doc.get("id", f"CIT-{len(citations)+1}"),
-                title=doc.get("title", "Statutory Source"),
-                section=doc.get("section"),
-                act=doc.get("act"),
-                authority_level=doc.get("authority_level", 1),
-                url=doc.get("url"),
-                snippet=doc.get("snippet", doc.get("content", "")[:200]),
-                year=doc.get("year"),
-                relevance_score=0.75
-            ))
-            grounded_evidence_count += 1
-
-    grounding_ratio = grounded_evidence_count / max(len(retrieved_documents), 1)
+    # Only include citations that have genuine grounding in the answer and retrieved text.
+    # We do NOT fabricate or attach fallback citations when there is no supporting evidence.
+    grounding_ratio = grounded_evidence_count / max(len(retrieved_documents), 1) if retrieved_documents else 0.0
     return citations, round(grounding_ratio, 2)

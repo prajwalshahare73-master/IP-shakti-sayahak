@@ -24,8 +24,9 @@ import {
 import { Breadcrumbs } from '../../components/layout/Breadcrumbs';
 import { StatusBadge } from '../../components/shared/StatusBadge';
 import { CaseTimeline } from '../../components/shared/CaseTimeline';
-import { VoiceInputField } from '../../components/shared/VoiceInputField';
 import { useAppStore, CaseRecord } from '../../store/appStore';
+import { EmpanelledExpert, EMPANELLED_EXPERTS } from '../../components/expert/ExpertDirectorySelector';
+import { ExpertProfileModal } from '../../components/expert/ExpertProfileModal';
 
 export const UserDashboard: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -41,6 +42,11 @@ export const UserDashboard: React.FC = () => {
   const [unlockedCases, setUnlockedCases] = useState<Record<string, boolean>>({});
   const [passcodeInput, setPasscodeInput] = useState('');
   const [passcodeError, setPasscodeError] = useState(false);
+
+  // Section 7 Expert Review Modals
+  const [viewingExpert, setViewingExpert] = useState<EmpanelledExpert | null>(null);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [showGuidanceModal, setShowGuidanceModal] = useState(false);
 
   // Localization helper functions for dynamic data
   const getLocalizedDomain = (domain: string) => {
@@ -463,6 +469,112 @@ export const UserDashboard: React.FC = () => {
                 </div>
               </div>
 
+              {/* Section 7: EXPERT REVIEW BLOCK */}
+              <div
+                className="gov-card expert-review-user-card mb-6"
+                style={{
+                  background: '#ffffff',
+                  border: '1.5px solid #0f3d5c',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  boxShadow: '0 4px 12px rgba(15, 61, 92, 0.06)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ background: '#ecfdf5', color: '#047857', padding: '8px', borderRadius: '8px' }}>
+                      <UserCheck size={20} />
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#047857' }}>
+                        Empanelled Legal Supervision
+                      </span>
+                      <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#0f3d5c' }}>
+                        EXPERT REVIEW
+                      </h3>
+                    </div>
+                  </div>
+
+                  <span style={{ fontSize: '12px', fontWeight: 700, padding: '4px 12px', borderRadius: '12px', background: '#f8fafc', border: '1px solid #cbd5e1', color: '#0f3d5c' }}>
+                    Status:{' '}
+                    <strong style={{ color: selectedCase.status === 'REVIEW_COMPLETED' ? '#047857' : '#0284c7' }}>
+                      {selectedCase.status === 'REVIEW_COMPLETED'
+                        ? 'Response Available'
+                        : selectedCase.status === 'IN_REVIEW'
+                        ? 'Under Review'
+                        : selectedCase.status === 'ASSIGNED'
+                        ? 'Pending Expert Review'
+                        : selectedCase.status === 'CLOSED'
+                        ? 'Closed'
+                        : 'Pending Expert Review'}
+                    </strong>
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '18px', fontSize: '13px' }}>
+                  <div>
+                    <span style={{ color: '#64748b', fontSize: '12px', display: 'block', marginBottom: '2px' }}>Expert:</span>
+                    <strong style={{ color: '#0f3d5c', fontSize: '14px' }}>
+                      {getLocalizedExpertName(selectedCase.assignedExpertName) || 'Dr. Vandana Sharma (Senior Facilitator)'}
+                    </strong>
+                  </div>
+                  <div>
+                    <span style={{ color: '#64748b', fontSize: '12px', display: 'block', marginBottom: '2px' }}>Domain:</span>
+                    <strong style={{ color: '#0284c7', fontSize: '14px' }}>
+                      {selectedCase.assignedExpertCategory || selectedCase.domain}
+                    </strong>
+                  </div>
+                  <div>
+                    <span style={{ color: '#64748b', fontSize: '12px', display: 'block', marginBottom: '2px' }}>Review Status:</span>
+                    <strong style={{ color: selectedCase.status === 'REVIEW_COMPLETED' ? '#047857' : '#d97706', fontSize: '14px' }}>
+                      {selectedCase.status === 'REVIEW_COMPLETED'
+                        ? '✓ Response Available'
+                        : selectedCase.status === 'IN_REVIEW'
+                        ? '⏳ Under Review'
+                        : '📩 Pending Expert Review'}
+                    </strong>
+                  </div>
+                </div>
+
+                {/* Section 7 Action Buttons: [VIEW EXPERT], [VIEW REVIEW STATUS], [VIEW EXPERT GUIDANCE] */}
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const found = EMPANELLED_EXPERTS.find((e) => selectedCase.assignedExpertName?.includes(e.name)) || EMPANELLED_EXPERTS[0];
+                      setViewingExpert(found);
+                    }}
+                    className="btn btn-outline btn-sm"
+                    style={{ gap: '6px' }}
+                  >
+                    <Eye size={14} />
+                    <span>VIEW EXPERT</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowStatusModal(true)}
+                    className="btn btn-secondary btn-sm"
+                    style={{ gap: '6px' }}
+                  >
+                    <Clock size={14} />
+                    <span>VIEW REVIEW STATUS</span>
+                  </button>
+
+                  {(selectedCase.expertReview || selectedCase.status === 'REVIEW_COMPLETED') && (
+                    <button
+                      type="button"
+                      onClick={() => setShowGuidanceModal(true)}
+                      className="btn btn-primary btn-sm"
+                      style={{ gap: '6px', fontWeight: 700 }}
+                    >
+                      <CheckCircle2 size={14} />
+                      <span>VIEW EXPERT GUIDANCE</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+
               {/* Action Required / Expert Information Request Box (PRD Part B Section 23) */}
               {selectedCase.status === 'NEED_MORE_INFORMATION' ||
                 (selectedCase.escalated && !selectedCase.expertReview && (
@@ -484,15 +596,19 @@ export const UserDashboard: React.FC = () => {
                       </div>
                     ) : (
                       <form onSubmit={handleSendAdditionalInfo} className="additional-info-form">
-                        <VoiceInputField
-                          value={userResponseText}
-                          onChange={setUserResponseText}
-                          placeholder={t('dashboard.replyPlaceholder', 'Add information or clarification for the specialist...')}
-                          multiline={true}
-                          rows={2}
-                          id="additional-info-input"
-                          label={t('dashboard.sendReply', 'Send Clarification to Specialist')}
-                        />
+                        <div className="form-field-group mb-2">
+                          <label htmlFor="additional-info-input" className="gov-input-label">
+                            {t('dashboard.sendReply', 'Send Clarification to Specialist')}
+                          </label>
+                          <textarea
+                            id="additional-info-input"
+                            value={userResponseText}
+                            onChange={(e) => setUserResponseText(e.target.value)}
+                            placeholder={t('dashboard.replyPlaceholder', 'Add information or clarification for the specialist...')}
+                            rows={2}
+                            className="gov-textarea"
+                          />
+                        </div>
                         <div className="additional-form-actions">
                           <button
                             type="submit"
@@ -619,6 +735,124 @@ export const UserDashboard: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Expert Profile Credentials Modal */}
+      {viewingExpert && (
+        <ExpertProfileModal
+          expert={viewingExpert}
+          onClose={() => setViewingExpert(null)}
+        />
+      )}
+
+      {/* Review Status Tracking Modal */}
+      {showStatusModal && selectedCase && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-gray-200 animate-in fade-in zoom-in-95 duration-200">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Clock size={20} className="text-secondary" />
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#0f3d5c' }}>
+                  Case Review Status Tracking
+                </h3>
+              </div>
+              <button type="button" onClick={() => setShowStatusModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                ✕
+              </button>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '14px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '16px', fontSize: '13px' }}>
+              <div><strong>Case ID:</strong> {selectedCase.id}</div>
+              <div><strong>Assigned Expert:</strong> {selectedCase.assignedExpertName || 'Empanelled Specialist'}</div>
+              <div><strong>Current Stage:</strong> <span style={{ color: '#047857', fontWeight: 700 }}>{selectedCase.status}</span></div>
+            </div>
+
+            {/* Stage Progress */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+              {[
+                { label: 'REQUEST SENT', desc: 'Case dossier transmitted to specialist', done: true },
+                { label: 'EXPERT REVIEW', desc: 'Specialist examination in progress', done: selectedCase.status === 'IN_REVIEW' || selectedCase.status === 'REVIEW_COMPLETED' },
+                { label: 'RESPONSE / GUIDANCE', desc: 'Authoritative legal guidance delivered', done: selectedCase.status === 'REVIEW_COMPLETED' },
+                { label: 'CASE CLOSED', desc: 'Examination completed and filed', done: selectedCase.status === 'CLOSED' }
+              ].map((st, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: st.done ? '#10b981' : '#cbd5e1', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700 }}>
+                    {st.done ? '✓' : i + 1}
+                  </div>
+                  <div>
+                    <strong style={{ fontSize: '13px', color: '#0f3d5c' }}>{st.label}</strong>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#64748b' }}>{st.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="button" onClick={() => setShowStatusModal(false)} className="btn btn-primary btn-md">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Expert Guidance Modal */}
+      {showGuidanceModal && selectedCase && selectedCase.expertReview && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-gray-200 animate-in fade-in zoom-in-95 duration-200" style={{ maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <UserCheck size={22} className="text-success" />
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#0f3d5c' }}>
+                  Empanelled Expert Legal Guidance
+                </h3>
+              </div>
+              <button type="button" onClick={() => setShowGuidanceModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                ✕
+              </button>
+            </div>
+
+            <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px', border: '1px solid #e2e8f0', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <strong style={{ fontSize: '14px', color: '#0f3d5c' }}>{selectedCase.expertReview.expertName}</strong>
+                <span style={{ fontSize: '11px', color: '#64748b' }}>{new Date(selectedCase.expertReview.completedAt).toLocaleDateString()}</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '13.5px', color: '#334155', lineHeight: 1.6 }}>
+                {selectedCase.expertReview.summary}
+              </p>
+            </div>
+
+            {selectedCase.expertReview.observations && selectedCase.expertReview.observations.length > 0 && (
+              <div style={{ marginBottom: '16px' }}>
+                <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 700, color: '#334155' }}>
+                  Statutory Observations:
+                </h4>
+                <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', color: '#475569', lineHeight: 1.6 }}>
+                  {selectedCase.expertReview.observations.map((obs, i) => (
+                    <li key={i}>{obs}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {selectedCase.expertReview.recommendedAction && (
+              <div style={{ background: '#ecfdf5', padding: '14px', borderRadius: '10px', border: '1px solid #a7f3d0', marginBottom: '16px' }}>
+                <strong style={{ fontSize: '12px', color: '#065f46', display: 'block', marginBottom: '4px' }}>
+                  Recommended Next Step:
+                </strong>
+                <p style={{ margin: 0, fontSize: '13px', color: '#047857' }}>
+                  {selectedCase.expertReview.recommendedAction}
+                </p>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <button type="button" onClick={() => setShowGuidanceModal(false)} className="btn btn-primary btn-md">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

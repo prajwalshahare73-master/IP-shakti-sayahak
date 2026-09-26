@@ -64,5 +64,22 @@ backend/data/index/
 # Temporary testing / audit files
 scratch/
 scratch_crop.ps1
+play_demo.html
+device_mockup_showcase.html
+ip_sakti_rag/
+*.validation_results.json
+case_builder_validation_results.json
+full_corpus_rag_validation_results.json
 
+# PRD and Internal Planning Documents (DO NOT COMMIT TO GIT)
+*PRD*
+*prd*
+*Product_Requirement*
+*Product_Spec*
+*internal_plan*
+*planning*
+*.plan.md
+implementation_plan.md
+!requirements.txt
+!backend/requirements.txt
 

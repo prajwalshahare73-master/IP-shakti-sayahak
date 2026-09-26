@@ -12,17 +12,25 @@ def calculate_confidence_and_abstention(
     """
     gaps: List[str] = []
     
-    # Base confidence calculation
-    if retrieved_count == 0:
-        base_score = 0.2
+    # Base confidence calculation & evidence sufficiency check
+    if retrieved_count == 0 or len(citations) == 0 or grounding_score < 0.20:
+        base_score = 0.10
         level = "low"
-        reasoning = "No primary statutory or guideline documents found in the database."
-        gaps.append("Missing primary statutory authority in knowledge base")
+        reasoning = "Insufficient supporting statutory evidence or authoritative guidance found in the available knowledge base."
+        gaps.append("Required legal authority or precedent does not exist in the available knowledge base.")
+        abstained = True
+        abstention_reason = (
+            "Insufficient statutory evidence in knowledge base: The available legal and regulatory corpus "
+            "does not contain reliable primary sources, official guidelines, or case precedents covering this specific inquiry. "
+            "To prevent unfounded legal determinations or hallucinated advice, the system safely abstains from providing an authoritative answer."
+        )
     elif grounding_score >= 0.7 and len(citations) >= 2:
         base_score = min(0.92, 0.75 + (0.15 * grounding_score))
         level = "high"
         reasoning = "Strong statutory basis with verified legal citations from primary Indian IP/ABS statutes."
-    elif grounding_score >= 0.4 or len(citations) >= 1:
+        abstained = False
+        abstention_reason = None
+    elif grounding_score >= 0.4 and len(citations) >= 1:
         base_score = 0.76
         level = "medium"
         reasoning = "Good legal basis; specific experimental or factual evidence may require closer scrutiny."
@@ -30,18 +38,18 @@ def calculate_confidence_and_abstention(
             gaps.append("Synergistic bio-assay data required to overcome Section 3(e)")
         if "ABS_BIODIVERSITY" in query_analysis.intent:
             gaps.append("Exact source location (state/wild vs cultivated) needed for SBB vs NBA determination")
+        abstained = False
+        abstention_reason = None
     else:
-        base_score = 0.45
+        base_score = 0.20
         level = "low"
-        reasoning = "Preliminary evaluation based on general principles; full statutory grounding is partial."
+        reasoning = "Preliminary evaluation based on general principles; full statutory grounding is insufficient."
         gaps.append("Full prior art and classical formulary review required")
-
-    # Safe Abstention logic
-    abstained = False
-    abstention_reason = None
-    if base_score < 0.3:
         abstained = True
-        abstention_reason = "Insufficient statutory evidence to provide a confident legal assessment without human expert guidance."
+        abstention_reason = (
+            "Insufficient statutory evidence in knowledge base: The available legal documents lack adequate grounding "
+            "to support a reliable legal answer for this inquiry without human expert consultation."
+        )
 
     # Human Review Recommendation
     human_review_recommended = False

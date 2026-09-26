@@ -19,7 +19,6 @@ import {
   Building,
   AlertCircle
 } from 'lucide-react';
-import { VoiceInputField } from '../../components/shared/VoiceInputField';
 import { useAppStore } from '../../store/appStore';
 
 export const HomePage: React.FC = () => {
@@ -108,13 +107,13 @@ export const HomePage: React.FC = () => {
           <div className="hero-ask-card text-left">
             <form onSubmit={handleAskSubmit} className="hero-ask-form">
               <div className="hero-input-area">
-                <VoiceInputField
-                  value={inputQuery}
-                  onChange={setInputQuery}
-                  placeholder={t('hero.inputPlaceholder', 'Ask your IP question (e.g. Can I patent a polyherbal kadha, or do I need ABS clearance?)...')}
-                  multiline={true}
-                  rows={2}
+                <textarea
                   id="hero-main-query"
+                  value={inputQuery}
+                  onChange={(e) => setInputQuery(e.target.value)}
+                  placeholder={t('hero.inputPlaceholder', 'Ask your IP question (e.g. Can I patent a polyherbal kadha, or do I need ABS clearance?)...')}
+                  rows={2}
+                  className="gov-textarea"
                 />
               </div>
 

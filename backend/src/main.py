@@ -10,6 +10,7 @@ from .api.v1.cases import router as cases_router
 from .api.v1.escalate import router as escalate_router
 from .api.v1.expert import router as expert_router
 from .api.v1.me import router as me_router
+from .api.v1.auth import router as auth_router
 
 from .rag.retriever import retriever
 from .core.llm_client import llm_client
@@ -100,6 +101,7 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
 
 # Include Routers (Supports both direct /v1 and /api/v1 paths)
 app.include_router(health_router)
+app.include_router(auth_router)
 app.include_router(query_router)
 app.include_router(cases_router)
 app.include_router(escalate_router)
@@ -108,6 +110,7 @@ app.include_router(me_router)
 
 # Mount /api aliases for full client interoperability
 app.include_router(health_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
 app.include_router(query_router, prefix="/api")
 app.include_router(cases_router, prefix="/api")
 app.include_router(escalate_router, prefix="/api")

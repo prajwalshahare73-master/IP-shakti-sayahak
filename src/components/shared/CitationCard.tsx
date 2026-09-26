@@ -30,6 +30,41 @@ export const CitationCard: React.FC<{ citation: Citation; index?: number }> = ({
           </span>
           <span className="citation-jurisdiction">{citation.jurisdiction}</span>
           <span className="citation-status">{citation.status}</span>
+          {(citation as any).verificationStatus && (
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 700,
+                padding: '2px 8px',
+                borderRadius: '12px',
+                background:
+                  (citation as any).verificationStatus === 'SUPPORTED'
+                    ? '#f0fdf4'
+                    : (citation as any).verificationStatus === 'PARTIALLY_SUPPORTED'
+                    ? '#fffbeb'
+                    : '#fef2f2',
+                color:
+                  (citation as any).verificationStatus === 'SUPPORTED'
+                    ? '#16a34a'
+                    : (citation as any).verificationStatus === 'PARTIALLY_SUPPORTED'
+                    ? '#d97706'
+                    : '#dc2626',
+                border: `1px solid ${
+                  (citation as any).verificationStatus === 'SUPPORTED'
+                    ? '#bbf7d0'
+                    : (citation as any).verificationStatus === 'PARTIALLY_SUPPORTED'
+                    ? '#fde68a'
+                    : '#fecaca'
+                }`
+              }}
+            >
+              {(citation as any).verificationStatus === 'SUPPORTED'
+                ? '✓ Supported'
+                : (citation as any).verificationStatus === 'PARTIALLY_SUPPORTED'
+                ? '⚠ Partially Supported'
+                : '✕ Unsupported'}
+            </span>
+          )}
         </div>
 
         {index !== undefined && <span className="citation-num">[{index + 1}]</span>}
@@ -41,6 +76,16 @@ export const CitationCard: React.FC<{ citation: Citation; index?: number }> = ({
         {citation.section && <span className="citation-section">{citation.section}</span>}
         {citation.page && <span className="citation-page">Page {citation.page}</span>}
         {citation.version && <span className="citation-version">v{citation.version}</span>}
+        {(citation as any).effectiveDate && (
+          <span style={{ fontSize: '11px', color: '#047857', background: '#ecfdf5', padding: '2px 7px', borderRadius: '10px', border: '1px solid #a7f3d0', fontWeight: 600 }}>
+            In force: {(citation as any).effectiveDate}
+          </span>
+        )}
+        {(citation as any).lastAmendedDate && (
+          <span style={{ fontSize: '11px', color: '#b45309', background: '#fffbeb', padding: '2px 7px', borderRadius: '10px', border: '1px solid #fde68a', fontWeight: 600 }}>
+            Amended: {(citation as any).lastAmendedDate}
+          </span>
+        )}
       </div>
 
       {citation.excerpt && (
@@ -67,6 +112,23 @@ export const CitationCard: React.FC<{ citation: Citation; index?: number }> = ({
               )}
             </button>
           )}
+        </div>
+      )}
+
+      {/* Verification Note: only shown when trust validation data is attached */}
+      {(citation as any).verificationNote && (
+        <div style={{
+          fontSize: '11px',
+          marginTop: '6px',
+          padding: '6px 10px',
+          borderRadius: '6px',
+          background: (citation as any).verificationStatus === 'NOT_SUPPORTED' ? '#fef2f2' : (citation as any).verificationStatus === 'PARTIALLY_SUPPORTED' ? '#fffbeb' : '#f0fdf4',
+          color: (citation as any).verificationStatus === 'NOT_SUPPORTED' ? '#dc2626' : (citation as any).verificationStatus === 'PARTIALLY_SUPPORTED' ? '#d97706' : '#15803d',
+          border: `1px solid ${(citation as any).verificationStatus === 'NOT_SUPPORTED' ? '#fecaca' : (citation as any).verificationStatus === 'PARTIALLY_SUPPORTED' ? '#fde68a' : '#bbf7d0'}`,
+          lineHeight: 1.4
+        }}>
+          {(citation as any).verificationStatus === 'NOT_SUPPORTED' && <strong>⚠ Warning: </strong>}
+          {(citation as any).verificationNote}
         </div>
       )}
 
