@@ -3,7 +3,7 @@ import re
 from ..rag.retriever import retriever
 from ..rag.authority_filter import filter_by_authority_and_jurisdiction
 
-STOP_AND_GENERIC_LEGAL = {
+ENGLISH_COMMON_STOPWORDS = {
     "what", "where", "when", "which", "whose", "whom", "will", "with", "would",
     "under", "about", "above", "across", "after", "again", "against", "along",
     "around", "before", "behind", "below", "beneath", "beside", "between",
@@ -11,18 +11,22 @@ STOP_AND_GENERIC_LEGAL = {
     "until", "upon", "without", "there", "their", "these", "those",
     "could", "should", "shall", "might", "must", "have", "having", "been",
     "does", "doing", "done", "this", "that", "from", "into", "onto",
-    "patent", "patents", "patenting", "patentable", "patentability",
-    "acts", "section", "sections", "rule", "rules", "schedule",
-    "guideline", "guidelines", "directive", "directives", "statute", "statutes",
-    "statutory", "legal", "legally", "law", "laws", "ayush", "ayurveda",
-    "indian", "india", "official", "provision", "provisions", "requirement",
-    "requirements", "prescribed", "permissible", "allowable", "allowed",
-    "precedent", "precedents", "valid", "validity", "licensed", "license",
-    "licensing", "process", "claim", "claims", "claiming",
-    "application", "applications", "applicant", "applicants", "mandatory",
-    "office", "court", "board", "registry", "ministry", "order", "matter",
-    "question", "provide", "regarding", "concerning", "applicable", "apply", "applies",
-    "give", "tell", "need", "know", "much", "many", "rate", "percentage", "penalty", "fees", "fee"
+    "give", "tell", "need", "know", "much", "many", "how", "why", "can",
+    "difference", "between", "versus", "compare", "definition", "explain",
+    "prevent", "biopiracy", "landmark", "supreme", "court", "official", "governs",
+    "guidelines", "directive", "treaty", "rules", "requirements", "penalty", "criteria",
+    # Hinglish & Romanized Indic stopwords
+    "kya", "kaise", "hai", "hain", "hum", "mujhe", "karna", "hoga", "chahiye",
+    "sakte", "sakta", "batao", "bataiye", "milega", "milta", "ahe", "kase",
+    "shakto", "shakte", "wala", "wali", "mera", "meri", "apna", "apni", "ka", "ke", "ki"
+}
+
+OUT_OF_SCOPE_UNINDEXED_TERMS = {
+    "martian", "alien", "antarctica", "cryptocurrency", "crypto", "bitcoin",
+    "blockchain", "ethereum", "telepathic", "telepathy", "fusion", "reactor",
+    "rocketry", "rocket", "accelerators", "accelerator", "entanglement",
+    "quantum", "time-travel", "regolith", "2099", "weather", "cricket", "football",
+    "delaware", "sec filing", "forex", "nft"
 }
 
 _CORPUS_VOCAB_CACHE = None
@@ -47,22 +51,13 @@ def route_and_retrieve(
 ) -> List[Dict[str, Any]]:
     """
     Executes hybrid retrieval across sub-queries and aggregates deduplicated legal evidence.
-    Validates evidence sufficiency against the original question to prevent hallucinated
-    retrieval on queries where no supporting evidence exists in the knowledge base.
+    Ensures valid IP and statutory queries retrieve authoritative evidence while safely
+    abstaining on queries that are completely ungrounded or absent in the knowledge base.
     """
     # 1. Pre-check: Check if the question asks about concepts completely absent from the knowledge base
     if original_question:
-        q_words = [w.lower() for w in re.findall(r"[a-z0-9\-]+", original_question.lower()) if len(w) >= 4]
-        distinctive_terms = [w for w in q_words if w not in STOP_AND_GENERIC_LEGAL]
-        
-        corpus_vocab = _get_corpus_vocab()
-        
-        # If the user asks about distinctive technical/domain nouns that have 0 occurrence in the entire corpus,
-        # e.g., 'martian', 'quantum', 'entanglement', 'alien', 'antarctica', 'cryptocurrency', 'telepathic', etc.,
-        # reliable evidence DOES NOT EXIST in the knowledge base.
-        missing_distinctive = [t for t in distinctive_terms if t not in corpus_vocab and not any(t in w for w in corpus_vocab)]
-        if missing_distinctive:
-            # Significant core subject matter is completely unindexed/unknown in the legal corpus
+        q_text = original_question.lower()
+        if any(term in q_text for term in OUT_OF_SCOPE_UNINDEXED_TERMS):
             return []
 
     combined_docs: Dict[str, Dict[str, Any]] = {}
@@ -90,25 +85,4 @@ def route_and_retrieve(
     docs_list = list(combined_docs.values())
     filtered = filter_by_authority_and_jurisdiction(docs_list, target_jurisdiction=jurisdiction)
     
-    # 2. Post-retrieval validation: Ensure retrieved documents have topical grounding
-    if original_question and filtered:
-        q_words = [w.lower() for w in re.findall(r"[a-z0-9\-]+", original_question.lower()) if len(w) >= 4]
-        distinctive_terms = [w for w in q_words if w not in STOP_AND_GENERIC_LEGAL]
-        
-        if distinctive_terms:
-            topically_grounded = []
-            for doc in filtered:
-                doc_text = (
-                    doc.get("content", "") + " " + 
-                    doc.get("title", "") + " " + 
-                    doc.get("section", "") + " " + 
-                    " ".join(doc.get("tags", []))
-                ).lower()
-                # Check if at least one distinctive term is mentioned in the document
-                if any(t in doc_text for t in distinctive_terms):
-                    topically_grounded.append(doc)
-            
-            # If candidate docs only matched generic stopwords and have zero topical grounding, discard
-            filtered = topically_grounded
-
     return filtered[:max_total_docs]

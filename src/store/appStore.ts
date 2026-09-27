@@ -77,6 +77,8 @@ export interface AIAnswerData {
     reason: string;
     missingInfo: string[];
   };
+  originalQuery?: string;
+  reformulatedQuery?: string;
 }
 
 export interface CaseEvent {

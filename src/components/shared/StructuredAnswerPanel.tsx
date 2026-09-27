@@ -346,6 +346,34 @@ export const StructuredAnswerPanel: React.FC<Props> = ({
           })}
         </nav>
 
+        {/* Query Understanding Card (Original vs Reformulated Query) */}
+        {(answer.reformulatedQuery || answer.originalQuery) && (
+          <div className="sap-query-understanding-card" style={{
+            background: '#f0fdf4',
+            border: '1px solid #bbf7d0',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            marginBottom: '16px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: '#166534', fontWeight: 600, fontSize: '0.88rem' }}>
+              <Zap size={15} />
+              <span>Query Understanding & Reformulation</span>
+            </div>
+            <div style={{ fontSize: '0.84rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div>
+                <span style={{ color: '#4b5563', fontWeight: 600 }}>Original Query: </span>
+                <span style={{ color: '#1f2937' }}>{answer.originalQuery || query}</span>
+              </div>
+              {answer.reformulatedQuery && (
+                <div>
+                  <span style={{ color: '#15803d', fontWeight: 600 }}>Reformulated Retrieval Query: </span>
+                  <span style={{ color: '#14532d', fontStyle: 'italic' }}>{answer.reformulatedQuery}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Render each present section */}
         <div className="sap-sections-stack">
           {SECTION_MARKERS.map(m => {
@@ -415,6 +443,34 @@ export const StructuredAnswerPanel: React.FC<Props> = ({
   // ──────────────────────────────
   return (
     <div className="sap-root sap-prose-mode" id="structured-answer-panel">
+      {/* Query Understanding Card (Original vs Reformulated Query) */}
+      {(answer.reformulatedQuery || answer.originalQuery) && (
+        <div className="sap-query-understanding-card" style={{
+          background: '#f0fdf4',
+          border: '1px solid #bbf7d0',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          marginBottom: '16px'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', color: '#166534', fontWeight: 600, fontSize: '0.88rem' }}>
+            <Zap size={15} />
+            <span>Query Understanding & Reformulation</span>
+          </div>
+          <div style={{ fontSize: '0.84rem', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div>
+              <span style={{ color: '#4b5563', fontWeight: 600 }}>Original Query: </span>
+              <span style={{ color: '#1f2937' }}>{answer.originalQuery || query}</span>
+            </div>
+            {answer.reformulatedQuery && (
+              <div>
+                <span style={{ color: '#15803d', fontWeight: 600 }}>Reformulated Retrieval Query: </span>
+                <span style={{ color: '#14532d', fontStyle: 'italic' }}>{answer.reformulatedQuery}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Case context summary */}
       {caseProfile && Object.keys(caseProfile).some(k => (caseProfile as any)[k]) && (
         <div className="sap-case-context-banner">

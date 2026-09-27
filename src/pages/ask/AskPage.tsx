@@ -25,6 +25,7 @@ import { useAppStore, CaseRecord } from '../../store/appStore';
 import { askIPQuestion } from '../../services/ask.service';
 import { ExpertDirectorySelector, EmpanelledExpert, EMPANELLED_EXPERTS } from '../../components/expert/ExpertDirectorySelector';
 import { TrustValidationPanel } from '../../components/shared/TrustValidationPanel';
+import { VoiceInputButton } from '../../components/shared/VoiceInputButton';
 
 export const AskPage: React.FC = () => {
   const { t } = useTranslation();
@@ -182,7 +183,12 @@ export const AskPage: React.FC = () => {
                 <strong>{jurisdiction}</strong>
               </div>
 
-              <div className="ask-form-btn-row">
+              <div className="ask-form-btn-row" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <VoiceInputButton
+                  currentValue={inputQuestion}
+                  onTranscript={(text) => setInputQuestion(text)}
+                  id="ask-voice-input-btn"
+                />
                 <button
                   type="submit"
                   className="btn btn-primary"

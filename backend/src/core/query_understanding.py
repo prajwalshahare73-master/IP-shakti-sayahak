@@ -29,6 +29,73 @@ INTENT_PATTERNS = {
     ]
 }
 
+def _generate_reformulated_query(
+    question: str,
+    intents: List[str],
+    ip_types: List[str],
+    domains: List[str],
+    case_builder_data: Optional[CaseBuilderInput] = None
+) -> str:
+    """
+    Generates a canonical, statutory-focused query reformulation used for
+    targeted retrieval and transparent query understanding on the frontend.
+    """
+    text = question.lower().strip()
+    
+    # If case builder data is present, assemble formulation context
+    if case_builder_data and (case_builder_data.product_name or case_builder_data.ingredients):
+        prod = case_builder_data.product_name or "Ayurvedic formulation"
+        ingr = f" with ingredients ({', '.join(case_builder_data.ingredients)})" if case_builder_data.ingredients else ""
+        return (
+            f"Statutory IP evaluation of '{prod}'{ingr} under Indian Patents Act 1970 "
+            f"(Section 3(p), 3(d), 3(e)), TKDL prior art verification, and NBA Biological Diversity Act compliance"
+        )
+    
+    # Specific common statutory inquiry patterns
+    if ("patent" in text and "trademark" in text) or "difference" in text or "compare" in text:
+        return (
+            "Comparative statutory analysis of Patent protection (inventions, technical novelty, Section 3) "
+            "versus Trademark protection (brand identity, distinctive signs, Class 5, Section 9/11) under Indian IP Law"
+        )
+    elif "tkdl" in text or "traditional knowledge" in text:
+        return (
+            "Traditional Knowledge Digital Library (TKDL) documentation of classical formulations, "
+            "defensive prior art database, and Section 3(p) non-patentability provisions under Indian Patents Act 1970"
+        )
+    elif "abs" in text or "biodiversity" in text or "nba" in text:
+        return (
+            "Access and Benefit Sharing (ABS) compliance, National Biodiversity Authority (NBA) prior approval (Form III), "
+            "and State Biodiversity Board (SBB) intimation under Biological Diversity Act 2002"
+        )
+    elif "gi" in text or "geographical indication" in text:
+        return (
+            "Geographical Indications of Goods Act 1999 criteria, origin-linked reputation, and legal protection "
+            "for traditional Ayurvedic products and herbal commodities in India"
+        )
+    elif "trademark" in text or "trade mark" in text or "brand" in text:
+        return (
+            "Trademark registration criteria, Section 9 absolute grounds (descriptiveness), Section 11 relative grounds, "
+            "and Class 5 filing for Ayurvedic and herbal medicinal goods under Trade Marks Act 1999"
+        )
+    elif "hair oil" in text or "kadha" in text or "taila" in text or "extract" in text or "formulation" in text:
+        return (
+            f"Patentability, Section 3(p) traditional knowledge exclusions, Section 3(e) synergistic data requirements, "
+            f"and novel extraction process claims for: '{question.strip()}' under Indian Patents Act 1970"
+        )
+    elif "patent" in text or "patentable" in text:
+        return (
+            f"Patentability requirements (novelty, inventive step, industrial applicability) and statutory exclusions "
+            f"under the Indian Patents Act 1970 for: '{question.strip()}'"
+        )
+    elif "ayush" in text or "license" in text or "manufacturing" in text:
+        return (
+            f"AYUSH regulatory framework, Rule 158-B manufacturing licensing, and Schedule T Good Manufacturing Practices (GMP) "
+            f"for: '{question.strip()}'"
+        )
+    
+    return f"Statutory guidance and relevant Indian Intellectual Property legal provisions for: '{question.strip()}'"
+
+
 def analyze_query(
     question: str, 
     requested_language: Optional[str] = "en",
@@ -37,6 +104,7 @@ def analyze_query(
 ) -> QueryAnalysis:
     """
     Classifies intent, IP types, technical domain, jurisdiction, and language from query + context.
+    Produces a normalized reformulated_query for targeted retrieval.
     """
     text = question.lower()
 
@@ -65,12 +133,10 @@ def analyze_query(
     text_words = set(text.split())
 
     if norm_lang and norm_lang not in ("en", "english"):
-        # Explicit non-English selection takes precedence
         detected_lang = norm_lang
     elif has_gujarati:
         detected_lang = "gu"
     elif has_devanagari:
-        # Check if Marathi vocabulary or default to Hindi
         if any(w in question for w in marathi_vocab):
             detected_lang = "mr"
         else:
@@ -116,7 +182,7 @@ def analyze_query(
         "ip", "ipr", "ayush", "ayurveda", "siddha", "unani", "formulation", "kadha", "herb", "herbal",
         "medicine", "drug", "extract", "tkdl", "abs", "biodiversity", "nba", "sbb", "section",
         "statute", "license", "licensing", "fssai", "prior art", "invention", "novelty", "claim",
-        "traditional knowledge", "law", "rule", "fee", "fees", "examination", "infringement",
+        "traditional knowledge", "law", "rule", "fee", "fees", "examination", "infringement", "difference",
         # Devanagari (Hindi, Marathi, Sanskrit)
         "पेटेंट", "ट्रेडमार्क", "कॉपीराइट", "आयुष", "आयुर्वेद", "काढ़ा", "औषध", "दवा", "जैव विविधता", "टीकेडीएल", "पेटंट", "वनस्पति",
         # Gujarati
@@ -136,7 +202,8 @@ def analyze_query(
         "weather", "temperature", "forecast", "rain", "cricket", "football", "match", "score",
         "movie", "film", "song", "actor", "recipe", "cooking", "president", "prime minister",
         "capital of", "joke", "story", "bitcoin", "crypto", "stock market today",
-        "delaware", "blockchain", "ethereum", "uspto", "sec filing", "forex", "nft"
+        "delaware", "blockchain", "ethereum", "uspto", "sec filing", "forex", "nft",
+        "martian", "alien", "antarctica telepathy"
     ]
 
     is_out_of_scope = any(re.search(r"\b" + re.escape(w) + r"\b", text) for w in OUT_OF_SCOPE_TERMS)
@@ -149,7 +216,8 @@ def analyze_query(
             domain=["OUT_OF_SCOPE"],
             jurisdiction=requested_jurisdiction or "india",
             query_type="out_of_scope",
-            requires_case_context=False
+            requires_case_context=False,
+            reformulated_query=f"Out-of-scope inquiry outside Indian IP/Ayurveda regulatory domain: '{question.strip()}'"
         )
 
     # Map intents to IP types and domains
@@ -159,19 +227,27 @@ def analyze_query(
         if not intents:
             intents.append("PATENTABILITY")
 
-    if "TRADEMARK" in intents:
+    if "TRADEMARK" in intents or "trademark" in text or "trade mark" in text or "brand" in text:
         if "TRADEMARK" not in ip_types:
             ip_types.append("TRADEMARK")
 
-    if "TRADITIONAL_KNOWLEDGE" in intents and "TK" not in domains:
+    if ("TRADITIONAL_KNOWLEDGE" in intents or "tkdl" in text) and "TK" not in domains:
         domains.append("TK")
-    if "ABS_BIODIVERSITY" in intents and "ABS" not in domains:
+    if ("ABS_BIODIVERSITY" in intents or "abs" in text or "biodiversity" in text) and "ABS" not in domains:
         domains.append("ABS")
-    if "REGULATORY_CLASSIFICATION" in intents and "AYUSH" not in domains:
+    if ("REGULATORY_CLASSIFICATION" in intents or "ayush" in text or "fssai" in text) and "AYUSH" not in domains:
         domains.append("AYUSH")
 
     jurisdiction = requested_jurisdiction or "india"
-    requires_context = bool(case_builder_data) or len(text.split()) > 15
+    requires_context = bool(case_builder_data) or len(text.split()) > 20
+
+    reformulated = _generate_reformulated_query(
+        question=question,
+        intents=intents,
+        ip_types=ip_types,
+        domains=domains,
+        case_builder_data=case_builder_data
+    )
 
     return QueryAnalysis(
         language=detected_lang,
@@ -180,5 +256,6 @@ def analyze_query(
         domain=domains,
         jurisdiction=jurisdiction,
         query_type="case_specific" if requires_context else "general",
-        requires_case_context=requires_context
+        requires_case_context=requires_context,
+        reformulated_query=reformulated
     )

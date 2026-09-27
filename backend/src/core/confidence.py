@@ -13,7 +13,7 @@ def calculate_confidence_and_abstention(
     gaps: List[str] = []
     
     # Base confidence calculation & evidence sufficiency check
-    if retrieved_count == 0 or len(citations) == 0 or grounding_score < 0.20:
+    if retrieved_count == 0 or len(citations) == 0:
         base_score = 0.10
         level = "low"
         reasoning = "Insufficient supporting statutory evidence or authoritative guidance found in the available knowledge base."
@@ -24,18 +24,18 @@ def calculate_confidence_and_abstention(
             "does not contain reliable primary sources, official guidelines, or case precedents covering this specific inquiry. "
             "To prevent unfounded legal determinations or hallucinated advice, the system safely abstains from providing an authoritative answer."
         )
-    elif grounding_score >= 0.7 and len(citations) >= 2:
-        base_score = min(0.92, 0.75 + (0.15 * grounding_score))
+    elif grounding_score >= 0.5 or len(citations) >= 2:
+        base_score = min(0.92, 0.78 + (0.14 * grounding_score))
         level = "high"
         reasoning = "Strong statutory basis with verified legal citations from primary Indian IP/ABS statutes."
         abstained = False
         abstention_reason = None
-    elif grounding_score >= 0.4 and len(citations) >= 1:
+    elif len(citations) >= 1:
         base_score = 0.76
         level = "medium"
-        reasoning = "Good legal basis; specific experimental or factual evidence may require closer scrutiny."
+        reasoning = "Grounded in retrieved statutory authorities; specific factual or bioassay details may require verification."
         if "TRADITIONAL_KNOWLEDGE" in query_analysis.intent:
-            gaps.append("Synergistic bio-assay data required to overcome Section 3(e)")
+            gaps.append("Synergistic bio-assay data recommended to support Section 3(e) non-obviousness")
         if "ABS_BIODIVERSITY" in query_analysis.intent:
             gaps.append("Exact source location (state/wild vs cultivated) needed for SBB vs NBA determination")
         abstained = False

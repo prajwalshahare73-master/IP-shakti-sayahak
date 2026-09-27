@@ -29,6 +29,7 @@ class QueryAnalysis(BaseModel):
     jurisdiction: str = "india"
     query_type: str = "general"
     requires_case_context: bool = False
+    reformulated_query: Optional[str] = None
 
 
 class Citation(BaseModel):

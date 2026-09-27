@@ -20,6 +20,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useAppStore } from '../../store/appStore';
+import { VoiceInputButton } from '../../components/shared/VoiceInputButton';
 
 export const HomePage: React.FC = () => {
   const { t } = useTranslation();
@@ -117,7 +118,12 @@ export const HomePage: React.FC = () => {
                 />
               </div>
 
-              <div className="hero-form-actions">
+              <div className="hero-form-actions" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                <VoiceInputButton
+                  currentValue={inputQuery}
+                  onTranscript={(text) => setInputQuery(text)}
+                  id="hero-voice-input-btn"
+                />
                 <button type="submit" className="btn btn-primary btn-lg hero-submit-btn">
                   <span>{t('hero.askButton', 'Ask IP-SAKTI')}</span>
                   <ArrowRight size={18} />

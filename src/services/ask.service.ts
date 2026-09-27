@@ -114,7 +114,9 @@ function mapRagResponseToAnswerData(raw: any): AIAnswerData {
     abstentionDetails: raw.abstained ? {
       reason: raw.abstention_reason || 'Insufficient evidence retrieved from knowledge base.',
       missingInfo: raw.confidence_info?.gaps || []
-    } : undefined
+    } : undefined,
+    originalQuery: raw.question,
+    reformulatedQuery: raw.query_analysis?.reformulated_query
   };
 }
 
