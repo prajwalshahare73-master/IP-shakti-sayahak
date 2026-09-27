@@ -39,7 +39,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="FastAPI Backend for IP-SAKTI Sahayak: Indian IP, TKDL & ABS Legal AI System",
+    description="IP Shakti Backend — Indian IP, TKDL, ABS & Ayurveda Regulatory Compliance API",
     version="1.0.0",
     lifespan=lifespan
 )

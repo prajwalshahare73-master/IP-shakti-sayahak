@@ -39,7 +39,7 @@ def _resolve_chroma_path() -> str:
     return str((project_root / "data" / "index" / "chroma").resolve())
 
 class Settings:
-    APP_NAME: str = "IP-SAKTI Sahayak Backend"
+    APP_NAME: str = "IP Shakti Backend"
     APP_ENV: str = os.getenv("APP_ENV", "development")
     API_HOST: str = os.getenv("API_HOST", "0.0.0.0")
     API_PORT: int = int(os.getenv("PORT") or os.getenv("API_PORT") or "8000")
