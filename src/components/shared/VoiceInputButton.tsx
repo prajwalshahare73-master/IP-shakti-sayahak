@@ -132,39 +132,23 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
         style={{
           display: 'inline-flex',
           alignItems: 'center',
-          gap: '6px',
-          padding: '6px 10px',
-          borderRadius: '6px',
-          fontSize: '0.85rem',
-          fontWeight: 500,
-          border: isListening ? '1px solid #ef4444' : '1px solid #d1d5db',
+          justifyContent: 'center',
+          width: '38px',
+          height: '38px',
+          padding: '8px',
+          borderRadius: '8px',
+          border: isListening ? '1.5px solid #ef4444' : '1px solid #d1d5db',
           background: isListening ? '#fef2f2' : '#ffffff',
           color: isListening ? '#dc2626' : '#4b5563',
           cursor: 'pointer',
           transition: 'all 0.2s ease',
-          boxShadow: isListening ? '0 0 0 3px rgba(239, 68, 68, 0.2)' : 'none'
+          boxShadow: isListening ? '0 0 0 3px rgba(239, 68, 68, 0.25)' : 'none'
         }}
       >
         {isListening ? (
-          <>
-            <span
-              style={{
-                display: 'inline-block',
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                backgroundColor: '#dc2626',
-                animation: 'pulse 1.2s infinite ease-in-out'
-              }}
-            />
-            <Mic size={16} className="text-error" />
-            <span style={{ fontSize: '0.8rem', color: '#dc2626', fontWeight: 600 }}>Listening...</span>
-          </>
+          <Mic size={18} style={{ color: '#dc2626', animation: 'pulse 1.2s infinite ease-in-out' }} />
         ) : (
-          <>
-            <Mic size={16} />
-            <span style={{ fontSize: '0.8rem' }}>Voice</span>
-          </>
+          <Mic size={18} />
         )}
       </button>
 
