@@ -1,14 +1,23 @@
-import os
 import sys
+import os
+from pathlib import Path
 
-# Ensure project root, backend, and src directories are in Python path
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
-BACKEND_DIR = os.path.join(ROOT_DIR, "backend")
-SRC_DIR = os.path.join(BACKEND_DIR, "src")
+# Add project root and backend directory to sys.path for Vercel Serverless runtime
+current_dir = Path(__file__).resolve().parent
+root_dir = current_dir.parent
+backend_dir = root_dir / "backend"
 
-for path in [ROOT_DIR, BACKEND_DIR, SRC_DIR]:
-    if path not in sys.path:
-        sys.path.insert(0, path)
+if str(root_dir) not in sys.path:
+    sys.path.insert(0, str(root_dir))
+if str(backend_dir) not in sys.path:
+    sys.path.insert(0, str(backend_dir))
+
+# Enable fast, lightweight retrieval defaults for serverless execution
+os.environ.setdefault("APP_ENV", "production")
+os.environ.setdefault("DISABLE_VECTOR_EMBEDDINGS", "true")
+os.environ.setdefault("DISABLE_HEAVY_RERANKER", "true")
 
 from backend.src.main import app
+
+# Vercel serverless entry point
+handler = app

@@ -1,1 +1,1 @@
-# API package marker
+# Package marker for Vercel Python runtime

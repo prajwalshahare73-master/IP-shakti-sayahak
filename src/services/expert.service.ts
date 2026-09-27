@@ -53,7 +53,7 @@ export interface CaseMatchingContext {
   ingredients?: string[];
 }
 
-const API_BASE = `${(API_CONFIG.FASTAPI_BASE_URL || '/api/v1')
+const API_BASE = `${(API_CONFIG.FASTAPI_BASE_URL || 'http://localhost:8000/api/v1')
   .replace(/\/api\/v1\/?$/, '')
   .replace(/\/v1\/?$/, '')}/v1/expert`;
 

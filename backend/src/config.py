@@ -53,7 +53,7 @@ class Settings:
     # ── Low-memory mode flags ────────────────────────────────────────────────
     # For memory-constrained deployment environments such as Render Free (512 MB).
     # When APP_ENV=production, low-memory mode is active by default unless explicitly disabled.
-    _default_low_mem = "true" if os.getenv("APP_ENV") == "production" or os.getenv("VERCEL") == "1" else "false"
+    _default_low_mem = "true" if os.getenv("APP_ENV") == "production" else "false"
     DISABLE_HEAVY_RERANKER: bool = os.getenv("DISABLE_HEAVY_RERANKER", _default_low_mem).strip().lower() in ("true", "1", "yes")
     DISABLE_VECTOR_EMBEDDINGS: bool = os.getenv("DISABLE_VECTOR_EMBEDDINGS", _default_low_mem).strip().lower() in ("true", "1", "yes")
 
