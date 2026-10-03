@@ -1,0 +1,134 @@
+{
+  "evaluation_timestamp": "2026-10-04T00:04:15.796763",
+  "project": "IP-SAKTI Sahayak Prototype",
+  "metrics": {
+    "test_cases_total": 78,
+    "classification_accuracy": {
+      "numerator": 34,
+      "denominator": 48,
+      "percentage": 70.8,
+      "formatted": "34 / 48 = 70.8%",
+      "validation": "VALIDATED"
+    },
+    "pathway_accuracy": {
+      "numerator": 34,
+      "denominator": 48,
+      "percentage": 70.8,
+      "formatted": "34 / 48 = 70.8%",
+      "validation": "VALIDATED"
+    },
+    "citation_coverage": {
+      "numerator": 3,
+      "denominator": 10,
+      "percentage": 30.0,
+      "formatted": "3 / 10 = 30.0%",
+      "validation": "VALIDATED"
+    },
+    "citation_correctness": {
+      "numerator": 1,
+      "denominator": 3,
+      "percentage": 33.3,
+      "formatted": "1 / 3 = 33.3%",
+      "validation": "VALIDATED"
+    },
+    "faithfulness": {
+      "numerator": 2,
+      "denominator": 10,
+      "percentage": 20.0,
+      "formatted": "2 / 10 = 20.0%",
+      "validation": "VALIDATED"
+    },
+    "safe_abstention_rate": {
+      "numerator": 15,
+      "denominator": 15,
+      "percentage": 100.0,
+      "formatted": "15 / 15 = 100.0%",
+      "validation": "VALIDATED"
+    },
+    "jurisdiction_separation_accuracy": {
+      "numerator": 15,
+      "denominator": 15,
+      "percentage": 100.0,
+      "formatted": "15 / 15 = 100.0%",
+      "validation": "VALIDATED"
+    },
+    "retrieval_relevance_at_1": {
+      "numerator": 1,
+      "denominator": 10,
+      "percentage": 10.0,
+      "formatted": "1 / 10 = 10.0%",
+      "validation": "VALIDATED"
+    },
+    "retrieval_relevance_at_3": {
+      "numerator": 2,
+      "denominator": 10,
+      "percentage": 20.0,
+      "formatted": "2 / 10 = 20.0%",
+      "validation": "VALIDATED"
+    },
+    "multilingual_quality": {
+      "numerator": 8,
+      "denominator": 8,
+      "percentage": 100.0,
+      "formatted": "8 / 8 = 100.0%",
+      "validation": "VALIDATED"
+    },
+    "expert_reviewed_cases": {
+      "numerator": 20,
+      "denominator": 20,
+      "percentage": 100.0,
+      "formatted": "20 / 20 = 100.0%",
+      "validation": "VALIDATED"
+    }
+  },
+  "confusion_matrix": {
+    "Classical / Generic": {
+      "Classical / Generic": 8,
+      "Patent / Proprietary": 0,
+      "New / Non-Classical Drug": 0,
+      "Phytopharmaceutical": 0,
+      "Ayurveda-Aahar / Nutraceutical": 0,
+      "Cosmetic": 0
+    },
+    "Patent / Proprietary": {
+      "Classical / Generic": 0,
+      "Patent / Proprietary": 5,
+      "New / Non-Classical Drug": 3,
+      "Phytopharmaceutical": 0,
+      "Ayurveda-Aahar / Nutraceutical": 0,
+      "Cosmetic": 0
+    },
+    "New / Non-Classical Drug": {
+      "Classical / Generic": 0,
+      "Patent / Proprietary": 1,
+      "New / Non-Classical Drug": 7,
+      "Phytopharmaceutical": 0,
+      "Ayurveda-Aahar / Nutraceutical": 0,
+      "Cosmetic": 0
+    },
+    "Phytopharmaceutical": {
+      "Classical / Generic": 0,
+      "Patent / Proprietary": 0,
+      "New / Non-Classical Drug": 8,
+      "Phytopharmaceutical": 0,
+      "Ayurveda-Aahar / Nutraceutical": 0,
+      "Cosmetic": 0
+    },
+    "Ayurveda-Aahar / Nutraceutical": {
+      "Classical / Generic": 2,
+      "Patent / Proprietary": 0,
+      "New / Non-Classical Drug": 0,
+      "Phytopharmaceutical": 0,
+      "Ayurveda-Aahar / Nutraceutical": 6,
+      "Cosmetic": 0
+    },
+    "Cosmetic": {
+      "Classical / Generic": 0,
+      "Patent / Proprietary": 0,
+      "New / Non-Classical Drug": 0,
+      "Phytopharmaceutical": 0,
+      "Ayurveda-Aahar / Nutraceutical": 0,
+      "Cosmetic": 8
+    }
+  }
+}

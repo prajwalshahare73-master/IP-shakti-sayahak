@@ -183,8 +183,9 @@ def analyze_query(
         "medicine", "drug", "extract", "tkdl", "abs", "biodiversity", "nba", "sbb", "section",
         "statute", "license", "licensing", "fssai", "prior art", "invention", "novelty", "claim",
         "traditional knowledge", "law", "rule", "fee", "fees", "examination", "infringement", "difference",
+        "cosmetic", "cosmetics", "phytopharmaceutical", "aahar", "aahara", "nutraceutical",
         # Devanagari (Hindi, Marathi, Sanskrit)
-        "पेटेंट", "ट्रेडमार्क", "कॉपीराइट", "आयुष", "आयुर्वेद", "काढ़ा", "औषध", "दवा", "जैव विविधता", "टीकेडीएल", "पेटंट", "वनस्पति",
+        "पेटेंट", "ट्रेडमार्क", "कॉपीराइट", "आयुष", "आयुर्वेद", "काढ़ा", "औषध", "दवा", "जैव विविधता", "टीकेडीएल", "पेटंट", "वनस्पति", "जीआई", "भौगोलिक संकेत",
         # Gujarati
         "પેટન્ટ", "આયુર્વેદ", "ઔષધ",
         # Telugu
