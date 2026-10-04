@@ -15,22 +15,23 @@
 │                       │ • Vite 6                                           │
 │                       │ • Vanilla CSS (Gov-Standard Design System Tokens)  │
 ├───────────────────────┼────────────────────────────────────────────────────┤
-│ 2. Backend            │ • FastAPI (Python 3.12)                            │
+│ 2. Backend            │ • FastAPI (Python 3.11+)                           │
 │                       │ • Uvicorn (ASGI Production Server)                 │
 │                       │ • Pydantic v2 (Strict Schema Validation)           │
 ├───────────────────────┼────────────────────────────────────────────────────┤
-│ 3. Database & Vectors │ • Supabase (Managed PostgreSQL)                    │
-│                       │ • pgvector / ChromaDB (Vector Store)               │
+│ 3. Database & Vectors │ • Supabase (Managed PostgreSQL) / Local SQLite     │
+│                       │ • ChromaDB / BM25 (Vector & Lexical Search Stores) │
 ├───────────────────────┼────────────────────────────────────────────────────┤
-│ 4. AI / LLM & Search  │ • Google Gemini (1.5 Flash / Pro API)              │
+│ 4. AI / LLM & Search  │ • Ollama (llama3.1) / Grounded Statutory Synthesis │
 │                       │ • Sentence-Transformers (all-MiniLM-L6-v2)         │
 │                       │ • Rank-BM25 (Hybrid Semantic + Keyword Search)     │
+│                       │ • (Optional External LLM Provider API Support)     │
 ├───────────────────────┼────────────────────────────────────────────────────┤
-│ 5. APIs & Services    │ • Supabase Auth & REST API                         │
-│                       │ • Web Speech API (Native Indian Voice Input)       │
+│ 5. APIs & Services    │ • Supabase Auth / Local JWT Auth                   │
+│                       │ • Web Speech API (Multilingual Indic Voice Input)  │
 ├───────────────────────┼────────────────────────────────────────────────────┤
 │ 6. Hosting & Cloud    │ • Vercel (Frontend Single Page Application)        │
-│                       │ • Render (FastAPI Production Web Service)          │
+│                       │ • Render (FastAPI Containerized Web Service)       │
 └───────────────────────┴────────────────────────────────────────────────────┘
 ```
 
@@ -43,7 +44,7 @@ The system was engineered following a 6-phase statutory and technical pipeline:
 ```mermaid
 graph TD
     S1["Step 1: Statutory Legal Corpus Ingestion<br/>(4,016+ Chunks: Patents Act 1970, TKDL, Biodiversity Act 2002)"] --> S2["Step 2: Vector Embeddings & Hybrid Indexing<br/>(Sentence-Transformers + BM25 Lexical Grounding)"]
-    S2 --> S3["Step 3: FastAPI Backend & RAG Engine<br/>(Query Analysis, Safe Abstention & Gemini Synthesis)"]
+    S2 --> S3["Step 3: FastAPI Backend & RAG Engine<br/>(Query Analysis, Safe Abstention & Statutory Synthesis)"]
     S3 --> S4["Step 4: Gov-Standard Frontend Design Tokens<br/>(Accessible UI, High Contrast, 320px Mobile Responsive)"]
     S4 --> S5["Step 5: Feature Modules Implementation<br/>(Ask AI, 5-Step Case Builder, PDF Engine, Expert Directory)"]
     S5 --> S6["Step 6: Multilingual Localization & Failover<br/>(Full Native Hindi/Marathi/Gujarati & Resilient Client Fallback)"]
@@ -58,12 +59,12 @@ graph TD
 
 ### Step 2: Vector Embeddings & Hybrid Indexing
 - Embedded statutory chunks using `Sentence-Transformers` (`all-MiniLM-L6-v2`).
-- Combined dense vector embeddings with sparse `Rank-BM25` keyword indexing to guarantee that specific section references (e.g. "Section 3(p)", "Form 1", "Rule 55") are retrieved with zero hallucination.
+- Combined dense vector embeddings with sparse `Rank-BM25` keyword indexing to retrieve specific section references (e.g. "Section 3(p)", "Form 1", "Rule 55") grounded in the indexed legal corpus.
 
 ### Step 3: FastAPI Backend & RAG Engine
-- Built production FastAPI endpoints (`/api/v1/query`, `/api/v1/cases`).
-- Implemented **Safe Abstention Gateways**: If user queries are ambiguous or lack facts, the engine abstains safely instead of guessing.
-- Grounded prompt synthesis via Google Gemini, enforcing output in user-requested languages (Hindi, Marathi, Gujarati, English).
+- Built FastAPI endpoints (`/api/v1/query`, `/api/v1/cases`, `/api/v1/escalate`).
+- Implemented **Safe Abstention Gateways**: If user queries are ambiguous or lack factual support, the engine abstains safely instead of generating unsupported conclusions.
+- Grounded prompt synthesis via Ollama (llama3.1) and evidence-grounded synthesis, enforcing output in user-requested languages (Hindi, Marathi, Gujarati, English).
 
 ### Step 4: Government Design System & Responsive Foundation
 - Built a custom Vanilla CSS design token system aligned with national portal standards (Ashoka Pillar motif, Tri-color accents, high legibility typography).
@@ -73,11 +74,11 @@ graph TD
 - **Ask AI Sahayak**: Real-time legal assessment with speech-to-text voice input.
 - **5-Step Case Builder**: Step-by-step IP evaluation matrix (Formulation info, Traditional Knowledge novelty, Synergistic bio-assay evidence, Entity category, Commercialization).
 - **Official Case Dossier PDF Engine**: Standardized A4 downloadable and printable dossier with 14 statutory sections.
-- **Empanelled Expert Directory**: Verified directory of Ayurveda patent attorneys, scientists, and regulatory consultants.
+- **Empanelled Expert Directory**: Directory of verified Ayurveda patent attorneys, scientists, and regulatory consultants.
 
-### Step 6: Multilingual Localization & Zero-Downtime Fallback
+### Step 6: Multilingual Localization & Resilient Client Fallback
 - Localized into English, Hindi, Marathi, Gujarati, Kannada, and Sanskrit.
-- Added a client-side statutory fallback engine: If the cloud server is warming up or slow, the portal generates instant grounded guidance directly in the browser.
+- Added a client-side statutory fallback engine: If the cloud server is warming up or slow, the portal generates grounded guidance directly in the browser.
 
 ---
 
@@ -90,7 +91,7 @@ sequenceDiagram
     autonumber
     actor User as Citizen / Innovator
     participant UI as IP-SAKTI Portal (Web / Mobile)
-    participant RAG as FastAPI / Gemini Engine
+    participant RAG as FastAPI / RAG Engine
     participant DB as Statutory Corpus & Experts DB
 
     User->>UI: 1. Portal Access & Language Selection (Hindi / Marathi / Gujarati / English)

@@ -1,3 +1,14 @@
+# SIH 2026 — Judge Quick Start
+
+1. **Live Prototype:** [https://ip-shakti-sayahak.vercel.app](https://ip-shakti-sayahak.vercel.app)
+2. **Demo Video:** [Interactive Walkthrough & Feature Demo (play_demo.html)](./play_demo.html)
+3. **API / Swagger:** [https://ip-shakti-backend.onrender.com/docs](https://ip-shakti-backend.onrender.com/docs)
+4. **Evaluation Report:** [ip_sakti_evaluation_report.md](./ip_sakti_evaluation_report.md)
+5. **Architecture:** [System Architecture](#-system-architecture)
+6. **Source Code:** [https://github.com/prajwalshahare73-master/IP-shakti-sayahak](https://github.com/prajwalshahare73-master/IP-shakti-sayahak)
+
+---
+
 # 🌿 IP Shakti Sahayak (IP शक्ति सहायक)
 
 <p align="center">
@@ -20,28 +31,22 @@
   <img src="https://img.shields.io/badge/Vite_6-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite 6" />
   <img src="https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Python_3.11+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.11+" />
-  <img src="https://img.shields.io/badge/Google_Gemini_AI-4285F4?style=flat-square&logo=google&logoColor=white" alt="Google Gemini" />
+  <img src="https://img.shields.io/badge/LLM-Ollama_+_LLaMA_3.1-000000?style=flat-square&logo=meta&logoColor=white" alt="Ollama LLaMA 3.1" />
+  <img src="https://img.shields.io/badge/Hybrid_RAG-BM25_+_Chroma-orange?style=flat-square" alt="Hybrid RAG" />
   <img src="https://img.shields.io/badge/Indexed_Chunks-4%2C016%2B_Statutes-brightgreen?style=flat-square" alt="Statutory Chunks" />
   <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square" alt="MIT License" />
 </p>
 
 ---
 
-> [!IMPORTANT]
-> ### 🏆 HACKATHON JUDGES QUICK START & EVALUATION MATRIX
-> - 🌐 **Live Web Application:** [ip-shakti-sayahak.vercel.app](https://ip-shakti-sayahak.vercel.app)
-> - 📦 **GitHub Repository:** [github.com/prajwalshahare73-master/IP-shakti-sayahak](https://github.com/prajwalshahare73-master/IP-shakti-sayahak)
-> - ⚡ **Live FastAPI Swagger Docs:** [ip-shakti-backend.onrender.com/docs](https://ip-shakti-backend.onrender.com/docs)
-> - 📊 **Empirical Evaluation & QA Benchmark:** [ip_sakti_evaluation_report.md](./ip_sakti_evaluation_report.md) (78 Benchmark Test Cases)
-
----
-
 ## 📑 Table of Contents
 
+- [SIH 2026 — Judge Quick Start](#sih-2026--judge-quick-start)
 - [Executive Summary](#-executive-summary)
 - [Hackathon Judges & Evaluators Overview](#-hackathon-judges--evaluators-overview)
+- [What to Try (Judge Evaluation Guide)](#-what-to-try-judge-evaluation-guide)
+- [Current Prototype Benchmark Results](#-current-prototype-benchmark-results)
 - [Key Highlights & Differentiators](#-key-highlights--differentiators)
-- [Empirical Benchmark Metrics](#-empirical-benchmark-metrics)
 - [System Architecture](#-system-architecture)
 - [End-to-End User Workflow](#-end-to-end-user-workflow)
 - [Core Feature Modules](#-core-feature-modules)
@@ -62,36 +67,54 @@
 
 ## 🌟 Executive Summary
 
-**IP Shakti Sahayak (IP शक्ति सहायक)** is an advanced, production-grade Artificial Intelligence and Statutory Regulatory Guidance System specifically engineered for **Ayurvedic practitioners, AYUSH startups, MSMEs, herbal researchers, and IP attorneys in India**.
+**IP Shakti Sahayak (IP शक्ति सहायक)** is an evidence-grounded Artificial Intelligence prototype and Statutory Regulatory Guidance System engineered for **Ayurvedic practitioners, AYUSH startups, MSMEs, herbal researchers, and IP attorneys in India**.
 
-Protecting traditional Ayurvedic formulations is challenging under Indian Patent Law due to strict exclusions against traditional knowledge monopolies (*Section 3(p)*) and mere admixtures (*Section 3(e)*). **IP Shakti Sahayak** bridges this critical gap by providing instant, AI-guided statutory clearance, patentability assessments, biological diversity approvals (NBA Form III), and automated 14-section official legal dossier generation.
+Protecting traditional Ayurvedic formulations is challenging under Indian Patent Law due to strict exclusions against traditional knowledge monopolies (*Section 3(p)*) and mere admixtures (*Section 3(e)*). **IP Shakti Sahayak** bridges this critical gap by providing AI-guided preliminary statutory clearance, patentability assessments, biological diversity approvals (NBA Form III), and automated 14-section legal dossier generation.
 
 ---
 
 ## 🎯 Hackathon Judges & Evaluators Overview
 
-Why **IP Shakti Sahayak** stands out as a judge-ready, enterprise-grade submission:
+Key aspects of **IP Shakti Sahayak** for prototype evaluation:
 
-1. **Solving a ₹10,000+ Cr National Challenge:** Over 80% of Ayurvedic patent applications in India face rejection due to *Section 3(p)* (Traditional Knowledge Exclusions) or *Section 3(e)* (Admixtures). IP Shakti Sahayak automates prior-art clearing and statutory bio-assay risk checks.
-2. **Deterministic Statutory Grounding (Zero Hallucinations):** RAG engine indexes **4,016+ statutory chunks** across the Indian Patents Act 1970, Biodiversity Act 2002, and TKDL guidelines using Reciprocal Rank Fusion (BM25 + Dense Embeddings).
-3. **100% Safe Abstention Gateway:** Prevents hallucinated or risky legal advice by detecting out-of-scope or vague inputs and requiring necessary technical inputs before scoring.
-4. **Instant 14-Section Court-Ready PDF Dossier:** Automatically transforms 5-step formulation evaluation inputs into an official A4 document with Ashoka emblem branding and attorney signature blocks.
+1. **Addressing a ₹10,000+ Cr National Challenge:** Over 80% of Ayurvedic patent applications in India face rejection due to *Section 3(p)* (Traditional Knowledge Exclusions) or *Section 3(e)* (Admixtures). IP Shakti Sahayak assists in prior-art clearing and statutory bio-assay risk checks.
+2. **Evidence-Grounded Hybrid RAG:** RAG engine indexes **4,016+ statutory chunks** across the Indian Patents Act 1970, Biodiversity Act 2002, and TKDL guidelines using Reciprocal Rank Fusion (BM25 + Dense Embeddings).
+3. **Safe Abstention Guardrails:** Helps prevent inaccurate or speculative legal advice by detecting out-of-scope or vague inputs and prompting for necessary technical details before scoring.
+4. **Standardized 14-Section A4 PDF Dossier Generation:** Compiles 5-step formulation evaluation inputs into an A4 document with structured compliance sections and attorney signature blocks for preliminary assessment support.
 5. **Grassroots Vernacular Accessibility:** Native speech-to-text integration supporting **Hindi, Marathi, Gujarati, English, Kannada, and Sanskrit**.
 
 ---
 
-## 📊 Empirical Benchmark Metrics
+## 🧪 What to Try (Judge Evaluation Guide)
 
-Evaluated across **78 rigorous test cases** in 10 test groups:
+Evaluators can test the prototype through the following verified features implemented in the repository:
 
-| Metric Category | Target / Evaluation Scope | Result | Status |
+- **Ask an Ayurveda IP / Regulatory Query:** Test verified statutory questions such as *"What is a Patent for Ayurvedic medicine?"*, *"What is TKDL and Section 3(p) protection?"*, or *"What are NBA Access and Benefit Sharing (ABS) rules?"*.
+- **Observe Structured Guidance & Evidence / Citation Output:** Inspect statutory badge citations, primary legal excerpts, and confidence levels. For out-of-scope queries (e.g. general conversation, sports, or unsubstantiated inquiries), observe the safe abstention guardrails in action.
+- **Try the 5-Step Case Builder:** Navigate to `/case-builder`, enter formulation details (title, traditional knowledge references, in-vitro bio-assay data, applicant type), and observe the dynamic Patent Readiness Score calculation and statutory risk flags.
+- **Review Expert Escalation / Directory Workflow:** Navigate to `/expert/dashboard` or the empanelled directory to view certified patent agents and the escalation workflow for preliminary reviews.
+- **Download / Inspect Generated Case Output:** Preview the standardized 14-section evaluation dossier and use the **Download Official PDF Dossier** / **Print** action to inspect the export.
+
+---
+
+## 📊 Current Prototype Benchmark Results
+
+> [!NOTE]
+> The following metrics reflect empirical evaluation on the current prototype benchmark (**78 test cases across 10 test groups**) as documented in [ip_sakti_evaluation_report.md](./ip_sakti_evaluation_report.md). These represent validated prototype capabilities, not production guarantees.
+
+| Metric Category | Target / Evaluation Scope | Result | Validation Status |
 | :--- | :--- | :---: | :---: |
-| **Safe Abstention Rate** | Out-of-Scope / Vague Inquiry Filtering | **100.0%** (15/15) | ✅ VALIDATED |
-| **Jurisdiction Separation** | Indian Patents Act vs. US/EU Exclusions | **100.0%** (15/15) | ✅ VALIDATED |
-| **Multilingual Quality** | Intent preservation across 6 Indic languages | **100.0%** (8/8) | ✅ VALIDATED |
-| **Expert Concordance** | Validation by Empanelled IP Attorneys | **100.0%** (20/20) | ✅ VALIDATED |
-| **Classical & Cosmetic Accuracy** | Ayurvedic Classical Texts & Cosmetic Rules 2020 | **100.0%** (16/16) | ✅ VALIDATED |
-| **Overall Classification Accuracy** | 6 Product Categories (48 test cases) | **70.8%** (34/48) | ✅ VALIDATED |
+| **Product Classification Accuracy** | 6 Product Categories (48 test cases) | **70.8%** (34/48) | VALIDATED |
+| **Pathway Selection Accuracy** | IP & Regulatory statutory pathway mapping | **70.8%** (34/48) | VALIDATED |
+| **Citation Coverage** | Retrieved chunk citation overlap | **30.0%** (3/10) | VALIDATED |
+| **Citation Correctness** | Factual citation precision | **33.3%** (1/3) | VALIDATED |
+| **Faithfulness %** | Evidence grounding in retrieved corpus | **20.0%** (2/10) | VALIDATED |
+| **Safe Abstention Rate** | Out-of-Scope / Vague Inquiry Filtering | **100.0%** (15/15) | VALIDATED |
+| **Jurisdiction Separation** | Indian Patents Act vs. US/EU Exclusions | **100.0%** (15/15) | VALIDATED |
+| **Retrieval Relevance@1** | Top-1 chunk statutory precision | **10.0%** (1/10) | VALIDATED |
+| **Retrieval Relevance@3** | Top-3 chunk statutory precision | **20.0%** (2/10) | VALIDATED |
+| **Multilingual Quality** | Intent preservation across 6 Indic languages | **100.0%** (8/8) | VALIDATED |
+| **Expert Concordance** | Validation across expert-reviewed cases | **100.0%** (20/20) | VALIDATED |
 
 ---
 
@@ -99,12 +122,12 @@ Evaluated across **78 rigorous test cases** in 10 test groups:
 
 | Feature | Description | Impact |
 |---|---|---|
-| **Zero-Hallucination RAG** | Indexed across **4,016+ statutory chunks** from Patents Act 1970, Biodiversity Act 2002 & TKDL. | 100% grounded in verified legal text and statutory citations. |
-| **Safe Self-Abstention Gateway** | Detects ambiguous, out-of-scope, or insufficient factual inputs and gracefully abstains. | Prevents inaccurate legal assumptions for high-stakes patent filings. |
+| **Evidence-Grounded Hybrid RAG** | Indexed across **4,016+ statutory chunks** from Patents Act 1970, Biodiversity Act 2002 & TKDL. | Citation-aware statutory guidance grounded in indexed legal text and statutory citations. |
+| **Safe Self-Abstention Gateway** | Detects ambiguous, out-of-scope, or insufficient factual inputs and gracefully abstains. | Prevents inaccurate legal assumptions for preliminary patent assessments. |
 | **Multilingual Voice Input** | Single-click Speech-to-Text supporting **Hindi, Marathi, Gujarati, English, Kannada, and Sanskrit**. | Accessible to grassroot Vaidyas, researchers, and vernacular founders. |
 | **5-Step Case Evaluation Matrix** | Evaluates Novelty, Synergistic Bio-Assay Data, Traditional Knowledge Overlap, and NBA clearances. | Quantified **Patent Readiness Score (%)** with statutory risk flags. |
-| **Print-Ready Official PDF Dossier** | Compiles complete case evaluations into an official **14-section A4 branded PDF**. | Ready for submission to patent agents, AYUSH ministries, or investors. |
-| **Offline-Resilient Client Fallback** | Instant local statutory lookup engine if backend or network is offline. | 100% uptime and seamless user experience anywhere. |
+| **Standardized PDF Dossier** | Compiles complete case evaluations into a standardized **14-section A4 branded PDF**. | Preliminary assessment support for patent agents, AYUSH innovators, or researchers. |
+| **Offline-Resilient Client Fallback** | Local statutory lookup engine if backend or network is offline. | Resilient client fallback and offline statutory lookup support. |
 
 ---
 
@@ -121,10 +144,10 @@ Evaluated across **78 rigorous test cases** in 10 test groups:
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ 🌐 CLIENT LAYER (React 18 + TypeScript + Vite 6 + Vanilla CSS Design Tokens)                     │
 │  ├─ VoiceInput (Web Speech API: Hindi / Marathi / Gujarati / English / Sanskrit)                 │
-│  ├─ Ask AI Sahayak (Instant Statutory Guidance + Verified Legal Citations)                       │
+│  ├─ Ask AI Sahayak (Statutory Guidance + Grounded Legal Citations)                                │
 │  ├─ 5-Step Case Builder (Bio-assay Synergism, Novelty, NBA Form III Risk Matrix)                 │
-│  ├─ 14-Section PDF Dossier Engine (Official A4 Download / Print)                                 │
-│  └─ Client-Side Statutory Knowledge Cache (Zero-Downtime Offline Fallback)                       │
+│  ├─ 14-Section PDF Dossier Engine (Standardized A4 Download / Print)                             │
+│  └─ Client-Side Statutory Knowledge Cache (Resilient Client Fallback)                           │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘
                      │ (REST / HTTPS)
                      ▼
@@ -141,7 +164,7 @@ Evaluated across **78 rigorous test cases** in 10 test groups:
 │  ├─ Dense Vector Retrieval: Sentence-Transformers (all-MiniLM-L6-v2)                             │
 │  ├─ Sparse Lexical Grounding: Rank-BM25 (Pinpoint Act sections, Rules & Forms)                   │
 │  ├─ Reciprocal Rank Fusion (RRF) & Statutory Authority Re-ranking                                │
-│  └─ LLM Synthesis: Google Gemini (1.5 Pro / Flash) with strict statutory grounding               │
+│  └─ LLM Synthesis: Ollama (LLaMA 3.1) / Evidence-Grounded Synthesis (Configurable LLM API)      │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘
                      │
                      ▼
@@ -173,11 +196,11 @@ Evaluated across **78 rigorous test cases** in 10 test groups:
        │
        ▼
 [ Step 4: Hybrid RAG Search over 4,016+ Chunks ]
-  • BM25 + Dense embeddings retrieve exact statutory provisions, case laws, and NBA requirements.
+  • BM25 + Dense embeddings retrieve statutory provisions, case references, and NBA requirements.
        │
        ▼
 [ Step 5: Grounded Legal Guidance Delivered ]
-  • Synthesizes clear, actionable guidance with expandable official citations.
+  • Synthesizes structured, actionable guidance with expandable official citations.
        │
        ▼
 [ Step 6: 5-Step Case Builder Evaluation ]
@@ -185,9 +208,9 @@ Evaluated across **78 rigorous test cases** in 10 test groups:
   • System calculates Patent Readiness Score (%) and identifies regulatory risks.
        │
        ▼
-[ Step 7: Official 14-Section PDF Dossier & Attorney Connect ]
-  • Innovator downloads the complete 14-Section A4 PDF Dossier.
-  • Option to directly connect with verified empanelled IP attorneys for formal filing.
+[ Step 7: Standardized 14-Section PDF Dossier & Attorney Connect ]
+  • Innovator downloads the 14-Section A4 PDF Dossier for preliminary assessment support.
+  • Option to directly connect with verified empanelled IP attorneys for formal review.
 ```
 
 ---
@@ -200,7 +223,7 @@ Evaluated across **78 rigorous test cases** in 10 test groups:
 - **Section Citations:** Instant statutory badge cards linking directly to the Indian Patents Act and Biodiversity Act sections.
 
 ### 2. 5-Step Case Builder & Patent Readiness Score
-A comprehensive diagnostic wizard guiding users through:
+A diagnostic assessment wizard guiding users through:
 1. **Basic Formulation & Invention Profile:** Title, therapeutic domain, entity type (Individual / Startup / MSME / Institution).
 2. **Traditional Knowledge & Novelty Review:** Verification against Classical Texts (Charaka Samhita, Sushruta Samhita, Bhavaprakasha).
 3. **Synergistic Evidence Assessment:** Validation of bio-assay data proving enhanced therapeutic effect (*Section 3(e)* compliance).
@@ -208,12 +231,12 @@ A comprehensive diagnostic wizard guiding users through:
 5. **Commercialization & Filing Strategy:** Provisional vs. Complete Specification recommendations.
 
 ### 3. Official 14-Section A4 PDF Dossier Generator
-- Generates a court-ready, audit-ready **14-Section A4 Legal Evaluation Dossier**.
-- Contains Official Ashoka Emblem watermarks, executive summary, claim generation, statutory risk matrix, and signature blocks.
+- Generates a structured **14-Section A4 Legal Evaluation Dossier** for preliminary assessment support.
+- Contains Official Ashoka Emblem watermarks, executive summary, claim structure preview, statutory risk matrix, and signature blocks.
 
 ### 4. Statutory Legal Corpus & Hybrid RAG Engine
 - **4,016+ Curated Legal Chunks** structured with hierarchical legal authority weights.
-- **BM25 + Semantic Embeddings:** Guarantees that specific statutory queries (e.g. *"Form 1"*, *"Section 3(p)"*, *"Rule 55"*) are matched with pinpoint accuracy.
+- **BM25 + Semantic Embeddings:** Enables targeted retrieval of specific statutory queries (e.g. *"Form 1"*, *"Section 3(p)"*, *"Rule 55"*) via hybrid lexical and dense ranking.
 
 ### 5. Empanelled IP Attorney & AYUSH Expert Directory
 - Searchable and filterable registry of certified Indian Patent Agents, Ayurvedic IP specialists, and regulatory consultants.
@@ -239,9 +262,9 @@ A comprehensive diagnostic wizard guiding users through:
 |---|---|
 | **🌐 Frontend** | **React 18 (TypeScript)**, **Vite 6**, Vanilla CSS (Gov-Design System Tokens), Lucide Icons |
 | **⚙️ Backend** | **FastAPI (Python 3.11+)**, **Uvicorn (ASGI)**, Pydantic v2 Schema Validation |
-| **🧠 AI & RAG Engine** | **Google Gemini (1.5 Pro / Flash)**, **Sentence-Transformers (`all-MiniLM-L6-v2`)**, **Rank-BM25** |
-| **🗄️ Database & Vectors** | **Supabase (PostgreSQL)**, **pgvector / ChromaDB (4,016+ Legal Chunks)** |
-| **🎙️ Voice & PDF Export** | **Web Speech API (Multilingual Indic Voice STT)**, **jsPDF (14-Section A4 Dossier)** |
+| **🧠 AI & RAG Engine** | **Ollama (LLaMA 3.1)** (default local LLM) / Evidence-Grounded Statutory Synthesis; **Sentence-Transformers (`all-MiniLM-L6-v2`)**, **Rank-BM25**; Optional external LLM API support |
+| **🗄️ Database & Vectors** | **Supabase (PostgreSQL) / SQLite**, **ChromaDB / BM25 (4,016+ Legal Chunks)** |
+| **🎙️ Voice & PDF Export** | **Web Speech API (Multilingual Indic Voice STT)**, **Window Print / jsPDF (14-Section A4 Dossier)** |
 | **☁️ Cloud & CI/CD** | **Vercel (Frontend Global CDN)**, **Render (FastAPI Container Service)** |
 
 ---
@@ -255,29 +278,33 @@ IP-SAKTI-SAHAYAK/
 ├── backend/                         # Core Python FastAPI Backend
 │   ├── src/
 │   │   ├── main.py                  # FastAPI Application Entrypoint & CORS
-│   │   ├── rag_engine.py            # Hybrid RAG & Safe Abstention Engine
-│   │   ├── routes/                  # API Sub-routers (/query, /cases, /experts)
+│   │   ├── config.py                # Environment & model settings (Ollama, paths)
+│   │   ├── dependencies.py          # Auth & dependency injection
+│   │   ├── api/v1/                  # API Sub-routers (/query, /cases, /expert, /auth)
+│   │   ├── core/                    # Query understanding, LLM client & RAG pipeline
+│   │   ├── rag/                     # Retriever, reranker, RRF & authority filter
+│   │   ├── db/                      # Repository layer (Cases, Conversations, Experts)
 │   │   └── models/                  # Pydantic Request & Response Schemas
 │   └── requirements.txt             # Python Backend Dependencies
 ├── data/                            # Processed Legal Corpora & Vector Stores
-│   └── statutory_corpus.json        # 4,016+ Statutory Chunks
+│   ├── index/                       # BM25 and Chroma index stores
+│   └── corpus/                      # Primary statutory legal markdown files
 ├── public/                          # Brand Assets & Emblems
 │   ├── logo-brand.png               # Official Brand Emblem
 │   ├── logo-symbol.png              # Vectorized Botanical Logo
 │   └── logo.svg                     # High-Resolution SVG Logo
 ├── src/                             # React 18 TypeScript Frontend Source
 │   ├── components/                  # Reusable UI Components
-│   │   ├── Navbar.tsx               # Top Navigation & Language Switcher
-│   │   ├── Footer.tsx               # Official Footer & Compliance Disclaimers
-│   │   ├── VoiceInput.tsx           # Multilingual Microphone Controller
-│   │   ├── CaseBuilder/             # 5-Step Evaluation Wizard Steps
-│   │   └── DossierViewer.tsx        # 14-Section A4 PDF Preview & Export
+│   │   ├── layout/                  # Navbar, Footer & Compliance Disclaimers
+│   │   ├── shared/                  # VoiceInput, Modals, Evidence Badges
+│   │   └── expert/                  # Expert portal & escalation workflows
 │   ├── pages/                       # Application Views
-│   │   ├── Home.tsx                 # Hero & Quick AI Query Interface
-│   │   ├── CaseBuilderPage.tsx      # Multi-Step Case Assessment
-│   │   └── ExpertsPage.tsx          # Empanelled IP Attorney Directory
-│   ├── services/                    # API Clients & Local Fallback Engine
-│   ├── index.css                    # Gov-Standard Design Tokens & Theme
+│   │   ├── home/                    # Hero & Quick AI Query Interface
+│   │   ├── case-builder/            # 5-Step Case Assessment & PDF Export
+│   │   ├── ask/                     # Detailed RAG Q&A Interface
+│   │   └── expert/                  # Empanelled IP Attorney Directory
+│   ├── services/                    # API Clients & Client-Side Fallback Engine
+│   ├── design/                      # Gov-Standard Design Tokens & Theme
 │   ├── App.tsx                      # Root Component & Routing
 │   └── main.tsx                     # Vite Entrypoint
 ├── index.html                       # HTML Template
@@ -325,7 +352,7 @@ python -m venv venv
 # Install Python requirements
 pip install -r requirements.txt
 
-# Create .env file with your API credentials
+# Create .env file with your configuration
 cp .env.example .env
 
 # Run FastAPI with live reload
@@ -340,11 +367,11 @@ python -m uvicorn backend.src.main:app --host 0.0.0.0 --port 8000 --reload
 
 | Method | Endpoint | Description | Sample Payload |
 |---|---|---|---|
-| `POST` | `/api/v1/query` | Ask AI Sahayak for statutory patent guidance | `{"query": "Is turmeric and pepper formulation patentable?", "lang": "hi"}` |
-| `POST` | `/api/v1/cases/evaluate` | Evaluate 5-Step Case Builder formulation | `{"title": "...", "ingredients": [...], "bio_assay": true}` |
-| `GET` | `/api/v1/acts` | Retrieve list of indexed statutes and sections | `None` |
-| `GET` | `/api/v1/experts` | List verified empanelled IP attorneys | `?specialization=ayurveda` |
-| `GET` | `/health` | Server health check and vector DB status | `None` |
+| `POST` | `/api/v1/query` | Ask AI Sahayak for statutory patent guidance | `{"question": "What is a Patent for Ayurvedic medicine?", "language": "en"}` |
+| `POST` | `/api/v1/cases` | Submit / evaluate 5-Step Case Builder formulation | `{"title": "...", "case_builder_data": {...}}` |
+| `GET` | `/api/v1/expert/profile` | List verified empanelled IP attorneys | `None` |
+| `POST` | `/api/v1/escalate` | Escalate a case or query for human expert review | `{"case_id": "...", "reason": "..."}` |
+| `GET` | `/health` | Server health check, LLM status, and vector DB status | `None` |
 
 ---
 
@@ -364,7 +391,7 @@ The backend includes `render.yaml` configuration:
 2. Choose **Web Service** with Python environment.
 3. Build Command: `pip install -r requirements.txt`
 4. Start Command: `uvicorn backend.src.main:app --host 0.0.0.0 --port $PORT`
-5. Add `GEMINI_API_KEY` in Render environment variables.
+5. Configure environment variables (e.g., `OLLAMA_BASE_URL`, `OLLAMA_MODEL`, or optional external `LLM_API_KEY`).
 
 ---
 
