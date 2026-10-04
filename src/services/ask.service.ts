@@ -164,54 +164,61 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload): AIAnswerDa
     return regex.test(qLower);
   });
 
-  if (isOutOfScope) {
+  // 2. Check if query matches predefined homepage topic boxes or Case Builder context
+  const isTrademark = (qLower.includes('trademark') || qLower.includes('trade mark') || qLower.includes('brand') || qLower.includes('ट्रेडमार्क')) && !qLower.includes('difference');
+  const isGI = qLower.includes('geographical indication') || qLower.includes(' gi ') || qLower.startsWith('gi') || qLower.includes('भौगोलिक');
+  const isTKDL = qLower.includes('tkdl') || qLower.includes('traditional knowledge') || qLower.includes('3(p)') || qLower.includes('3p') || qLower.includes('पारंपरिक');
+  const isABS = qLower.includes('abs') || qLower.includes('benefit sharing') || qLower.includes('biodiversity') || qLower.includes('nba') || qLower.includes('जैव विविधता');
+  const isPatent = qLower.includes('patent') || qLower.includes('patentable') || qLower.includes('patentability') || qLower.includes('section 3(e)') || qLower.includes('section 3(d)') || qLower.includes('पेटेंट');
+
+  const isVerifiedTopicBox = isTrademark || isGI || isTKDL || isABS || isPatent;
+
+  // If query is explicitly out-of-scope OR is an unverified custom query (not matching preset topic boxes & no Case Builder data) -> Trigger Safe Abstention!
+  if (isOutOfScope || (!isVerifiedTopicBox && !payload.case_profile)) {
     return {
       answer: (
-        `### ⚠️ Safe Abstention — Insufficient Statutory Evidence\n\n` +
-        `IP-SAKTI Sahayak could not find reliable primary statutory sources or official examination guidelines ` +
-        `covering this specific inquiry in the available Indian IP & Ayurveda knowledge base.\n\n` +
-        `- **Zero Hallucinations:** The system will not invent ungrounded legal conclusions.\n` +
-        `- **Domain Limitation:** IP-SAKTI Sahayak exclusively provides guidance on Indian Patents Act 1970, ` +
-        `Trade Marks Act 1999, Biological Diversity Act 2002, TKDL, and AYUSH regulations.\n\n` +
-        `### Recommended Next Steps\n` +
-        `1. Rephrase your query focusing on Ayurvedic formulation patentability, trademark registration, ABS compliance, or TKDL prior art.\n` +
-        `2. Use the **Case Builder** to structure your formulation for a formal compliance dossier.\n` +
-        `3. Submit for **Human Expert Review** with an empanelled Indian IP Attorney.`
+        `### ⚠️ SAFE ABSTENTION — UNVERIFIED CUSTOM QUERY DETECTED\n\n` +
+        `IP-SAKTI Sahayak has activated its **Zero-Hallucination Safe Abstention Protocol** to maintain 100% legal integrity.\n\n` +
+        `To ensure trust and prevent unsupported legal conclusions, automated answers are provided **exclusively for verified statutory topic boxes** or structured **Case Builder** reports.\n\n` +
+        `### How to Get Verified Statutory Results:\n` +
+        `1. **Homepage Statutory Topic Boxes:** Click any of the popular question boxes on the homepage (*What is a Patent?*, *What is a Trademark?*, *What is GI?*, *What is TKDL?*, *What is ABS?*) for verified statutory guidance.\n` +
+        `2. **Custom Herbal Formulations:** Use the **5-Step Case Builder** to input your formulation matrix, ingredients, and bio-assay data to generate an official 14-section legal evaluation dossier.\n` +
+        `3. **Human Expert Review:** Submit your query to an **Empanelled Indian IP Attorney**.`
       ),
-      summary: 'Out-of-scope query: Question does not relate to Indian IP or Ayurveda regulatory frameworks.',
+      summary: 'Safe Abstention triggered: Query falls outside verified homepage statutory topic boxes.',
       why: [
-        'Retriever found no supporting statutory evidence or authoritative guidance in the Indian IP legal corpus.',
-        'Zero hallucination safety protocol activated.'
+        'Zero-hallucination safety protocol activated for custom input query.',
+        'Only verified pre-approved homepage statutory topic boxes or Case Builder reports are answered automatically.'
       ],
       meaningForYou: [
-        'Ask an Indian IP or Ayurveda question (e.g. Can I patent a polyherbal formulation under Section 3(p)?).'
+        'Click one of the verified sample question boxes on the homepage or use the 5-Step Case Builder for custom formulation evaluations.'
       ],
       jurisdiction: payload.jurisdiction || 'India',
-      ipType: 'Out of Scope',
+      ipType: 'Safe Abstention',
       confidence: {
         level: 'low',
-        reasons: ['Query subject matter does not exist in available Indian IP, TKDL, or AYUSH legal corpus.'],
-        caveat: 'Safe abstention triggered due to absence of statutory evidence.'
+        reasons: ['Safe abstention enforced to guarantee legal integrity and user trust.'],
+        caveat: 'Custom unverified query triggered safe abstention.'
       },
       citations: [],
       warnings: [
-        '⚠️ Query falls outside the legal and regulatory advisory scope of IP-SAKTI Sahayak.'
+        '⚠️ Safe Abstention active: Select a verified homepage topic box or use Case Builder for custom evaluations.'
       ],
       nextSteps: [
-        { title: 'Ask an IP/Ayurveda Query', action: 'RETRY', link: '/ask', primary: true },
-        { title: 'Use Case Builder', action: 'BUILD_CASE', link: '/case-builder' }
+        { title: 'Select Verified Homepage Topic', action: 'RETRY', link: '/', primary: true },
+        { title: 'Use 5-Step Case Builder', action: 'BUILD_CASE', link: '/case-builder' }
       ],
       abstained: true,
       abstentionDetails: {
-        reason: 'Out-of-scope query outside Indian IP and Ayurveda legal domain.',
-        missingInfo: ['Valid Indian statutory provisions or AYUSH regulatory guidelines']
+        reason: 'Safe abstention enforced on custom unverified query.',
+        missingInfo: ['Verified statutory topic box selection or Case Builder formulation context']
       },
       originalQuery: query,
-      reformulatedQuery: `Out-of-scope inquiry outside Indian IP/Ayurveda regulatory domain: '${query}'`
+      reformulatedQuery: `Safe Abstention triggered for query: '${query}'`
     };
   }
 
-  // 2. Specialized Canonical Statutory IP Guidance
+  // 3. Specialized Canonical Statutory IP Guidance for Verified Topic Boxes
   let answer = '';
   let ipType = 'Patent';
   let reformulated = `Statutory guidance and relevant Indian Intellectual Property legal provisions for: '${query}'`;
