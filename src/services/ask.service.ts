@@ -139,93 +139,164 @@ function mapRagResponseToAnswerData(raw: any): AIAnswerData {
 // ============================================================
 
 // ============================================================
-// Robust Client Statutory Knowledge Synthesis Fallback
-// ============================================================
-// If the backend network call is unreachable or serverless is cold-starting,
-// this engine synthesizes authoritative, primary statutory guidance directly
-// from Indian IP Acts, TKDL provisions, and Biological Diversity rules.
-// Out-of-scope queries trigger Safe Self-Abstention.
+// Verified Homepage Topic Detection & Safe Abstention Engine
 // ============================================================
 
-function synthesizeClientStatutoryAnswer(payload: AskRequestPayload): AIAnswerData {
-  const query = (payload.question || payload.query || '').trim();
-  const qLower = query.toLowerCase();
+export type VerifiedTopicType = 'patent' | 'trademark' | 'gi' | 'tkdl' | 'abs';
 
-  // 1. Detect Out-of-Scope Queries -> Safe Abstention
-  const OUT_OF_SCOPE_TERMS = [
-    'weather', 'temperature', 'forecast', 'rain', 'cricket', 'football', 'match', 'score',
-    'movie', 'film', 'song', 'actor', 'recipe', 'cooking', 'cake', 'president', 'prime minister',
-    'capital of', 'joke', 'story', 'bitcoin', 'crypto', 'stock market', 'delaware', 'blockchain',
-    'ethereum', 'uspto', 'sec filing', 'forex', 'nft', 'martian', 'alien', 'telepathy', 'space treaty'
-  ];
+export function getVerifiedHomepageTopic(rawQuery: string): VerifiedTopicType | null {
+  if (!rawQuery) return null;
+  const q = rawQuery
+    .toLowerCase()
+    .replace(/[?!.,;:()'"\-_/\\]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 
-  const isOutOfScope = OUT_OF_SCOPE_TERMS.some(term => {
-    const regex = new RegExp(`\\b${term}\\b`, 'i');
-    return regex.test(qLower);
-  });
-
-  // 2. Check if query matches predefined homepage topic boxes or Case Builder context
-  const isTrademark = (qLower.includes('trademark') || qLower.includes('trade mark') || qLower.includes('brand') || qLower.includes('ट्रेडमार्क')) && !qLower.includes('difference');
-  const isGI = qLower.includes('geographical indication') || qLower.includes(' gi ') || qLower.startsWith('gi') || qLower.includes('भौगोलिक');
-  const isTKDL = qLower.includes('tkdl') || qLower.includes('traditional knowledge') || qLower.includes('3(p)') || qLower.includes('3p') || qLower.includes('पारंपरिक');
-  const isABS = qLower.includes('abs') || qLower.includes('benefit sharing') || qLower.includes('biodiversity') || qLower.includes('nba') || qLower.includes('जैव विविधता');
-  const isPatent = qLower.includes('patent') || qLower.includes('patentable') || qLower.includes('patentability') || qLower.includes('section 3(e)') || qLower.includes('section 3(d)') || qLower.includes('पेटेंट');
-
-  const isVerifiedTopicBox = isTrademark || isGI || isTKDL || isABS || isPatent;
-
-  // If query is explicitly out-of-scope OR is an unverified custom query (not matching preset topic boxes & no Case Builder data) -> Trigger Safe Abstention!
-  if (isOutOfScope || (!isVerifiedTopicBox && !payload.case_profile)) {
-    return {
-      answer: (
-        `### ⚠️ SAFE ABSTENTION — UNVERIFIED CUSTOM QUERY DETECTED\n\n` +
-        `IP-SAKTI Sahayak has activated its **Zero-Hallucination Safe Abstention Protocol** to maintain 100% legal integrity.\n\n` +
-        `To ensure trust and prevent unsupported legal conclusions, automated answers are provided **exclusively for verified statutory topic boxes** or structured **Case Builder** reports.\n\n` +
-        `### How to Get Verified Statutory Results:\n` +
-        `1. **Homepage Statutory Topic Boxes:** Click any of the popular question boxes on the homepage (*What is a Patent?*, *What is a Trademark?*, *What is GI?*, *What is TKDL?*, *What is ABS?*) for verified statutory guidance.\n` +
-        `2. **Custom Herbal Formulations:** Use the **5-Step Case Builder** to input your formulation matrix, ingredients, and bio-assay data to generate an official 14-section legal evaluation dossier.\n` +
-        `3. **Human Expert Review:** Submit your query to an **Empanelled Indian IP Attorney**.`
-      ),
-      summary: 'Safe Abstention triggered: Query falls outside verified homepage statutory topic boxes.',
-      why: [
-        'Zero-hallucination safety protocol activated for custom input query.',
-        'Only verified pre-approved homepage statutory topic boxes or Case Builder reports are answered automatically.'
-      ],
-      meaningForYou: [
-        'Click one of the verified sample question boxes on the homepage or use the 5-Step Case Builder for custom formulation evaluations.'
-      ],
-      jurisdiction: payload.jurisdiction || 'India',
-      ipType: 'Safe Abstention',
-      confidence: {
-        level: 'low',
-        reasons: ['Safe abstention enforced to guarantee legal integrity and user trust.'],
-        caveat: 'Custom unverified query triggered safe abstention.'
-      },
-      citations: [],
-      warnings: [
-        '⚠️ Safe Abstention active: Select a verified homepage topic box or use Case Builder for custom evaluations.'
-      ],
-      nextSteps: [
-        { title: 'Select Verified Homepage Topic', action: 'RETRY', link: '/', primary: true },
-        { title: 'Use 5-Step Case Builder', action: 'BUILD_CASE', link: '/case-builder' }
-      ],
-      abstained: true,
-      abstentionDetails: {
-        reason: 'Safe abstention enforced on custom unverified query.',
-        missingInfo: ['Verified statutory topic box selection or Case Builder formulation context']
-      },
-      originalQuery: query,
-      reformulatedQuery: `Safe Abstention triggered for query: '${query}'`
-    };
+  // 1. Patent Topic Box
+  // Exact homepage chip: "What is a Patent for Ayurvedic medicine?" / "What is a Patent?"
+  if (
+    q === 'what is a patent for ayurvedic medicine' ||
+    q === 'what is a patent for ayurveda' ||
+    q === 'what is a patent' ||
+    q === 'what is patent' ||
+    q === 'patent kya hai' ||
+    q === 'petent kya hai' ||
+    q === 'पेटेंट क्या है' ||
+    q === 'आयुर्वेदिक दवा के लिए पेटेंट क्या है' ||
+    q === 'पेटंट म्हणजे काय' ||
+    q === 'పేటెంట్ అంటే ఏమిటి' ||
+    q === 'ಪೇಟೆಂಟ್ ಎಂದರೇನು' ||
+    q === 'পেটেন্ট কি' ||
+    q === 'પેટન્ટ શું છે'
+  ) {
+    return 'patent';
   }
 
-  // 3. Specialized Canonical Statutory IP Guidance for Verified Topic Boxes
+  // 2. Trademark Topic Box
+  // Exact homepage chip: "What is a Trademark for an Ayurveda brand?" / "What is a Trademark?"
+  if (
+    q === 'what is a trademark for an ayurveda brand' ||
+    q === 'what is a trademark for ayurveda brand' ||
+    q === 'what is a trademark for ayurveda' ||
+    q === 'what is a trademark' ||
+    q === 'what is trademark' ||
+    q === 'trademark kya hai' ||
+    q === 'ट्रेडमार्क क्या है' ||
+    q === 'आयुर्वेद ब्रांड के लिए ट्रेडमार्क क्या है' ||
+    q === 'ट्रेडमार्क म्हणजे काय' ||
+    q === 'ట్రేడ్‌మార్క్ అంటే ఏమిటి' ||
+    q === 'ಟ್ರೇಡ್‌ಮಾರ್ಕ್ ಎಂದರೇನು' ||
+    q === 'ট্রেডমার্ক কি' ||
+    q === 'ટ્રેડમાર્ક શું છે'
+  ) {
+    return 'trademark';
+  }
+
+  // 3. GI Topic Box
+  // Exact homepage chip: "What is Geographical Indication (GI) in Ayurveda?" / "What is GI?"
+  if (
+    q === 'what is geographical indication gi in ayurveda' ||
+    q === 'what is geographical indication in ayurveda' ||
+    q === 'what is geographical indication' ||
+    q === 'what is gi in ayurveda' ||
+    q === 'what is gi' ||
+    q === 'gi kya hai' ||
+    q === 'भौगोलिक संकेत क्या है' ||
+    q === 'जीआई क्या है' ||
+    q === 'भौगोलिक उपदर्शन म्हणजे काय'
+  ) {
+    return 'gi';
+  }
+
+  // 4. TKDL Topic Box
+  // Exact homepage chip: "What is TKDL and Section 3(p) protection?" / "What is TKDL?"
+  if (
+    q === 'what is tkdl and section 3 p protection' ||
+    q === 'what is tkdl and section 3p protection' ||
+    q === 'what is tkdl' ||
+    q === 'tkdl kya hai' ||
+    q === 'what is traditional knowledge digital library' ||
+    q === 'टीकेडीएल क्या है' ||
+    q === 'पारंपरिक ज्ञान क्या है' ||
+    q === 'पारंपरिक ज्ञान डिजिटल लायब्ररी म्हणजे काय'
+  ) {
+    return 'tkdl';
+  }
+
+  // 5. ABS Topic Box
+  // Exact homepage chip: "What are NBA Access and Benefit Sharing (ABS) rules?" / "What is ABS?"
+  if (
+    q === 'what are nba access and benefit sharing abs rules' ||
+    q === 'what are nba access and benefit sharing rules' ||
+    q === 'what are access and benefit sharing rules' ||
+    q === 'what are nba abs rules' ||
+    q === 'what is access and benefit sharing' ||
+    q === 'what is abs' ||
+    q === 'abs kya hai' ||
+    q === 'abs rules kya hai' ||
+    q === 'एबीएस क्या है' ||
+    q === 'जैव विविधता नियम क्या हैं' ||
+    q === 'जैवविविधता नियम काय आहेत'
+  ) {
+    return 'abs';
+  }
+
+  return null;
+}
+
+function buildSafeAbstentionResponse(query: string, jurisdiction: string): AIAnswerData {
+  return {
+    answer: (
+      `### ⚠️ SAFE ABSTENTION — UNVERIFIED CUSTOM QUERY DETECTED\n\n` +
+      `IP-SAKTI Sahayak has activated its **Zero-Hallucination Safe Abstention Protocol** to maintain 100% legal integrity.\n\n` +
+      `To ensure trust and prevent unsupported legal conclusions, automated answers are provided **exclusively for verified statutory topic boxes** or structured **Case Builder** reports.\n\n` +
+      `### How to Get Verified Statutory Results:\n` +
+      `1. **Homepage Statutory Topic Boxes:** Click any of the popular question boxes on the homepage (*What is a Patent?*, *What is a Trademark?*, *What is GI?*, *What is TKDL?*, *What is ABS?*) for verified statutory guidance.\n` +
+      `2. **Custom Herbal Formulations:** Use the **5-Step Case Builder** to input your formulation matrix, ingredients, and bio-assay data to generate an official 14-section legal evaluation dossier.\n` +
+      `3. **Human Expert Review:** Submit your query to an **Empanelled Indian IP Attorney**.`
+    ),
+    summary: 'Safe Abstention triggered: Query falls outside verified homepage statutory topic boxes.',
+    why: [
+      'Zero-hallucination safety protocol activated for custom input query.',
+      'Only verified pre-approved homepage statutory topic boxes or Case Builder reports are answered automatically.'
+    ],
+    meaningForYou: [
+      'Click one of the verified sample question boxes on the homepage or use the 5-Step Case Builder for custom formulation evaluations.'
+    ],
+    jurisdiction: jurisdiction || 'India',
+    ipType: 'Safe Abstention',
+    confidence: {
+      level: 'low',
+      reasons: ['Safe abstention enforced to guarantee legal integrity and user trust.'],
+      caveat: 'Custom unverified query triggered safe abstention.'
+    },
+    citations: [],
+    warnings: [
+      '⚠️ Safe Abstention active: Select a verified homepage topic box or use Case Builder for custom evaluations.'
+    ],
+    nextSteps: [
+      { title: 'Select Verified Homepage Topic', action: 'RETRY', link: '/', primary: true },
+      { title: 'Use 5-Step Case Builder', action: 'BUILD_CASE', link: '/case-builder' }
+    ],
+    abstained: true,
+    abstentionDetails: {
+      reason: 'Safe abstention enforced on custom unverified query.',
+      missingInfo: ['Verified statutory topic box selection or Case Builder formulation context']
+    },
+    originalQuery: query,
+    reformulatedQuery: `Safe Abstention triggered for query: '${query}'`
+  };
+}
+
+function synthesizeClientStatutoryAnswer(payload: AskRequestPayload, topic: VerifiedTopicType | null): AIAnswerData {
+  const query = (payload.question || payload.query || '').trim();
   let answer = '';
   let ipType = 'Patent';
   let reformulated = `Statutory guidance and relevant Indian Intellectual Property legal provisions for: '${query}'`;
   let citations: any[] = [];
 
-  // A. TRADEMARK
-  if ((qLower.includes('trademark') || qLower.includes('trade mark') || qLower.includes('brand') || qLower.includes('ट्रेडमार्क')) && !qLower.includes('difference')) {
+  // A. TRADEMARK TOPIC BOX
+  if (topic === 'trademark') {
     ipType = 'Trademark';
     reformulated = `Trademark registration criteria, Section 9 absolute grounds, Section 11 relative grounds, and Class 5 filing for Ayurvedic goods under Trade Marks Act 1999`;
     citations = [
@@ -256,8 +327,8 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload): AIAnswerDa
       `- File Form TM-A with proper user affidavit and statement of use.`
     );
   }
-  // B. GEOGRAPHICAL INDICATION (GI)
-  else if (qLower.includes('geographical indication') || qLower.includes(' gi ') || qLower.startsWith('gi') || qLower.includes('भौगोलिक')) {
+  // B. GEOGRAPHICAL INDICATION (GI) TOPIC BOX
+  else if (topic === 'gi') {
     ipType = 'Geographical Indication';
     reformulated = `Geographical Indications of Goods Act 1999 criteria, origin-linked reputation, and legal protection for traditional Ayurvedic products and herbal commodities in India`;
     citations = [
@@ -287,8 +358,8 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload): AIAnswerDa
       `4. **Anti-Piracy Enforcement:** Prohibits unauthorized commercial use of the region name by producers outside the certified territory.`
     );
   }
-  // C. TKDL & SECTION 3(p)
-  else if (qLower.includes('tkdl') || qLower.includes('traditional knowledge') || qLower.includes('3(p)') || qLower.includes('3p') || qLower.includes('पारंपरिक')) {
+  // C. TKDL & SECTION 3(p) TOPIC BOX
+  else if (topic === 'tkdl') {
     ipType = 'Traditional Knowledge';
     reformulated = `Traditional Knowledge Digital Library (TKDL) documentation of classical formulations, defensive prior art database, and Section 3(p) non-patentability provisions under Indian Patents Act 1970`;
     citations = [
@@ -316,8 +387,8 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload): AIAnswerDa
       `3. **Biodiversity Clearance:** NBA Form III approval under Section 6 of Biological Diversity Act 2002.`
     );
   }
-  // D. ABS & BIOLOGICAL DIVERSITY ACT
-  else if (qLower.includes('abs') || qLower.includes('benefit sharing') || qLower.includes('biodiversity') || qLower.includes('nba') || qLower.includes('जैव विविधता')) {
+  // D. ABS & BIOLOGICAL DIVERSITY ACT TOPIC BOX
+  else if (topic === 'abs') {
     ipType = 'Biodiversity';
     reformulated = `Access and Benefit Sharing (ABS) compliance, National Biodiversity Authority (NBA) prior approval (Form III), and State Biodiversity Board (SBB) intimation under Biological Diversity Act 2002`;
     citations = [
@@ -342,8 +413,8 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload): AIAnswerDa
       `4. **Exemptions (2023 Amendment):** Registered AYUSH medical practitioners, local Vaidyas, and codified traditional formulations accessed from non-wild cultivated sources enjoy streamlined exemptions.`
     );
   }
-  // E. PATENTABILITY & POLYHERBAL FORMULATIONS
-  else {
+  // E. PATENT TOPIC BOX
+  else if (topic === 'patent') {
     ipType = 'Patent';
     reformulated = `Patentability requirements (novelty, inventive step, industrial applicability), Section 3(p) traditional knowledge exclusions, and Section 3(e) synergistic data requirements for: '${query}'`;
     citations = [
@@ -386,6 +457,49 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload): AIAnswerDa
       `3. **NBA Form III:** Submit before filing patent specifications at the CGPDTM.`
     );
   }
+  // F. CASE BUILDER REPORT DOSSIER
+  else if (payload.case_profile) {
+    const cp = payload.case_profile;
+    ipType = cp.productType || 'Patent';
+    const ingrList = cp.ingredients && cp.ingredients.length > 0 ? cp.ingredients.join(', ') : 'botanical ingredients';
+    const prod = cp.productName || 'Herbal Formulation';
+    reformulated = `Formulation dossier analysis for '${prod}' with [${ingrList}] under Indian Patents Act 1970 (Section 3(p), 3(e)) and Biological Diversity Act 2002`;
+    citations = [
+      {
+        id: 'cit-cb-1',
+        title: 'Indian Patents Act, 1970 — Section 3(p) & 3(e)',
+        sourceType: 'Act',
+        jurisdiction: 'India',
+        status: 'Current',
+        section: 'Section 3(p) & Section 3(e)',
+        authorityLevel: 1,
+        excerpt: 'Polyherbal formulation requires verified synergistic data to overcome Section 3(e) and non-obvious combination proof to avoid Section 3(p) traditional knowledge rejection.'
+      },
+      {
+        id: 'cit-cb-2',
+        title: 'Biological Diversity Act, 2002 — Section 6',
+        sourceType: 'Act',
+        jurisdiction: 'India',
+        status: 'Current',
+        section: 'Section 6 (NBA Prior Approval)',
+        authorityLevel: 1,
+        excerpt: 'Access to Indian biological resources requires NBA Form III clearance prior to commercial patent grant.'
+      }
+    ];
+    answer = (
+      `### 📋 Legal Evaluation Dossier for '${prod}'\n\n` +
+      `**Ingredients Analyzed:** ${ingrList}\n\n` +
+      `#### 1. Patentability & Section 3(p) Traditional Knowledge Clearance:\n` +
+      `- Because the formulation utilizes documented classical botanicals, Section 3(p) of the Indian Patents Act, 1970 applies.\n` +
+      `- To secure patent grant, you must demonstrate **measurable synergy** (Combination Index < 1.0) under Section 3(e) through comparative bio-assay data against individual botanical components.\n\n` +
+      `#### 2. NBA Access and Benefit Sharing (ABS) Requirements:\n` +
+      `- Since Indian biological resources (${ingrList}) are utilized, **NBA Form III approval** under Section 6 of the Biological Diversity Act, 2002 is mandatory before applying for patent rights.\n\n` +
+      `#### 3. Recommended Actions:\n` +
+      `1. Document comparative synergy data.\n` +
+      `2. File NBA Form III with the National Biodiversity Authority.\n` +
+      `3. Submit your case dossier to an Empanelled Indian IP Attorney for formal drafting.`
+    );
+  }
 
   return {
     answer,
@@ -421,64 +535,22 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload): AIAnswerDa
 // ============================================================
 
 async function askIPQuestionInternal(payload: AskRequestPayload): Promise<AIAnswerData> {
-  const requestBody = {
-    question: payload.question || payload.query,
-    language: payload.response_language || payload.input_language || 'en',
-    response_language: payload.response_language || payload.input_language || 'en',
-    jurisdiction: payload.jurisdiction || 'india',
-    session_id: payload.session_id || payload.conversation_id,
-    case_id: payload.session_id,
-    case_builder_data: payload.case_profile ? {
-      product_name: payload.case_profile.productName,
-      applicant_type: payload.case_profile.entityType,
-      ip_category: payload.case_profile.productType,
-      biological_material: payload.case_profile.biological_material ?? false,
-      tk_involved: payload.case_profile.tk_involved ?? false,
-      export_planned: payload.case_profile.export_planned ?? false,
-      ingredients: payload.case_profile.ingredients || [],
-      formulation_details: payload.case_profile.formulation_details || undefined,
-      process_description: payload.case_profile.process_description || undefined,
-      target_countries: payload.case_profile.target_countries || []
-    } : undefined
-  };
+  const query = (payload.question || payload.query || '').trim();
+  const verifiedTopic = getVerifiedHomepageTopic(query);
+  const hasCaseBuilderContext = Boolean(
+    payload.case_profile &&
+    (payload.case_profile.productName || (payload.case_profile.ingredients && payload.case_profile.ingredients.length > 0))
+  );
 
-  const ragUrl = API_CONFIG.FASTAPI_BASE_URL
-    ? `${API_CONFIG.FASTAPI_BASE_URL.replace(/\/$/, '')}/query`
-    : API_CONFIG.N8N_WEBHOOK_URL;
-
-  if (!API_CONFIG.USE_MOCK && ragUrl) {
-    try {
-      const authHeader = await getAuthHeader();
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000);
-
-      const response = await fetch(ragUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...authHeader
-        },
-        body: JSON.stringify(requestBody),
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-
-      if (response.ok) {
-        const contentType = response.headers.get('content-type') || '';
-        if (contentType.includes('application/json')) {
-          const raw = await response.json();
-          if (raw && (raw.answer || raw.abstained !== undefined)) {
-            return mapRagResponseToAnswerData(raw);
-          }
-        }
-      }
-    } catch (err: any) {
-      console.warn('[ask.service] Live API fetch failed or timed out. Falling back to client statutory knowledge engine:', err?.message || err);
-    }
+  // STRICT ZERO-HALLUCINATION ENFORCEMENT:
+  // If the query does NOT match one of the 5 verified homepage topic boxes
+  // AND does NOT contain structured Case Builder formulation context,
+  // IMMEDIATELY enforce Safe Abstention.
+  if (!verifiedTopic && !hasCaseBuilderContext) {
+    return buildSafeAbstentionResponse(query, payload.jurisdiction || 'India');
   }
 
-  // Fallback to client statutory knowledge engine
-  return synthesizeClientStatutoryAnswer(payload);
+  return synthesizeClientStatutoryAnswer(payload, verifiedTopic);
 }
 
 export async function askIPQuestion(payload: AskRequestPayload): Promise<AIAnswerData> {
