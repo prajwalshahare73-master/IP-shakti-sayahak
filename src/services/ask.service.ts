@@ -142,163 +142,238 @@ function mapRagResponseToAnswerData(raw: any): AIAnswerData {
 // Verified Homepage Topic Detection & Safe Abstention Engine
 // ============================================================
 
-export type VerifiedTopicType = 'patent' | 'trademark' | 'gi' | 'tkdl' | 'abs';
+// ============================================================
+// Strict 6-Topic Enforcement Engine
+// Allowed Topics:
+// 1. Patent
+// 2. Trademark
+// 3. GI (Geographical Indication)
+// 4. Copyright
+// 5. Design
+// 6. Six Bricks
+// ALL other queries MUST return ONLY: abstention
+// ============================================================
 
-export function getVerifiedHomepageTopic(rawQuery: string): VerifiedTopicType | null {
+export type AllowedTopic = 'patent' | 'trademark' | 'gi' | 'copyright' | 'design' | 'six_bricks';
+
+export function classifyStrictTopic(rawQuery: string): AllowedTopic | null {
   if (!rawQuery) return null;
+
   const q = rawQuery
     .toLowerCase()
     .replace(/[?!.,;:()'"\-_/\\]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 
-  // 1. Patent Topic Box
-  // Exact homepage chip: "What is a Patent for Ayurvedic medicine?" / "What is a Patent?"
-  if (
-    q === 'what is a patent for ayurvedic medicine' ||
-    q === 'what is a patent for ayurveda' ||
-    q === 'what is a patent' ||
-    q === 'what is patent' ||
-    q === 'patent kya hai' ||
-    q === 'petent kya hai' ||
-    q === 'पेटेंट क्या है' ||
-    q === 'आयुर्वेदिक दवा के लिए पेटेंट क्या है' ||
-    q === 'पेटंट म्हणजे काय' ||
-    q === 'పేటెంట్ అంటే ఏమిటి' ||
-    q === 'ಪೇಟೆಂಟ್ ಎಂದರೇನು' ||
-    q === 'পেটেন্ট কি' ||
-    q === 'પેટન્ટ શું છે'
-  ) {
-    return 'patent';
+  // If query mentions disallowed domains (Ayurveda, medicine, herbs, formulations, medical, general unrelated),
+  // it MUST NOT be answered even if it mentions patent or other words (e.g. "What is an Ayurvedic patent?").
+  const DISALLOWED_TERMS = [
+    'ayurveda', 'ayurvedic', 'herb', 'herbal', 'ashwagandha', 'turmeric', 'curcumin', 'neem',
+    'kadha', 'taila', 'churna', 'medicine', 'medicines', 'medical', 'formulation', 'formulations',
+    'doctor', 'disease', 'cure', 'treatment', 'health', 'hospital', 'symptom',
+    'recipe', 'cooking', 'weather', 'cricket', 'football', 'movie', 'song', 'prime minister',
+    'president', 'machine learning', 'python', 'code', 'coding', 'crypto', 'bitcoin', 'shoe', 'shoes', 'tea'
+  ];
+
+  for (const term of DISALLOWED_TERMS) {
+    const regex = new RegExp(`\\b${term}\\b`, 'i');
+    if (regex.test(q)) {
+      return null;
+    }
   }
 
-  // 2. Trademark Topic Box
-  // Exact homepage chip: "What is a Trademark for an Ayurveda brand?" / "What is a Trademark?"
+  // 1. SIX BRICKS
   if (
-    q === 'what is a trademark for an ayurveda brand' ||
-    q === 'what is a trademark for ayurveda brand' ||
-    q === 'what is a trademark for ayurveda' ||
-    q === 'what is a trademark' ||
-    q === 'what is trademark' ||
-    q === 'trademark kya hai' ||
-    q === 'ट्रेडमार्क क्या है' ||
-    q === 'आयुर्वेद ब्रांड के लिए ट्रेडमार्क क्या है' ||
-    q === 'ट्रेडमार्क म्हणजे काय' ||
-    q === 'ట్రేడ్‌మార్క్ అంటే ఏమిటి' ||
-    q === 'ಟ್ರೇಡ್‌ಮಾರ್ಕ್ ಎಂದರೇನು' ||
-    q === 'ট্রেডমার্ক কি' ||
-    q === 'ટ્રેડમાર્ક શું છે'
+    q === 'what are six bricks' ||
+    q === 'what is six bricks' ||
+    q === 'explain six bricks' ||
+    q === 'six bricks' ||
+    q.includes('six bricks') ||
+    q === 'सिक्स ब्रिक्स क्या है'
   ) {
-    return 'trademark';
+    return 'six_bricks';
   }
 
-  // 3. GI Topic Box
-  // Exact homepage chip: "What is Geographical Indication (GI) in Ayurveda?" / "What is GI?"
+  // 2. GI (GEOGRAPHICAL INDICATION)
   if (
-    q === 'what is geographical indication gi in ayurveda' ||
-    q === 'what is geographical indication in ayurveda' ||
-    q === 'what is geographical indication' ||
-    q === 'what is gi in ayurveda' ||
     q === 'what is gi' ||
-    q === 'gi kya hai' ||
+    q === 'what is a gi' ||
+    q === 'what is geographical indication' ||
+    q === 'what is a geographical indication' ||
+    q === 'explain gi' ||
+    q === 'explain geographical indication' ||
+    q === 'how does a gi work' ||
+    q === 'how does gi work' ||
+    q === 'what is gi protection' ||
+    q === 'what is geographical indication protection' ||
+    q === 'gi' ||
+    q === 'geographical indication' ||
+    q === 'geographical indications' ||
+    q === 'gi protection' ||
     q === 'भौगोलिक संकेत क्या है' ||
-    q === 'जीआई क्या है' ||
-    q === 'भौगोलिक उपदर्शन म्हणजे काय'
+    q === 'जीआई क्या है'
   ) {
     return 'gi';
   }
 
-  // 4. TKDL Topic Box
-  // Exact homepage chip: "What is TKDL and Section 3(p) protection?" / "What is TKDL?"
+  // 3. COPYRIGHT
   if (
-    q === 'what is tkdl and section 3 p protection' ||
-    q === 'what is tkdl and section 3p protection' ||
-    q === 'what is tkdl' ||
-    q === 'tkdl kya hai' ||
-    q === 'what is traditional knowledge digital library' ||
-    q === 'टीकेडीएल क्या है' ||
-    q === 'पारंपरिक ज्ञान क्या है' ||
-    q === 'पारंपरिक ज्ञान डिजिटल लायब्ररी म्हणजे काय'
+    q === 'what is copyright' ||
+    q === 'what is a copyright' ||
+    q === 'explain copyright' ||
+    q === 'how does copyright work' ||
+    q === 'how does a copyright work' ||
+    q === 'what is copyright protection' ||
+    q === 'copyright' ||
+    q === 'copyrights' ||
+    q === 'copyright protection' ||
+    q === 'कॉपीराइट क्या है'
   ) {
-    return 'tkdl';
+    return 'copyright';
   }
 
-  // 5. ABS Topic Box
-  // Exact homepage chip: "What are NBA Access and Benefit Sharing (ABS) rules?" / "What is ABS?"
+  // 4. DESIGN
   if (
-    q === 'what are nba access and benefit sharing abs rules' ||
-    q === 'what are nba access and benefit sharing rules' ||
-    q === 'what are access and benefit sharing rules' ||
-    q === 'what are nba abs rules' ||
-    q === 'what is access and benefit sharing' ||
-    q === 'what is abs' ||
-    q === 'abs kya hai' ||
-    q === 'abs rules kya hai' ||
-    q === 'एबीएस क्या है' ||
-    q === 'जैव विविधता नियम क्या हैं' ||
-    q === 'जैवविविधता नियम काय आहेत'
+    q === 'what is design' ||
+    q === 'what is a design' ||
+    q === 'what is industrial design' ||
+    q === 'what is an industrial design' ||
+    q === 'explain design' ||
+    q === 'explain industrial design' ||
+    q === 'what is design protection' ||
+    q === 'what is industrial design protection' ||
+    q === 'how does design work' ||
+    q === 'how does design protection work' ||
+    q === 'design' ||
+    q === 'industrial design' ||
+    q === 'design protection' ||
+    q === 'डिजाइन क्या है' ||
+    q === 'औद्योगिक डिजाइन क्या है'
   ) {
-    return 'abs';
+    return 'design';
   }
+
+  // 5. TRADEMARK
+  if (
+    q === 'what is trademark' ||
+    q === 'what is a trademark' ||
+    q === 'what is trade mark' ||
+    q === 'what is a trade mark' ||
+    q === 'explain trademark' ||
+    q === 'explain trade mark' ||
+    q === 'how does a trademark work' ||
+    q === 'how does trademark work' ||
+    q === 'what is trademark protection' ||
+    q === 'trademark' ||
+    q === 'trade mark' ||
+    q === 'trademarks' ||
+    q === 'trademark protection' ||
+    q === 'ट्रेडमार्क क्या है'
+  ) {
+    return 'trademark';
+  }
+
+  // 6. PATENT
+  if (
+    q === 'what is patent' ||
+    q === 'what is a patent' ||
+    q === 'explain patent' ||
+    q === 'how does a patent work' ||
+    q === 'how does patent work' ||
+    q === 'what is patent protection' ||
+    q === 'patent' ||
+    q === 'patents' ||
+    q === 'patent protection' ||
+    q === 'पेटेंट क्या है'
+  ) {
+    return 'patent';
+  }
+
+  const isAboutPatent = /^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?patent(s|ability| protection)?\s*(work|mean)?$/i.test(q);
+  if (isAboutPatent) return 'patent';
+
+  const isAboutTrademark = /^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?trade\s*mark(s| protection)?\s*(work|mean)?$/i.test(q);
+  if (isAboutTrademark) return 'trademark';
+
+  const isAboutGI = /^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?(gi|geographical indication(s)?)( protection)?\s*(work|mean)?$/i.test(q);
+  if (isAboutGI) return 'gi';
+
+  const isAboutCopyright = /^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?copyright(s| protection)?\s*(work|mean)?$/i.test(q);
+  if (isAboutCopyright) return 'copyright';
+
+  const isAboutDesign = /^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?(industrial\s+)?design(s| protection)?\s*(work|mean)?$/i.test(q);
+  if (isAboutDesign) return 'design';
+
+  const isAboutSixBricks = /^(what is|explain|define|how does|what are|about)?\s*(the\s+)?six\s+bricks\s*(work|mean)?$/i.test(q);
+  if (isAboutSixBricks) return 'six_bricks';
 
   return null;
 }
 
 function buildSafeAbstentionResponse(query: string, jurisdiction: string): AIAnswerData {
   return {
-    answer: (
-      `### ⚠️ SAFE ABSTENTION — UNVERIFIED CUSTOM QUERY DETECTED\n\n` +
-      `IP-SAKTI Sahayak has activated its **Zero-Hallucination Safe Abstention Protocol** to maintain 100% legal integrity.\n\n` +
-      `To ensure trust and prevent unsupported legal conclusions, automated answers are provided **exclusively for verified statutory topic boxes** or structured **Case Builder** reports.\n\n` +
-      `### How to Get Verified Statutory Results:\n` +
-      `1. **Homepage Statutory Topic Boxes:** Click any of the popular question boxes on the homepage (*What is a Patent?*, *What is a Trademark?*, *What is GI?*, *What is TKDL?*, *What is ABS?*) for verified statutory guidance.\n` +
-      `2. **Custom Herbal Formulations:** Use the **5-Step Case Builder** to input your formulation matrix, ingredients, and bio-assay data to generate an official 14-section legal evaluation dossier.\n` +
-      `3. **Human Expert Review:** Submit your query to an **Empanelled Indian IP Attorney**.`
-    ),
-    summary: 'Safe Abstention triggered: Query falls outside verified homepage statutory topic boxes.',
-    why: [
-      'Zero-hallucination safety protocol activated for custom input query.',
-      'Only verified pre-approved homepage statutory topic boxes or Case Builder reports are answered automatically.'
-    ],
-    meaningForYou: [
-      'Click one of the verified sample question boxes on the homepage or use the 5-Step Case Builder for custom formulation evaluations.'
-    ],
+    answer: 'abstention',
+    summary: 'abstention',
+    why: [],
+    meaningForYou: [],
     jurisdiction: jurisdiction || 'India',
-    ipType: 'Safe Abstention',
+    ipType: 'Abstention',
     confidence: {
       level: 'low',
-      reasons: ['Safe abstention enforced to guarantee legal integrity and user trust.'],
-      caveat: 'Custom unverified query triggered safe abstention.'
+      reasons: [],
+      caveat: ''
     },
     citations: [],
-    warnings: [
-      '⚠️ Safe Abstention active: Select a verified homepage topic box or use Case Builder for custom evaluations.'
-    ],
-    nextSteps: [
-      { title: 'Select Verified Homepage Topic', action: 'RETRY', link: '/', primary: true },
-      { title: 'Use 5-Step Case Builder', action: 'BUILD_CASE', link: '/case-builder' }
-    ],
+    warnings: [],
+    nextSteps: [],
     abstained: true,
     abstentionDetails: {
-      reason: 'Safe abstention enforced on custom unverified query.',
-      missingInfo: ['Verified statutory topic box selection or Case Builder formulation context']
+      reason: 'abstention',
+      missingInfo: []
     },
     originalQuery: query,
-    reformulatedQuery: `Safe Abstention triggered for query: '${query}'`
+    reformulatedQuery: 'abstention'
   };
 }
 
-function synthesizeClientStatutoryAnswer(payload: AskRequestPayload, topic: VerifiedTopicType | null): AIAnswerData {
+function synthesizeClientStatutoryAnswer(payload: AskRequestPayload, topic: AllowedTopic): AIAnswerData {
   const query = (payload.question || payload.query || '').trim();
   let answer = '';
   let ipType = 'Patent';
-  let reformulated = `Statutory guidance and relevant Indian Intellectual Property legal provisions for: '${query}'`;
+  let reformulated = `Statutory guidance for: '${query}'`;
   let citations: any[] = [];
 
-  // A. TRADEMARK TOPIC BOX
-  if (topic === 'trademark') {
+  // 1. PATENT
+  if (topic === 'patent') {
+    ipType = 'Patent';
+    reformulated = `Patent protection, novelty criteria, inventive step, and statutory provisions under Indian Patents Act, 1970 for: '${query}'`;
+    citations = [
+      {
+        id: 'cit-pat-1',
+        title: 'Indian Patents Act, 1970 — Section 2(1)(j) & Section 3',
+        sourceType: 'Act',
+        jurisdiction: 'India',
+        status: 'Current',
+        section: 'Section 2(1)(j), 2(1)(ja), 2(1)(ac) & Section 3',
+        authorityLevel: 1,
+        excerpt: 'An invention must possess Novelty, Inventive Step (non-obviousness), and Industrial Applicability without falling under statutory non-patentability exclusions of Section 3.'
+      }
+    ];
+    answer = (
+      `### ⚖️ Patent & Patent Protection\n\n` +
+      `A **Patent** is an exclusive statutory right granted by the Government (under the **Indian Patents Act, 1970**) to an inventor for a limited period (usually **20 years** from the filing date) in exchange for full public disclosure of the invention.\n\n` +
+      `#### Core Criteria for Patentability:\n` +
+      `1. **Novelty (Section 2(1)(j)):** The invention must be new and not published or used anywhere in the world prior to the filing date.\n` +
+      `2. **Inventive Step / Non-Obviousness (Section 2(1)(ja)):** The invention must involve a technical advance compared to existing knowledge or economic significance that is not obvious to a person skilled in the art.\n` +
+      `3. **Industrial Applicability (Section 2(1)(ac)):** The invention must be capable of being made or used in an industry.\n\n` +
+      `#### Key Statutory Exclusions (Section 3):\n` +
+      `- Mere discoveries of scientific principles, abstract theories, mere admixtures, and traditional knowledge are non-patentable under Section 3.`
+    );
+  }
+  // 2. TRADEMARK
+  else if (topic === 'trademark') {
     ipType = 'Trademark';
-    reformulated = `Trademark registration criteria, Section 9 absolute grounds, Section 11 relative grounds, and Class 5 filing for Ayurvedic goods under Trade Marks Act 1999`;
+    reformulated = `Trademark registration criteria, Section 9 distinctiveness, Section 11 relative grounds, and protection under Trade Marks Act 1999 for: '${query}'`;
     citations = [
       {
         id: 'cit-tm-1',
@@ -308,29 +383,22 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload, topic: Veri
         status: 'Current',
         section: 'Section 9, 11 & Schedule IV',
         authorityLevel: 1,
-        excerpt: 'Section 9 prohibits registration of descriptive marks. Distinctive coined brand names for Ayurvedic pharmaceuticals are classified under Class 5.'
+        excerpt: 'Section 9 prohibits registration of descriptive or non-distinctive marks. Distinctive coined brand names and logos are registrable under the Nice Classification.'
       }
     ];
     answer = (
-      `### 🛡️ Trademark Protection for Ayurvedic Brands & Products\n\n` +
-      `Under the **Trade Marks Act, 1999** [1], a trademark grants exclusive proprietary rights over distinctive brand names, logos, slogans, and distinctive product packaging (trade dress) in India.\n\n` +
-      `#### Key Classification for Ayurveda:\n` +
-      `- **Class 5 (Nice Classification):** Ayurvedic medicines, herbal therapeutic formulations, medicated oils, and dietary supplements.\n` +
-      `- **Class 3:** Herbal cosmetics, essential oils, non-medicated herbal soaps, and skincare products.\n` +
-      `- **Class 30 / 32:** Herbal teas, health food supplements, and non-alcoholic herbal beverages.\n\n` +
-      `#### Critical Statutory Restrictions & Guidelines:\n` +
-      `1. **Absolute Ground of Refusal (Section 9):** Generic or descriptive Ayurvedic terms cannot be monopolized (e.g., *'Chyawanprash'*, *'Triphala Churna'*, *'Maha Bhringraj Taila'* are publici juris). Distinctive coined terms or composite brands (e.g., *'Dabur Chyawanprash'*, *'Patanjali Kesh Kanti'*) are fully registrable.\n` +
-      `2. **Deceptive Similarity (Section 11):** Must conduct prior art trademark search across Class 5 to prevent conflict with existing phonetically or visually similar marks.\n` +
-      `3. **Validity & Term:** Valid for **10 years** from filing date and indefinitely renewable every 10 years.\n\n` +
-      `### Recommended Next Steps\n` +
-      `- Conduct a comprehensive e-search on the IP India Trade Marks Registry portal (\`ipindiaonline.gov.in\`).\n` +
-      `- File Form TM-A with proper user affidavit and statement of use.`
+      `### 🛡️ Trademark & Trademark Protection\n\n` +
+      `A **Trademark** is a distinctive sign, logo, word, phrase, symbol, or packaging (trade dress) that identifies and distinguishes the goods or services of one enterprise from those of others under the **Trade Marks Act, 1999**.\n\n` +
+      `#### Key Principles:\n` +
+      `1. **Distinctiveness (Section 9):** The mark must not be generic or merely descriptive of the product's quality, quantity, or intended purpose.\n` +
+      `2. **Non-Deceptive Similarity (Section 11):** The mark must not cause consumer confusion or be deceptively similar to existing registered marks in the same or related classes.\n` +
+      `3. **Validity & Term:** A trademark registration is valid for **10 years** from the filing date and can be renewed indefinitely every 10 years upon payment of renewal fees.`
     );
   }
-  // B. GEOGRAPHICAL INDICATION (GI) TOPIC BOX
+  // 3. GI (GEOGRAPHICAL INDICATION)
   else if (topic === 'gi') {
     ipType = 'Geographical Indication';
-    reformulated = `Geographical Indications of Goods Act 1999 criteria, origin-linked reputation, and legal protection for traditional Ayurvedic products and herbal commodities in India`;
+    reformulated = `Geographical Indications of Goods Act 1999 criteria, origin-linked reputation, and collective legal protection for: '${query}'`;
     citations = [
       {
         id: 'cit-gi-1',
@@ -340,164 +408,97 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload, topic: Veri
         status: 'Current',
         section: 'Section 2(1)(e) & Section 9',
         authorityLevel: 1,
-        excerpt: 'GI identifies agricultural or manufactured goods originating from a specific geographical territory having distinctive reputation or characteristics.'
+        excerpt: 'GI identifies agricultural, natural, or manufactured goods originating from a specific geographical territory having distinctive reputation, quality, or characteristics.'
       }
     ];
     answer = (
-      `### 📍 Geographical Indication (GI) in Ayurveda & Herbal Sector\n\n` +
-      `Under the **Geographical Indications of Goods (Registration and Protection) Act, 1999** [1], a Geographical Indication (GI) identifies agricultural, natural, or manufactured goods originating from a definite geographical territory, where a specific quality, reputation, or unique characteristic is essentially attributable to its geographical origin.\n\n` +
-      `#### Key Indian Ayurvedic & Herbal GI Registered Goods:\n` +
-      `- **Navara Rice (Kerala):** Unique medicinal rice used in Ayurvedic Shashtika Shali Pinda Sweda treatments.\n` +
-      `- **Kashmiri Saffron (Jammu & Kashmir):** Renowned medicinal spice with high crocin and safranal content.\n` +
-      `- **Erode Turmeric (Tamil Nadu) & Waigaon Turmeric (Maharashtra):** High curcumin-content medicinal rhizomes.\n` +
-      `- **Malabar Pepper & Coorg Green Cardamom (South India):** Classical Trikatu / aromatic botanical ingredients.\n\n` +
-      `#### Core Statutory Highlights:\n` +
-      `1. **Community Ownership:** GI is collective intellectual property owned by an association of producers or statutory bodies, NOT an individual patent.\n` +
-      `2. **Section 9 Exclusion:** Cannot be registered if likely to deceive or cause confusion.\n` +
-      `3. **Protection Duration:** Valid for **10 years**, renewable perpetually upon payment of fees.\n` +
-      `4. **Anti-Piracy Enforcement:** Prohibits unauthorized commercial use of the region name by producers outside the certified territory.`
+      `### 📍 Geographical Indication (GI) & Protection\n\n` +
+      `A **Geographical Indication (GI)** identifies goods (agricultural, natural, or manufactured) as originating in a specific geographical territory, region, or locality, where a given quality, reputation, or other characteristic of the goods is essentially attributable to its geographical origin under the **Geographical Indications of Goods (Registration and Protection) Act, 1999**.\n\n` +
+      `#### Key Principles:\n` +
+      `1. **Collective Community Right:** Unlike patents or trademarks owned by individuals, a GI is a collective intellectual property right owned by an association of producers or statutory bodies.\n` +
+      `2. **Protection Against Misleading Use:** Prevents unauthorized producers outside the specified geographical territory from commercializing the reputation of the geographical name.\n` +
+      `3. **Term of Protection:** Registration is valid for **10 years** and can be renewed perpetually every 10 years.`
     );
   }
-  // C. TKDL & SECTION 3(p) TOPIC BOX
-  else if (topic === 'tkdl') {
-    ipType = 'Traditional Knowledge';
-    reformulated = `Traditional Knowledge Digital Library (TKDL) documentation of classical formulations, defensive prior art database, and Section 3(p) non-patentability provisions under Indian Patents Act 1970`;
+  // 4. COPYRIGHT
+  else if (topic === 'copyright') {
+    ipType = 'Copyright';
+    reformulated = `Copyright Act 1957 statutory provisions, literary, dramatic, artistic, and musical work protection for: '${query}'`;
     citations = [
       {
-        id: 'cit-tk-1',
-        title: 'Patents Act, 1970 — Section 3(p) (Traditional Knowledge Exclusion)',
+        id: 'cit-cpr-1',
+        title: 'Copyright Act, 1957 — Section 13 & 14 (Works Protected & Exclusive Rights)',
         sourceType: 'Act',
         jurisdiction: 'India',
         status: 'Current',
-        section: 'Section 3(p)',
+        section: 'Section 13, 14 & 22',
         authorityLevel: 1,
-        excerpt: 'An invention which in effect, is traditional knowledge or which is an aggregation or duplication of known properties of traditionally known components is not an invention.'
+        excerpt: 'Copyright subsists in original literary, dramatic, musical, artistic works, cinematograph films, and sound recordings throughout India.'
       }
     ];
     answer = (
-      `### 📚 Traditional Knowledge Digital Library (TKDL) & Section 3(p) Protection\n\n` +
-      `The **Traditional Knowledge Digital Library (TKDL)** is a pioneer initiative by the Council of Scientific and Industrial Research (CSIR) and the Ministry of AYUSH to safeguard India's traditional medicinal heritage from biopiracy and wrongful patenting [1].\n\n` +
-      `#### Statutory Framework & Section 3(p) of Patents Act, 1970:\n` +
-      `- **Section 3(p) Mandate:** Explicitly bars patent grants on *'an invention which in effect, is traditional knowledge or which is an aggregation or duplication of known properties of traditionally known component or components'*.\n` +
-      `- **Defensive Prior Art:** TKDL contains over **4.5 lakh classical formulations** translated from Sanskrit, Arabic, Persian, and Tamil into 5 international languages (English, German, French, Japanese, Spanish).\n` +
-      `- **International Access Agreements:** Patent examiners at USPTO, EPO, JPO, UKIPO, and Indian Patent Office directly cross-reference TKDL prior art during examination.\n\n` +
-      `#### Overcoming Section 3(p) for Novel Ayurvedic Inventions:\n` +
-      `1. **Synergistic Data:** Quantitative evidence showing unexpected synergistic bio-efficacy beyond additive effects.\n` +
-      `2. **Novel Extraction / Delivery:** Standardized fraction extracts, nano-carriers, or modified release mechanisms not disclosed in classical Samhitas.\n` +
-      `3. **Biodiversity Clearance:** NBA Form III approval under Section 6 of Biological Diversity Act 2002.`
+      `### 📄 Copyright & Copyright Protection\n\n` +
+      `A **Copyright** is a legal right granted under the **Copyright Act, 1957** to creators of original literary, dramatic, musical, artistic works, cinematograph films, and sound recordings.\n\n` +
+      `#### Key Principles:\n` +
+      `1. **Expression, Not Idea:** Copyright protects the specific original expression of ideas in tangible form, not the underlying ideas, concepts, or functional procedures.\n` +
+      `2. **Automatic Protection:** Protection arises automatically upon creation of the original work, though statutory registration provides prima facie legal evidence in court proceedings.\n` +
+      `3. **Term of Protection:** For literary, dramatic, musical, and artistic works, protection generally lasts for the lifetime of the author plus **60 years** post-mortem.`
     );
   }
-  // D. ABS & BIOLOGICAL DIVERSITY ACT TOPIC BOX
-  else if (topic === 'abs') {
-    ipType = 'Biodiversity';
-    reformulated = `Access and Benefit Sharing (ABS) compliance, National Biodiversity Authority (NBA) prior approval (Form III), and State Biodiversity Board (SBB) intimation under Biological Diversity Act 2002`;
+  // 5. DESIGN
+  else if (topic === 'design') {
+    ipType = 'Design';
+    reformulated = `Designs Act 2000 provisions, visual aesthetics, shape, and ornament protection for: '${query}'`;
     citations = [
       {
-        id: 'cit-abs-1',
-        title: 'Biological Diversity Act, 2002 — Section 3, 4, 6 & 7 (NBA & ABS Regulations)',
+        id: 'cit-des-1',
+        title: 'Designs Act, 2000 — Section 2(d) & Section 4 (Prohibition of Registration)',
         sourceType: 'Act',
         jurisdiction: 'India',
         status: 'Current',
-        section: 'Section 6 (Form III Clearance)',
+        section: 'Section 2(d), 4 & 11',
         authorityLevel: 1,
-        excerpt: 'Prior approval of the National Biodiversity Authority is mandatory before applying for any intellectual property right based on biological resources accessed from India.'
+        excerpt: 'Design means only features of shape, configuration, pattern, ornament applied to any article judged solely by the eye.'
       }
     ];
     answer = (
-      `### 🌿 Access and Benefit Sharing (ABS) — Biological Diversity Act, 2002\n\n` +
-      `Under the **Biological Diversity Act, 2002** [1] and the Biological Diversity (Amendment) Act, 2023, **Access and Benefit Sharing (ABS)** is a mandatory legal framework ensuring equitable sharing of commercial benefits arising out of the utilization of biological resources with local conserving communities.\n\n` +
-      `#### Core Statutory Requirements:\n` +
-      `1. **Section 3 & 4 (Foreign Entities):** Non-Indian citizens, NRI entities, and Indian companies with foreign shareholding/management must obtain **prior approval** from the **National Biodiversity Authority (NBA)** before accessing biological resources.\n` +
-      `2. **Section 6 (Mandatory IPR Approval):** Prior approval of the NBA (**Form III**) is legally mandatory **before applying for any patent or IP right** based on biological resources or associated traditional knowledge accessed from India.\n` +
-      `3. **Section 7 (Indian Entities / SBB):** Indian citizens/companies must intimate the relevant **State Biodiversity Board (SBB)** before commercial utilization.\n` +
-      `4. **Exemptions (2023 Amendment):** Registered AYUSH medical practitioners, local Vaidyas, and codified traditional formulations accessed from non-wild cultivated sources enjoy streamlined exemptions.`
+      `### 🎨 Industrial Design & Design Protection\n\n` +
+      `An **Industrial Design** (governed by the **Designs Act, 2000**) protects the aesthetic, visual, ornamental, or external appearance of an article, including features of shape, configuration, pattern, ornament, or composition of lines or colours applied to any article in two- or three-dimensional form.\n\n` +
+      `#### Key Principles:\n` +
+      `1. **Visual Appeal Only:** Design protection applies exclusively to visual aesthetic features judged solely by the eye; it does not protect functional or mechanical principles.\n` +
+      `2. **Novelty Requirement:** The design must be new, original, and not published or used anywhere in India or abroad prior to the filing date.\n` +
+      `3. **Term of Protection:** Registration is valid initially for **10 years**, extendable by another **5 years** (maximum total duration of 15 years).`
     );
   }
-  // E. PATENT TOPIC BOX
-  else if (topic === 'patent') {
-    ipType = 'Patent';
-    reformulated = `Patentability requirements (novelty, inventive step, industrial applicability), Section 3(p) traditional knowledge exclusions, and Section 3(e) synergistic data requirements for: '${query}'`;
+  // 6. SIX BRICKS
+  else if (topic === 'six_bricks') {
+    ipType = 'Six Bricks';
+    reformulated = `Six Bricks building blocks of Intellectual Property and foundational methodology for: '${query}'`;
     citations = [
       {
-        id: 'cit-pat-1',
-        title: 'Indian Patents Act, 1970 — Section 2(1)(j), Section 3(e), 3(p) & 3(d)',
-        sourceType: 'Act',
-        jurisdiction: 'India',
+        id: 'cit-sb-1',
+        title: 'Intellectual Property Portfolio Building Blocks & Educational Framework',
+        sourceType: 'Framework',
+        jurisdiction: 'India / International',
         status: 'Current',
-        section: 'Section 3(e) & Section 3(p)',
+        section: 'Six Bricks Core Framework',
         authorityLevel: 1,
-        excerpt: 'Inventions claiming mere admixture without synergistic efficacy or claiming traditional knowledge are non-patentable under Section 3(e) and 3(p).'
-      },
-      {
-        id: 'cit-pat-2',
-        title: 'Guidelines for Examination of Patent Applications in the Field of Pharmaceuticals & Traditional Knowledge',
-        sourceType: 'Act',
-        jurisdiction: 'India',
-        status: 'Current',
-        section: 'Guidelines Para 4.5',
-        authorityLevel: 2,
-        excerpt: 'Synergy must be established through comparative experimental pharmacological data against individual active components.'
+        excerpt: 'The Six Bricks represent the fundamental pillars of an Intellectual Property portfolio (Patents, Trademarks, Designs, Copyrights, Geographical Indications, and Trade Secrets).'
       }
     ];
     answer = (
-      `### ⚖️ Patentability of Ayurvedic Medicines & Formulations in India\n\n` +
-      `Under the **Indian Patents Act, 1970** [1], an Ayurvedic invention must satisfy **Novelty (Section 2(1)(j))**, **Inventive Step (Section 2(1)(ja))**, and **Industrial Applicability**, while overcoming strict statutory exclusions.\n\n` +
-      `#### Statutory Hurdles for Ayurveda Formulations:\n` +
-      `- **Section 3(p):** Traditional knowledge or mere aggregation of known classical properties is **non-patentable**.\n` +
-      `- **Section 3(e):** Mere admixture resulting only in the aggregation of properties without unexpected synergy is **non-patentable**.\n` +
-      `- **Section 3(d):** Mere discovery of a new form of a known substance without enhanced therapeutic efficacy is excluded.\n\n` +
-      `#### What CAN be Patented:\n` +
-      `1. **Synergistic Compositions:** Polyherbal combinations demonstrating verified synergistic potentiation with comparative pharmacology data (Combination Index < 1.0).\n` +
-      `2. **Novel Extraction & Purification:** Standardized solvent extraction methods isolating active phyto-fractions with reproducible chemical finger-printing (HPTLC/LC-MS).\n` +
-      `3. **Advanced Drug Delivery:** Phytosomes, liposomes, nano-emulsions, or sustained-release herbal delivery systems.\n` +
-      `4. **Mandatory NBA Clearance:** Must obtain Form III clearance from the National Biodiversity Authority under Section 6 of Biological Diversity Act 2002.\n\n` +
-      `### Actionable Compliance Roadmap\n` +
-      `1. **Prior Art Search:** Conduct comprehensive searches across TKDL and IP India Patent databases.\n` +
-      `2. **Experimental Proof of Synergy:** Prepare quantitative data comparing the combination against individual ingredients.\n` +
-      `3. **NBA Form III:** Submit before filing patent specifications at the CGPDTM.`
-    );
-  }
-  // F. CASE BUILDER REPORT DOSSIER
-  else if (payload.case_profile) {
-    const cp = payload.case_profile;
-    ipType = cp.productType || 'Patent';
-    const ingrList = cp.ingredients && cp.ingredients.length > 0 ? cp.ingredients.join(', ') : 'botanical ingredients';
-    const prod = cp.productName || 'Herbal Formulation';
-    reformulated = `Formulation dossier analysis for '${prod}' with [${ingrList}] under Indian Patents Act 1970 (Section 3(p), 3(e)) and Biological Diversity Act 2002`;
-    citations = [
-      {
-        id: 'cit-cb-1',
-        title: 'Indian Patents Act, 1970 — Section 3(p) & 3(e)',
-        sourceType: 'Act',
-        jurisdiction: 'India',
-        status: 'Current',
-        section: 'Section 3(p) & Section 3(e)',
-        authorityLevel: 1,
-        excerpt: 'Polyherbal formulation requires verified synergistic data to overcome Section 3(e) and non-obvious combination proof to avoid Section 3(p) traditional knowledge rejection.'
-      },
-      {
-        id: 'cit-cb-2',
-        title: 'Biological Diversity Act, 2002 — Section 6',
-        sourceType: 'Act',
-        jurisdiction: 'India',
-        status: 'Current',
-        section: 'Section 6 (NBA Prior Approval)',
-        authorityLevel: 1,
-        excerpt: 'Access to Indian biological resources requires NBA Form III clearance prior to commercial patent grant.'
-      }
-    ];
-    answer = (
-      `### 📋 Legal Evaluation Dossier for '${prod}'\n\n` +
-      `**Ingredients Analyzed:** ${ingrList}\n\n` +
-      `#### 1. Patentability & Section 3(p) Traditional Knowledge Clearance:\n` +
-      `- Because the formulation utilizes documented classical botanicals, Section 3(p) of the Indian Patents Act, 1970 applies.\n` +
-      `- To secure patent grant, you must demonstrate **measurable synergy** (Combination Index < 1.0) under Section 3(e) through comparative bio-assay data against individual botanical components.\n\n` +
-      `#### 2. NBA Access and Benefit Sharing (ABS) Requirements:\n` +
-      `- Since Indian biological resources (${ingrList}) are utilized, **NBA Form III approval** under Section 6 of the Biological Diversity Act, 2002 is mandatory before applying for patent rights.\n\n` +
-      `#### 3. Recommended Actions:\n` +
-      `1. Document comparative synergy data.\n` +
-      `2. File NBA Form III with the National Biodiversity Authority.\n` +
-      `3. Submit your case dossier to an Empanelled Indian IP Attorney for formal drafting.`
+      `### 🧱 Six Bricks\n\n` +
+      `**Six Bricks** refers to:\n\n` +
+      `#### 1. In Intellectual Property (IP Portfolio Building Blocks):\n` +
+      `The "Six Bricks of Intellectual Property" represent the foundational building blocks used to secure comprehensive IP protection:\n` +
+      `- **Brick 1: Patents** (Technical inventions, processes, and products)\n` +
+      `- **Brick 2: Trademarks** (Brand names, logos, slogans, and market identity)\n` +
+      `- **Brick 3: Industrial Designs** (Aesthetic shape, packaging appearance, and ornamentation)\n` +
+      `- **Brick 4: Copyrights** (Original literature, documentation, artistic works, and manuals)\n` +
+      `- **Brick 5: Geographical Indications (GI)** (Origin-linked collective reputation and heritage)\n` +
+      `- **Brick 6: Trade Secrets / Know-How** (Confidential proprietary processes, data, and formulas)\n\n` +
+      `#### 2. In Hands-on Learning & Pedagogy:\n` +
+      `"Six Bricks" is also an internationally recognized hands-on manipulative learning methodology developed in partnership with the LEGO Foundation, utilizing six bright 2x4 DUPLO bricks to stimulate executive brain function, perceptual spatial skills, and creative problem-solving through play.`
     );
   }
 
@@ -506,23 +507,22 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload, topic: Veri
     summary: answer.slice(0, 240) + '…',
     why: [
       `Authoritative guidance synthesized directly from primary statutory provisions (${citations.map(c => c.title).join(', ')}).`,
-      'Statutory compliance verified against Indian IP laws, TKDL prior art rules, and Biological Diversity regulations.'
+      'Statutory compliance verified against Indian Intellectual Property acts and regulatory frameworks.'
     ],
     meaningForYou: [
-      'Review the statutory requirements and verify that experimental synergy or distinctive source indicators are documented before commercial filing.'
+      'Review the statutory requirements and verify that criteria for registration and protection are met before commercial filing.'
     ],
     jurisdiction: payload.jurisdiction || 'India',
     ipType,
     confidence: {
       level: 'high',
-      reasons: ['Directly grounded in Indian Patents Act 1970, Trade Marks Act 1999, and Biological Diversity Act 2002.'],
+      reasons: ['Directly grounded in primary statutory provisions.'],
       caveat: 'Synthesized from primary Indian statutory provisions.'
     },
     citations,
     warnings: [],
     nextSteps: [
-      { title: 'Build Case Report in Case Builder', action: 'BUILD_CASE', link: '/case-builder', primary: true },
-      { title: 'Submit for Expert Review', action: 'ESCALATE', link: '/dashboard' }
+      { title: 'Learn More in IP Category Explorer', action: 'EXPLORE', link: '/categories', primary: true }
     ],
     abstained: false,
     originalQuery: query,
@@ -536,21 +536,19 @@ function synthesizeClientStatutoryAnswer(payload: AskRequestPayload, topic: Veri
 
 async function askIPQuestionInternal(payload: AskRequestPayload): Promise<AIAnswerData> {
   const query = (payload.question || payload.query || '').trim();
-  const verifiedTopic = getVerifiedHomepageTopic(query);
-  const hasCaseBuilderContext = Boolean(
-    payload.case_profile &&
-    (payload.case_profile.productName || (payload.case_profile.ingredients && payload.case_profile.ingredients.length > 0))
-  );
+  const matchedTopic = classifyStrictTopic(query);
 
-  // STRICT ZERO-HALLUCINATION ENFORCEMENT:
-  // If the query does NOT match one of the 5 verified homepage topic boxes
-  // AND does NOT contain structured Case Builder formulation context,
-  // IMMEDIATELY enforce Safe Abstention.
-  if (!verifiedTopic && !hasCaseBuilderContext) {
+  // STRICT DECISION LOGIC:
+  // IF the user's question is directly related to:
+  // Patent OR Trademark OR GI OR Copyright OR Design OR Six Bricks
+  // → Answer using the relevant website/content.
+  // ELSE
+  // → Output exactly: abstention
+  if (!matchedTopic) {
     return buildSafeAbstentionResponse(query, payload.jurisdiction || 'India');
   }
 
-  return synthesizeClientStatutoryAnswer(payload, verifiedTopic);
+  return synthesizeClientStatutoryAnswer(payload, matchedTopic);
 }
 
 export async function askIPQuestion(payload: AskRequestPayload): Promise<AIAnswerData> {

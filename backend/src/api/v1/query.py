@@ -18,25 +18,49 @@ from ...db.conversations_repo import conversations_repo
 
 router = APIRouter(prefix="/v1", tags=["Query Pipeline"])
 
+import re
+
+def classify_strict_topic(raw_query: str) -> Optional[str]:
+    if not raw_query:
+        return None
+    q = re.sub(r"[?!.,;:()\'\"\-_/\\]", " ", raw_query.lower())
+    q = re.sub(r"\s+", " ", q).strip()
+
+    DISALLOWED = [
+        "ayurveda", "ayurvedic", "herb", "herbal", "ashwagandha", "turmeric", "curcumin", "neem",
+        "kadha", "taila", "churna", "medicine", "medicines", "medical", "formulation", "formulations",
+        "doctor", "disease", "cure", "treatment", "health", "hospital", "symptom",
+        "recipe", "cooking", "weather", "cricket", "football", "movie", "song", "prime minister",
+        "president", "machine learning", "python", "code", "coding", "crypto", "bitcoin", "shoe", "shoes", "tea"
+    ]
+    for term in DISALLOWED:
+        if re.search(r"\b" + re.escape(term) + r"\b", q):
+            return None
+
+    if "six bricks" in q or q == "सिक्स ब्रिक्स क्या है":
+        return "six_bricks"
+
+    if re.search(r"^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?(gi|geographical indication(s)?)( protection)?\s*(work|mean)?$", q):
+        return "gi"
+
+    if re.search(r"^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?copyright(s| protection)?\s*(work|mean)?$", q):
+        return "copyright"
+
+    if re.search(r"^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?(industrial\s+)?design(s| protection)?\s*(work|mean)?$", q):
+        return "design"
+
+    if re.search(r"^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?trade\s*mark(s| protection)?\s*(work|mean)?$", q):
+        return "trademark"
+
+    if re.search(r"^(what is|explain|define|how does|what are|about)?\s*(a\s+|an\s+)?patent(s|ability| protection)?\s*(work|mean)?$", q):
+        return "patent"
+
+    return None
+
 @router.post("/query", response_model=QueryResponse)
 async def execute_query_pipeline(request: QueryRequest):
     """
-    Full RAG query pipeline:
-
-    1.  Query analysis — intent, domain, language (Case Builder aware)
-    2.  Case profile construction — from Case Builder fields + analysis
-    3.  Query decomposition — all case fields → domain-specific sub-queries
-    4.  Hybrid retrieval — BM25 + Chroma + RRF + Reranker (per sub-query)
-    5.  Authority filter — jurisdiction + authority-level ranked
-    6.  Prompt assembly — retrieved evidence + full case context
-    7.  LLM generation — Ollama LLaMA (or evidence-grounded abstention)
-    8.  Citation verification — grounding score from retrieved documents
-    9.  Confidence calculation — multi-factor + safe abstention check
-    10. Response assembly — structured answer + sources + citations
-    11. Persistence — conversation + case repositories
-
-    NO step in this pipeline generates a hard-coded legal conclusion.
-    Every factual claim in the answer must be grounded in retrieved evidence.
+    Full RAG query pipeline with strict 6-topic whitelist.
     """
     query_id = str(uuid.uuid4())
     user_id = "anon_user"
@@ -53,43 +77,35 @@ async def execute_query_pipeline(request: QueryRequest):
         case_builder_data=request.case_builder_data
     )
 
-    # Early Safe Abstention for Out-of-Scope Queries
-    if analysis.query_type == "out_of_scope":
+    # STRICT 6-TOPIC DECISION LOGIC:
+    # IF question is not in whitelist -> return exactly 'abstention'
+    topic = classify_strict_topic(request.question)
+    if not topic:
         from ...models.query import ConfidenceInfo, HumanReviewRecommendation
         return QueryResponse(
             query_id=query_id,
             case_id=case_id,
             question=request.question,
-            answer=(
-                "**OUT OF SCOPE — Query Outside Knowledge Base Domain**\n\n"
-                "IP-SAKTI Sahayak provides statutory and regulatory guidance exclusively on:\n"
-                "- Indian Intellectual Property Law (Patents Act 1970, Trade Marks Act 1999, "
-                "Copyright, GI, Designs)\n"
-                "- Traditional Knowledge (TKDL) and Ayurveda IP\n"
-                "- Biological Diversity (Biological Diversity Act 2002, NBA & SBB)\n"
-                "- AYUSH regulatory compliance (Drugs & Cosmetics Rules)\n\n"
-                "Please submit a question relating to Ayurveda formulation patentability, "
-                "trademark protection, prior art, ABS statutory obligations, or AYUSH licensing."
-            ),
-            language=analysis.language,
+            answer="abstention",
+            language=target_language,
             query_analysis=analysis,
             sources=[],
             retrieved_sources=[],
             citations=[],
-            confidence=0.1,
+            confidence=0.0,
             confidence_label="low",
             confidence_info=ConfidenceInfo(
-                score=0.1,
+                score=0.0,
                 level="low",
-                reasoning="The question falls outside the legal and regulatory domain of IP-SAKTI Sahayak.",
-                gaps=["Query is not related to Indian Intellectual Property, Traditional Knowledge, or AYUSH regulations."]
+                reasoning="abstention",
+                gaps=[]
             ),
             abstained=True,
-            abstention_reason="Out-of-scope query: Question does not relate to Indian IP or Ayurveda regulatory frameworks.",
-            next_step="Ask an IP or Ayurveda question (e.g. Can I patent a polyherbal formulation under Section 3(p)?).",
+            abstention_reason="abstention",
+            next_step="",
             human_review=HumanReviewRecommendation(
                 recommended=False,
-                reason="Query is outside the system's legal advisory scope."
+                reason="abstention"
             )
         )
 

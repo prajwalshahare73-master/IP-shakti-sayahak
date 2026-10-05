@@ -143,38 +143,45 @@ export const HomePage: React.FC = () => {
               <div className="suggested-chips">
                 <button
                   type="button"
-                  onClick={() => handleSuggestionClick('What is a Patent for Ayurvedic medicine?')}
+                  onClick={() => handleSuggestionClick('What is a patent?')}
                   className="suggested-chip"
                 >
-                  {t('hero.qPatent', 'What is a Patent?')}
+                  What is a Patent?
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleSuggestionClick('What is a Trademark for an Ayurveda brand?')}
+                  onClick={() => handleSuggestionClick('What is trademark?')}
                   className="suggested-chip"
                 >
-                  {t('hero.qTrademark', 'What is a Trademark?')}
+                  What is Trademark?
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleSuggestionClick('What is Geographical Indication (GI) in Ayurveda?')}
+                  onClick={() => handleSuggestionClick('What is GI?')}
                   className="suggested-chip"
                 >
-                  {t('hero.qGi', 'What is GI?')}
+                  What is GI?
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleSuggestionClick('What is TKDL and Section 3(p) protection?')}
+                  onClick={() => handleSuggestionClick('What is copyright?')}
                   className="suggested-chip"
                 >
-                  {t('hero.qTkdl', 'What is TKDL?')}
+                  What is Copyright?
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleSuggestionClick('What are NBA Access and Benefit Sharing (ABS) rules?')}
+                  onClick={() => handleSuggestionClick('What is design?')}
                   className="suggested-chip"
                 >
-                  {t('hero.qAbs', 'What is ABS?')}
+                  What is Design?
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSuggestionClick('What are Six Bricks?')}
+                  className="suggested-chip"
+                >
+                  What are Six Bricks?
                 </button>
               </div>
             </div>

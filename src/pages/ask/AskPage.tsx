@@ -270,49 +270,21 @@ export const AskPage: React.FC = () => {
 
         {/* Result Area (Two-Column Desktop, Stacked Mobile) */}
         {currentAnswer && !loading && (
-          <div className="answer-view-grid">
-            {/* Left Column: Direct Answer, Why, Meaning For You, Actions */}
-            <div className="answer-main-col">
-              {/* Safe Abstention Display if triggered */}
-              {currentAnswer.abstained ? (
-                <div className="gov-card abstention-card">
-                  <div className="abstention-header">
-                    <ShieldAlert size={28} className="text-accent" />
-                    <div>
-                      <h2 className="abstention-title">{t('abstention.title')}</h2>
-                      <p className="abstention-desc">{currentAnswer.abstentionDetails?.reason}</p>
-                    </div>
-                  </div>
-
-                  {currentAnswer.abstentionDetails?.missingInfo && (
-                    <div className="missing-info-box">
-                      <strong>{t('abstention.missingInfo')}</strong>
-                      <ul>
-                        {currentAnswer.abstentionDetails.missingInfo.map((item, idx) => (
-                          <li key={idx}>• {item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  <div className="abstention-actions">
-                    <Link to="/classifier" className="btn btn-primary">
-                      <span>Use Guided Product Classifier</span>
-                      <ArrowRight size={16} />
-                    </Link>
-                    <button onClick={() => setShowExpertModal(true)} className="btn btn-outline">
-                      <UserCheck size={16} />
-                      <span>{t('answer.humanReviewCta')}</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {/* Smart Clarification Box if needed */}
-                  {currentAnswer.needsClarification && currentAnswer.clarificationPrompt && (
-                    <div className="gov-card clarification-card">
-                      <div className="clarification-header">
-                        <HelpCircle size={22} className="text-primary" />
+          currentAnswer.abstained || currentAnswer.answer.trim().toLowerCase() === 'abstention' ? (
+            <div className="gov-card abstention-pure-card" style={{ padding: '36px 24px', textAlign: 'center', margin: '24px 0', border: '1px solid #e5e7eb', borderRadius: '10px', background: '#fafafa' }}>
+              <div style={{ fontSize: '24px', fontWeight: 600, color: '#374151', fontFamily: 'monospace' }}>
+                abstention
+              </div>
+            </div>
+          ) : (
+            <div className="answer-view-grid">
+              {/* Left Column: Direct Answer, Why, Meaning For You, Actions */}
+              <div className="answer-main-col">
+                {/* Smart Clarification Box if needed */}
+                {currentAnswer.needsClarification && currentAnswer.clarificationPrompt && (
+                  <div className="gov-card clarification-card">
+                    <div className="clarification-header">
+                      <HelpCircle size={22} className="text-primary" />
                         <h3>Clarification Required for Accurate Assessment</h3>
                       </div>
                       <p className="clarification-question">
@@ -435,8 +407,6 @@ export const AskPage: React.FC = () => {
                       </button>
                     </div>
                   </div>
-                </>
-              )}
             </div>
 
             {/* Right Column: Case Context, Confidence, Verified Sources */}
@@ -491,6 +461,7 @@ export const AskPage: React.FC = () => {
               </div>
             </div>
           </div>
+          )
         )}
 
         {/* Expert Selection Modal */}
@@ -504,7 +475,7 @@ export const AskPage: React.FC = () => {
         )}
 
         {/* Inline Legal Disclaimer — required per PRD Requirement 7 */}
-        {currentAnswer && !loading && (
+        {currentAnswer && !loading && !currentAnswer.abstained && currentAnswer.answer.trim().toLowerCase() !== 'abstention' && (
           <p
             style={{
               fontSize: '11.5px',
